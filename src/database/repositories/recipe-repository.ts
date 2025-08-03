@@ -1,5 +1,6 @@
 import { BaseEntity, BaseRepository } from "./base-repository";
 
+
 export interface RecipeEntity extends BaseEntity {
   name: string;
   servings: string;

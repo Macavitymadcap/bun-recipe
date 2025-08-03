@@ -8,7 +8,7 @@ import {
 } from "bun:test";
 import { CooksNoteEntity, CooksNoteRepository } from "./cooks-note-repository";
 import { DB_CONFIG } from "../config";
-import { DbContext } from "../context";
+import { DbContext } from "../context/context";
 
 const samplecooksNote = (
   overrides: Partial<Omit<CooksNoteEntity, "id">> = {},

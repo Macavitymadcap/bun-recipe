@@ -1,4 +1,4 @@
-import { DbContext } from "../context";
+import { DbContext } from "../context/context";
 
 export interface BaseEntity {
   id: number;

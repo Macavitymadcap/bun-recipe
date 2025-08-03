@@ -11,7 +11,7 @@ import {
   IngredientRepository,
 } from "./ingredient-repository";
 import { DB_CONFIG } from "../config";
-import { DbContext } from "../context";
+import { DbContext } from "../context/context";
 
 const sampleIngredient = (
   overrides: Partial<Omit<IngredientEntity, "id">> = {},
@@ -71,7 +71,7 @@ describe("IngredientRepository", () => {
       expect(result.id).toBeGreaterThan(0);
       expect(result.recipe_id).toBe(ingredientData.recipe_id);
       expect(result.quantity).toBe(ingredientData.quantity);
-      expect(result.unit).toBe(ingredientData.unit);
+      expect(result.unit).toBe(ingredientData.unit!);
       expect(result.name).toBe(ingredientData.name);
     });
 
@@ -122,7 +122,7 @@ describe("IngredientRepository", () => {
       expect(result.name).toBe(ingredientData.name);
       expect(result.recipe_id).toBe(ingredientData.recipe_id);
       expect(result.quantity).toBe(ingredientData.quantity);
-      expect(result.unit).toBe(ingredientData.unit);
+      expect(result.unit).toBe(ingredientData.unit!);
     });
 
     test("should return null for non-existent ingredient", () => {
@@ -191,7 +191,7 @@ describe("IngredientRepository", () => {
       expect(result.id).toBe(originalIngredient.id);
       expect(result.name).toBe(updatedData.name);
       expect(result.quantity).toBe(updatedData.quantity);
-      expect(result.unit).toBe(originalIngredient.unit);
+      expect(result.unit).toBe(originalIngredient.unit!);
       expect(result.order_index).toBe(originalIngredient.order_index);
     });
 

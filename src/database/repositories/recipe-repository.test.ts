@@ -8,7 +8,7 @@ import {
 } from "bun:test";
 import { RecipeEntity, RecipeRepository } from "./recipe-repository";
 import { DB_CONFIG } from "../config";
-import { DbContext } from "../context";
+import { DbContext } from "../context/context";
 
 const sampleRecipe = (
   overrides: Partial<
@@ -66,9 +66,9 @@ describe("RecipeRepository", () => {
       expect(result.id).toBeGreaterThan(0);
       expect(result.name).toBe(recipeData.name);
       expect(result.servings).toBe(recipeData.servings);
-      expect(result.calories_per_portion).toBe(recipeData.calories_per_portion);
-      expect(result.preparation_time).toBe(recipeData.preparation_time);
-      expect(result.cooking_time).toBe(recipeData.cooking_time);
+      expect(result.calories_per_portion).toBe(recipeData.calories_per_portion!);
+      expect(result.preparation_time).toBe(recipeData.preparation_time!);
+      expect(result.cooking_time).toBe(recipeData.cooking_time!);
       expect(result.created_at).toBeTypeOf("string");
       expect(result.updated_at).toBeTypeOf("string");
     });
@@ -129,9 +129,9 @@ describe("RecipeRepository", () => {
       expect(result.id).toBe(createdRecipe.id);
       expect(result.name).toBe(recipeData.name);
       expect(result.servings).toBe(recipeData.servings);
-      expect(result.calories_per_portion).toBe(recipeData.calories_per_portion);
-      expect(result.preparation_time).toBe(recipeData.preparation_time);
-      expect(result.cooking_time).toBe(recipeData.cooking_time);
+      expect(result.calories_per_portion).toBe(recipeData.calories_per_portion!);
+      expect(result.preparation_time).toBe(recipeData.preparation_time!);
+      expect(result.cooking_time).toBe(recipeData.cooking_time!);
     });
 
     test("should return null for non-existent recipe", () => {
@@ -208,10 +208,10 @@ describe("RecipeRepository", () => {
       expect(result.name).toBe(updatedData.name);
       expect(result.servings).toBe(updatedData.servings);
       expect(result.calories_per_portion).toBe(
-        updatedData.calories_per_portion,
+        updatedData.calories_per_portion!,
       );
-      expect(result.preparation_time).toBe(updatedData.preparation_time);
-      expect(result.cooking_time).toBe(updatedData.cooking_time);
+      expect(result.preparation_time).toBe(updatedData.preparation_time!);
+      expect(result.cooking_time).toBe(updatedData.cooking_time!);
       expect(result.created_at).toBe(originalRecipe.created_at);
       // Updated_at should be different
       expect(result.updated_at).not.toBe(originalUpdatedAt);

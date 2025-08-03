@@ -1,16 +1,10 @@
-import { DbContext } from "../../database/context";
-import {
-  RecipeEntity,
-  IngredientEntity,
-  MethodStepEntity,
-  RecipeRepository,
-  IngredientRepository,
-  MethodStepRepository,
-  CooksNoteRepository,
-  TagRepository,
-  RecipeTagRepository,
-  TagEntity,
-} from "../repositories";
+import { DbContext } from "../context/context";
+import { CooksNoteRepository } from "../repositories/cooks-note-repository";
+import { IngredientEntity, IngredientRepository } from "../repositories/ingredient-repository";
+import { MethodStepEntity, MethodStepRepository } from "../repositories/method-step-repository";
+import { RecipeEntity, RecipeRepository } from "../repositories/recipe-repository";
+import { RecipeTagRepository } from "../repositories/recipe-tag-repository";
+import { TagRepository, TagEntity } from "../repositories/tag-repository";
 
 export interface CompleteRecipe extends RecipeEntity {
   ingredients: IngredientEntity[];

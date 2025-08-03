@@ -10,7 +10,7 @@ import { RecipeTagEntity, RecipeTagRepository } from "./recipe-tag-repository";
 import { RecipeEntity, RecipeRepository } from "./recipe-repository";
 import { TagEntity, TagRepository } from "./tag-repository";
 import { DB_CONFIG } from "../config";
-import { DbContext } from "../context";
+import { DbContext } from "../context/context";
 
 const sampleRecipeTag = (
   overrides: Partial<Omit<RecipeTagEntity, "id">> = {},

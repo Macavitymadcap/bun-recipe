@@ -11,7 +11,7 @@ import {
   MethodStepRepository,
 } from "./method-step-repository";
 import { DB_CONFIG } from "../config";
-import { DbContext } from "../context";
+import { DbContext } from "../context/context";
 
 const samplemethodStep = (
   overrides: Partial<Omit<MethodStepEntity, "id">> = {},

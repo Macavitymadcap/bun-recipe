@@ -5,6 +5,7 @@
       "name": "bun-recipes",
       "dependencies": {
         "hono": "^4.6.18",
+        "jose": "6.0.2",
       },
       "devDependencies": {
         "@eslint/js": "^9.18.0",
@@ -176,6 +177,8 @@
     "is-number": ["is-number@7.0.0", "", {}, "sha512-41Cifkg6e8TylSpdtTpeLVMqvSBEVzTttHvERD741+pnZ8ANv0004MRL43QKPDlK9cGvNp6NZWZUBlbGXYxxng=="],
 
     "isexe": ["isexe@2.0.0", "", {}, "sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw=="],
+
+    "jose": ["jose@6.0.2", "", {}, "sha512-Ae2g+WBRYtiqZTXpcNYRWvKxf6P1pE/m6W7vBYsY64h2JTKGadBeynRvw6TH2V3h0JB7nZ+oGTueVjy8+yXNJA=="],
 
     "js-yaml": ["js-yaml@4.1.0", "", { "dependencies": { "argparse": "^2.0.1" }, "bin": { "js-yaml": "bin/js-yaml.js" } }, "sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA=="],
 

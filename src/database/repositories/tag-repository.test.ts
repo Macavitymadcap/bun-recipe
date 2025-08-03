@@ -8,7 +8,7 @@ import {
 } from "bun:test";
 import { TagEntity, TagRepository } from "./tag-repository";
 import { DB_CONFIG } from "../config";
-import { DbContext } from "../context";
+import { DbContext } from "../context/context";
 
 const sampleTag = (
   overrides: Partial<Omit<TagEntity, "id">> = {},

@@ -1,11 +1,4 @@
-import {
-  describe,
-  test,
-  expect,
-  beforeEach,
-  mock,
-  jest,
-} from "bun:test";
+import { describe, test, expect, beforeEach, mock, jest } from "bun:test";
 import {
   RecipeService,
   CompleteRecipe,
@@ -43,8 +36,22 @@ describe("RecipeService", () => {
   };
 
   const sampleIngredients = [
-    { id: 1, recipe_id: 1, quantity: 2, unit: "cups", name: "flour", order_index: 0 },
-    { id: 2, recipe_id: 1, quantity: 1, unit: "cup", name: "sugar", order_index: 1 },
+    {
+      id: 1,
+      recipe_id: 1,
+      quantity: 2,
+      unit: "cups",
+      name: "flour",
+      order_index: 0,
+    },
+    {
+      id: 2,
+      recipe_id: 1,
+      quantity: 1,
+      unit: "cup",
+      name: "sugar",
+      order_index: 1,
+    },
   ];
 
   const sampleMethodSteps = [
@@ -97,16 +104,23 @@ describe("RecipeService", () => {
 
     mockTagRepository = {
       create: mock(() => sampleTags[0]),
-      read: mock((id: number) => sampleTags.find(t => t.id === id) || null),
-      createOrFind: mock((name: string) => sampleTags.find(t => t.name === name) || { id: 3, name }),
-      findByName: mock((name: string) => sampleTags.find(t => t.name === name) || null),
+      read: mock((id: number) => sampleTags.find((t) => t.id === id) || null),
+      createOrFind: mock(
+        (name: string) =>
+          sampleTags.find((t) => t.name === name) || { id: 3, name },
+      ),
+      findByName: mock(
+        (name: string) => sampleTags.find((t) => t.name === name) || null,
+      ),
       readAll: mock(() => sampleTags),
     };
 
     mockRecipeTagRepository = {
       create: mock(() => sampleRecipeTags[0]),
       getByRecipeId: mock(() => sampleRecipeTags),
-      getByTagId: mock((tagId: number) => sampleRecipeTags.filter(rt => rt.tag_id === tagId)),
+      getByTagId: mock((tagId: number) =>
+        sampleRecipeTags.filter((rt) => rt.tag_id === tagId),
+      ),
       deleteByRecipeId: mock(() => true),
     };
 
@@ -136,7 +150,10 @@ describe("RecipeService", () => {
       expect(result!.name).toBe("Test Recipe");
       expect(result!.ingredients).toEqual(sampleIngredients);
       expect(result!.methodSteps).toEqual(sampleMethodSteps);
-      expect(result!.cooksNotes).toEqual(["Can substitute honey for sugar", "Best served warm"]);
+      expect(result!.cooksNotes).toEqual([
+        "Can substitute honey for sugar",
+        "Best served warm",
+      ]);
       expect(result!.tags).toEqual(["Dessert", "Easy"]);
 
       // Verify repository calls
@@ -175,7 +192,9 @@ describe("RecipeService", () => {
 
     test("should filter out null tags", () => {
       // Arrange
-      mockTagRepository.read = mock((id: number) => id === 1 ? sampleTags[0] : null);
+      mockTagRepository.read = mock((id: number) =>
+        id === 1 ? sampleTags[0] : null,
+      );
 
       // Act
       const result = recipeService.getCompleteRecipe(1);
@@ -197,17 +216,17 @@ describe("RecipeService", () => {
         { quantity: 2, unit: "cups", name: "flour" },
         { quantity: 1, unit: "cup", name: "milk" },
       ],
-      method: [
-        { instruction: "Mix ingredients" },
-        { instruction: "Bake" },
-      ],
+      method: [{ instruction: "Mix ingredients" }, { instruction: "Bake" }],
       cooksNotes: ["Preheat oven", "Cool before serving"],
       tags: ["Dessert", "Easy"],
     };
 
     test("should create complete recipe with all components", () => {
       // Arrange
-      const getCompleteRecipeSpy = jest.spyOn(recipeService, "getCompleteRecipe");
+      const getCompleteRecipeSpy = jest.spyOn(
+        recipeService,
+        "getCompleteRecipe",
+      );
       getCompleteRecipeSpy.mockReturnValue({
         ...sampleRecipe,
         ingredients: sampleIngredients,
@@ -279,11 +298,18 @@ describe("RecipeService", () => {
         method: [{ instruction: "Cook egg" }],
       };
 
-      const getCompleteRecipeSpy = jest.spyOn(recipeService, "getCompleteRecipe");
+      const getCompleteRecipeSpy = jest.spyOn(
+        recipeService,
+        "getCompleteRecipe",
+      );
       getCompleteRecipeSpy.mockReturnValue({
         ...sampleRecipe,
-        ingredients: [{ id: 1, recipe_id: 1, quantity: 1, name: "egg", order_index: 0 }],
-        methodSteps: [{ id: 1, recipe_id: 1, order_index: 1, instruction: "Cook egg" }],
+        ingredients: [
+          { id: 1, recipe_id: 1, quantity: 1, name: "egg", order_index: 0 },
+        ],
+        methodSteps: [
+          { id: 1, recipe_id: 1, order_index: 1, instruction: "Cook egg" },
+        ],
         cooksNotes: [],
         tags: [],
       } as CompleteRecipe);
@@ -301,11 +327,14 @@ describe("RecipeService", () => {
 
     test("should continue creating tags even if one fails", () => {
       // Arrange
-      mockTagRepository.createOrFind = mock((name: string) => 
-        name === "Dessert" ? null : { id: 2, name }
+      mockTagRepository.createOrFind = mock((name: string) =>
+        name === "Dessert" ? null : { id: 2, name },
       );
 
-      const getCompleteRecipeSpy = jest.spyOn(recipeService, "getCompleteRecipe");
+      const getCompleteRecipeSpy = jest.spyOn(
+        recipeService,
+        "getCompleteRecipe",
+      );
       getCompleteRecipeSpy.mockReturnValue({
         ...sampleRecipe,
         ingredients: sampleIngredients,
@@ -346,7 +375,10 @@ describe("RecipeService", () => {
 
     test("should update complete recipe successfully", () => {
       // Arrange
-      const getCompleteRecipeSpy = jest.spyOn(recipeService, "getCompleteRecipe");
+      const getCompleteRecipeSpy = jest.spyOn(
+        recipeService,
+        "getCompleteRecipe",
+      );
       getCompleteRecipeSpy.mockReturnValue({
         ...sampleRecipe,
         name: "Updated Recipe",
@@ -414,12 +446,24 @@ describe("RecipeService", () => {
         method: [{ instruction: "Cook egg differently" }],
       };
 
-      const getCompleteRecipeSpy = jest.spyOn(recipeService, "getCompleteRecipe");
+      const getCompleteRecipeSpy = jest.spyOn(
+        recipeService,
+        "getCompleteRecipe",
+      );
       getCompleteRecipeSpy.mockReturnValue({
         ...sampleRecipe,
         name: "Simple Updated Recipe",
-        ingredients: [{ id: 1, recipe_id: 1, quantity: 1, name: "egg", order_index: 0 }],
-        methodSteps: [{ id: 1, recipe_id: 1, order_index: 1, instruction: "Cook egg differently" }],
+        ingredients: [
+          { id: 1, recipe_id: 1, quantity: 1, name: "egg", order_index: 0 },
+        ],
+        methodSteps: [
+          {
+            id: 1,
+            recipe_id: 1,
+            order_index: 1,
+            instruction: "Cook egg differently",
+          },
+        ],
         cooksNotes: [],
         tags: [],
       } as CompleteRecipe);
@@ -485,7 +529,9 @@ describe("RecipeService", () => {
 
     test("should filter out null recipes", () => {
       // Arrange
-      mockRecipeRepository.read = mock((id: number) => id === 1 ? sampleRecipe : null);
+      mockRecipeRepository.read = mock((id: number) =>
+        id === 1 ? sampleRecipe : null,
+      );
       mockRecipeTagRepository.getByTagId = mock(() => [
         { id: 1, recipe_id: 1, tag_id: 1 },
         { id: 2, recipe_id: 999, tag_id: 1 },
@@ -525,7 +571,9 @@ describe("RecipeService", () => {
 
       // Assert
       expect(result).toEqual(searchResults);
-      expect(mockRecipeRepository.searchByName).toHaveBeenCalledWith("Chocolate");
+      expect(mockRecipeRepository.searchByName).toHaveBeenCalledWith(
+        "Chocolate",
+      );
     });
 
     test("should return empty array when no matches found", () => {
