@@ -1,0 +1,24 @@
+a {
+  display: inline-block;
+  text-decoration: none;
+  color: var(--colour-primary);
+  font-weight: bold;
+  transition: color 0.3s;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+a:hover {
+  color: var(--colour-surface-low);
+  text-decoration: underline;
+  opacity: 0.8;
+  transform: translateY(-2px);
+}
+
+a:visited {
+  color: var(--colour-secondary);
+}
+
+a:active {
+  color: var(--colour-success);
+}

@@ -1,4 +1,7 @@
-import { BaseEntity, BaseRepository } from "../../database/repositories/base-repository";
+import {
+  BaseEntity,
+  BaseRepository,
+} from "../../database/repositories/base-repository";
 
 export interface UserEntity extends BaseEntity {
   username: string;

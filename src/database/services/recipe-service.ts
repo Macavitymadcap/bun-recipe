@@ -1,8 +1,17 @@
 import { DbContext } from "../context/context";
 import { CooksNoteRepository } from "../repositories/cooks-note-repository";
-import { IngredientEntity, IngredientRepository } from "../repositories/ingredient-repository";
-import { MethodStepEntity, MethodStepRepository } from "../repositories/method-step-repository";
-import { RecipeEntity, RecipeRepository } from "../repositories/recipe-repository";
+import {
+  IngredientEntity,
+  IngredientRepository,
+} from "../repositories/ingredient-repository";
+import {
+  MethodStepEntity,
+  MethodStepRepository,
+} from "../repositories/method-step-repository";
+import {
+  RecipeEntity,
+  RecipeRepository,
+} from "../repositories/recipe-repository";
 import { RecipeTagRepository } from "../repositories/recipe-tag-repository";
 import { TagRepository, TagEntity } from "../repositories/tag-repository";
 
@@ -40,7 +49,7 @@ export class RecipeService {
     private tagRepository: TagRepository,
     private recipeTagRepository: RecipeTagRepository,
     private dbContext: DbContext,
-  ) {}
+  ) { }
 
   getCompleteRecipe(id: number): CompleteRecipe | null {
     const recipe = this.recipeRepository.read(id);
@@ -64,6 +73,33 @@ export class RecipeService {
       cooksNotes: cooksNotes.map((n) => n.note),
       tags,
     };
+  }
+
+  getAllCompleteRecipes(): CompleteRecipe[] {
+    const recipes = this.recipeRepository.readAll();
+
+    return recipes.map((recipe) => {
+      const id = recipe.id;
+
+      const ingredients = this.ingredientRepository.getByRecipeId(id);
+      const methodSteps = this.methodStepRepository.getByRecipeId(id);
+      const cooksNotes = this.cooksNoteRepository.getByRecipeId(id);
+
+      // Get tags through the junction table
+      const recipeTags = this.recipeTagRepository.getByRecipeId(id);
+      const tags = recipeTags
+        .map((rt) => this.tagRepository.read(rt.tag_id))
+        .filter((tag) => tag !== null)
+        .map((tag) => tag!.name);
+
+      return {
+        ...recipe,
+        ingredients,
+        methodSteps,
+        cooksNotes: cooksNotes.map((n) => n.note),
+        tags,
+      };
+    });
   }
 
   createCompleteRecipe(data: CreateRecipeData): CompleteRecipe | null {

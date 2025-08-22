@@ -66,7 +66,9 @@ describe("RecipeRepository", () => {
       expect(result.id).toBeGreaterThan(0);
       expect(result.name).toBe(recipeData.name);
       expect(result.servings).toBe(recipeData.servings);
-      expect(result.calories_per_portion).toBe(recipeData.calories_per_portion!);
+      expect(result.calories_per_portion).toBe(
+        recipeData.calories_per_portion!,
+      );
       expect(result.preparation_time).toBe(recipeData.preparation_time!);
       expect(result.cooking_time).toBe(recipeData.cooking_time!);
       expect(result.created_at).toBeTypeOf("string");
@@ -129,7 +131,9 @@ describe("RecipeRepository", () => {
       expect(result.id).toBe(createdRecipe.id);
       expect(result.name).toBe(recipeData.name);
       expect(result.servings).toBe(recipeData.servings);
-      expect(result.calories_per_portion).toBe(recipeData.calories_per_portion!);
+      expect(result.calories_per_portion).toBe(
+        recipeData.calories_per_portion!,
+      );
       expect(result.preparation_time).toBe(recipeData.preparation_time!);
       expect(result.cooking_time).toBe(recipeData.cooking_time!);
     });

@@ -1,0 +1,7 @@
+code {
+  font-family: "Ubuntu Mono", "Courier New", monospace;
+  padding: var(--space-xs);
+  background: var(--colour-surface-high);
+  color: var(--colour-surface-lowest);
+  border-radius: var(--space-xs);
+}

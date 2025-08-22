@@ -1,0 +1,133 @@
+@import url("1-reset.css");
+@import url("2-variables.css");
+@import url("3-base.css");
+@import url("4-layout.css");
+@import url("5-typography.css");
+@import url("6-theme.css");
+@import url("7-buttons.css");
+@import url("8-code.css");
+@import url("9-cards.css");
+@import url("10-alerts.css");
+@import url("11-badges.css");
+@import url("12-forms.css");
+@import url("13-tables.css");
+@import url("14-details.css");
+@import url("15-lists.css");
+@import url("16-utilities.css");
+@import url("17-anchors.css");
+@import url("18-menu.css");
+@import url("18-menu.css");
+@import url("19-dialog.css");
+@import url("20-paragraphs.css");
+@import url("21-aside.css");
+
+/* Responsive Grid - large */
+@media (max-width: 768px) {
+  .col-md-1 {
+    grid-column: span 1;
+  }
+
+  .col-md-2 {
+    grid-column: span 2;
+  }
+
+  .col-md-3 {
+    grid-column: span 3;
+  }
+
+  .col-md-4 {
+    grid-column: span 4;
+  }
+
+  .col-md-5 {
+    grid-column: span 5;
+  }
+
+  .col-md-6 {
+    grid-column: span 6;
+  }
+
+  .col-md-7 {
+    grid-column: span 7;
+  }
+
+  .col-md-8 {
+    grid-column: span 8;
+  }
+
+  .col-md-9 {
+    grid-column: span 9;
+  }
+
+  .col-md-10 {
+    grid-column: span 10;
+  }
+
+  .col-md-11 {
+    grid-column: span 11;
+  }
+
+  .col-md-12 {
+    grid-column: span 12;
+  }
+}
+
+/* Responsive Grid - medium */
+@media (max-width: 576px) {
+  .col-sm-1 {
+    grid-column: span 1;
+  }
+
+  .col-sm-2 {
+    grid-column: span 2;
+  }
+
+  .col-sm-3 {
+    grid-column: span 3;
+  }
+
+  .col-sm-4 {
+    grid-column: span 4;
+  }
+
+  .col-sm-5 {
+    grid-column: span 5;
+  }
+
+  .col-sm-6 {
+    grid-column: span 6;
+  }
+
+  .col-sm-7 {
+    grid-column: span 7;
+  }
+
+  .col-sm-8 {
+    grid-column: span 8;
+  }
+
+  .col-sm-9 {
+    grid-column: span 9;
+  }
+
+  .col-sm-10 {
+    grid-column: span 10;
+  }
+
+  .col-sm-11 {
+    grid-column: span 11;
+  }
+
+  .col-sm-12 {
+    grid-column: span 12;
+  }
+}
+
+/* Ensure dialog content doesn't overflow on small screens */
+@media (max-width: 576px) {
+  dialog {
+    width: 95vw;
+    max-height: 85vh;
+    padding: var(--space-sm);
+  }
+}

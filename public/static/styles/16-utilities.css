@@ -1,0 +1,21 @@
+.centred-item {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.left-item {
+  display: block;
+  margin-left: 0;
+  margin-right: auto;
+}
+
+.right-item {
+  display: block;
+  margin-left: auto;
+  margin-right: 0;
+}
+
+.text-center {
+  text-align: center !important;
+}

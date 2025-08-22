@@ -1,0 +1,128 @@
+.btn {
+  display: inline-block;
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--colour-surface-lowest);
+  color: var(--colour-background);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: var(--font-family-sans);
+  transition: all 0.3s;
+}
+
+.btn:hover {
+  opacity: 0.8;
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background-color: var(--colour-primary);
+}
+
+.btn-secondary {
+  background-color: var(--colour-secondary);
+}
+
+.btn-success {
+  background-color: var(--colour-success);
+}
+
+.btn-warning {
+  background-color: var(--colour-warning);
+}
+
+.btn-danger {
+  background-color: var(--colour-danger);
+}
+
+.btn-icon {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  line-height: 1;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  position: relative;
+  text-align: center;
+}
+
+.btn-icon > * {
+  display: block;
+  margin: auto;
+}
+
+.btn-icon img,
+.btn-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.btn-icon:has(span),
+.btn-icon:has(i) {
+  font-size: 1rem;
+  padding-top: 0.3rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-icon span,
+.btn-icon i {
+  display: inline-block;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.btn-icon.btn-sm {
+  width: 2rem;
+  height: 2rem;
+  padding: var(--space-xxs);
+}
+
+.btn-icon.btn-lg {
+  width: 3rem;
+  height: 3rem;
+  padding: var(--space-sm);
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 2px solid var(--colour-surface-lowest);
+  color: var(--colour-surface-lowest);
+}
+
+.btn-outline-primary {
+  background-color: transparent;
+  border: 2px solid var(--colour-primary);
+  color: var(--colour-primary);
+}
+
+.btn-outline-secondary {
+  background-color: transparent;
+  border: 2px solid var(--colour-secondary);
+  color: var(--colour-secondary);
+}
+
+.btn-outline-success {
+  background-color: transparent;
+  border: 2px solid var(--colour-success);
+  color: var(--colour-success);
+}
+
+.btn-outline-warning {
+  background-color: transparent;
+  border: 2px solid var(--colour-warning);
+  color: var(--colour-warning);
+}
+
+.btn-outline-danger {
+  background-color: transparent;
+  border: 2px solid var(--colour-danger);
+  color: var(--colour-danger);
+}

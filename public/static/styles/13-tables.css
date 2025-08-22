@@ -1,0 +1,31 @@
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--space-md);
+  min-width: 600px;
+}
+
+th,
+td {
+  padding: var(--space-sm);
+  text-align: left;
+  border-bottom: 1px solid var(--td-border-colour);
+}
+
+th {
+  font-weight: bold;
+  background-color: var(--th-colour);
+}
+
+tr:nth-child(even) {
+  background-color: var(--tr-nth-even-colour);
+}
+tr:nth-child(odd) {
+  background-color: var(--tr-nth-odd-colour);
+}

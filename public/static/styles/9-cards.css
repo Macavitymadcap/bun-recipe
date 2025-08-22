@@ -1,0 +1,88 @@
+.card {
+  padding: var(--card-padding);
+  margin: var(--card-margin);
+  color: var(--colour-text);
+  background-color: var(--colour-surface-highest);
+  border: var(--card-border-width) solid var(--colour-surface-lowest);
+  box-shadow: var(--card-box-shadow);
+  transition: var(--card-transition-duration);
+  max-width: 90%;
+  border-radius: var(--card-border-radius);
+  min-width: var(--card-min-width);
+  min-height: fit-content;
+}
+
+.card:hover {
+  box-shadow: var(--card-hover-box-shadow);
+}
+
+/* Color modifier classes for cards */
+.card-primary {
+  background-color: var(--colour-primary);
+  color: var(--colour-background);
+  border-color: var(--colour-primary);
+}
+
+.card-secondary {
+  background-color: var(--colour-secondary);
+  color: var(--colour-background);
+  border-color: var(--colour-secondary);
+}
+
+.card-success {
+  background-color: var(--colour-success);
+  color: var(--colour-background);
+  border-color: var(--colour-success);
+}
+
+.card-warning {
+  background-color: var(--colour-warning);
+  color: var(--colour-background);
+  border-color: var(--colour-warning);
+}
+
+.card-danger {
+  background-color: var(--colour-danger);
+  color: var(--colour-background);
+  border-color: var(--colour-danger);
+}
+
+.card-outline-primary {
+  border: var(--card-outline-border-width) solid var(--colour-primary);
+  color: var(--colour-primary);
+}
+
+.card-outline-secondary {
+  border: var(--card-outline-border-width) solid var(--colour-secondary);
+  color: var(--colour-secondary);
+}
+
+.card-outline-success {
+  border: var(--card-outline-border-width) solid var(--colour-success);
+  color: var(--colour-success);
+}
+
+.card-outline-warning {
+  border: var(--card-outline-border-width) solid var(--colour-warning);
+  color: var(--colour-warning);
+}
+
+.card-outline-danger {
+  border: var(--card-outline-border-width) solid var(--colour-danger);
+  color: var(--colour-danger);
+}
+
+/* Card internal elements */
+.card-header {
+  margin-bottom: var(--card-header-margin-bottom);
+  font-weight: bold;
+}
+
+.card-body {
+  margin-bottom: var(--card-body-margin-bottom);
+}
+
+.card-footer {
+  margin-bottom: 0;
+  font-size: 0.875rem;
+}

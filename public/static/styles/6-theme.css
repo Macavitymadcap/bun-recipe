@@ -1,0 +1,69 @@
+/* Short-form background color utilities */
+.bg-text {
+  background-color: var(--colour-text) !important;
+}
+.bg-surface-lowest {
+  background-color: var(--colour-surface-lowest) !important;
+}
+.bg-surface-low {
+  background-color: var(--colour-surface-low) !important;
+}
+.bg-surface-high {
+  background-color: var(--colour-surface-high) !important;
+}
+.bg-surface-highest {
+  background-color: var(--colour-surface-highest) !important;
+}
+.bg-background {
+  background-color: var(--colour-background) !important;
+}
+.bg-primary {
+  background-color: var(--colour-primary) !important;
+}
+.bg-secondary {
+  background-color: var(--colour-secondary) !important;
+}
+.bg-success {
+  background-color: var(--colour-success) !important;
+}
+.bg-warning {
+  background-color: var(--colour-warning) !important;
+}
+.bg-danger {
+  background-color: var(--colour-danger) !important;
+}
+
+/* Short-form text color utilities */
+.text-text {
+  color: var(--colour-text) !important;
+}
+.text-surface-lowest {
+  color: var(--colour-surface-lowest) !important;
+}
+.text-surface-low {
+  color: var(--colour-surface-low) !important;
+}
+.text-surface-high {
+  color: var(--colour-surface-high) !important;
+}
+.text-surface-highest {
+  color: var(--colour-surface-highest) !important;
+}
+.text-background {
+  color: var(--colour-background) !important;
+}
+.text-primary {
+  color: var(--colour-primary) !important;
+}
+.text-secondary {
+  color: var(--colour-secondary) !important;
+}
+.text-success {
+  color: var(--colour-success) !important;
+}
+.text-warning {
+  color: var(--colour-warning) !important;
+}
+.text-danger {
+  color: var(--colour-danger) !important;
+}

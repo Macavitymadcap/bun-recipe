@@ -1,0 +1,9 @@
+ul,
+ol {
+  margin-left: var(--space-xl);
+  margin-bottom: var(--space-md);
+}
+
+li {
+  margin-bottom: var(--space-xs);
+}

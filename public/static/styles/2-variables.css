@@ -1,0 +1,73 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu+Mono&display=swap");
+
+:root {
+  /* Theme Colors */
+  --colour-text: #ffffff;
+  --colour-surface-lowest: #f0f0f0;
+  --colour-surface-low: #cccccc;
+  --colour-surface-high: #888888;
+  --colour-surface-highest: #222222;
+  --colour-background: #181a1b;
+
+  /* Additional accent colors */
+  --colour-primary: #8cb4ff;
+  --colour-secondary: #bfa6e0;
+  --colour-success: #7fffd4;
+  --colour-warning: #ffe29a;
+  --colour-danger: #ffb3b3;
+
+  --shadow: 0 4px 16px 0 rgba(247, 243, 243, 0.297);
+
+  /* Table Colours */
+  --td-border-colour: rgba(59, 34, 34, 0.161);
+  --th-colour: rgba(29, 29, 29, 0.539);
+  --tr-nth-even-colour: rgba(84, 84, 84, 0.728);
+  --tr-nth-odd-colour: rgba(60, 60, 60, 0.945);
+
+  /* Switch Component */
+  --switch-background: var(--colour-surface-high);
+
+  --switch-thumb: #181a1b;
+  --switch-checked-background: var(--colour-surface-low);
+  --switch-focus-outline:  rgb(127, 255, 212);
+  --switch-shadow: 0 1px 3px rgb(255, 255, 255);
+
+  /* Alert Colors */
+  --colour-alert-primary-bg: rgba(74, 110, 181, 0.7);
+  --colour-alert-secondary-bg: rgba(107, 74, 140, 0.7);
+  --colour-alert-success-bg: rgba(74, 140, 100, 0.7);
+  --colour-alert-warning-bg: rgba(217, 164, 65, 0.7);
+  --colour-alert-danger-bg: rgba(201, 74, 74, 0.7);
+
+  /* Spacing variables */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-xxl: 3rem;
+
+  /* Font variables */
+  --font-family-sans: "Lato", Tahoma, sans-serif;
+  --font-family-serif: "Crimson Text", Georgia, serif;
+  --font-family-mono: "Ubuntu Mono", monospace;
+
+  /* Card structure */
+  --card-padding: var(--space-md);
+  --card-margin: var(--space-md);
+  --card-border-radius: 0.39em;
+  --card-min-width: 10em;
+  --card-border-width: 1px;
+  --card-outline-border-width: 2px;
+
+  /* Card shadows */
+  --card-box-shadow: 0 8px 16px 0 var(--shadow);
+  --card-hover-box-shadow: var(--shadow);
+  --card-transition-duration: 0.3s;
+
+  /* Card internal spacing */
+  --card-header-margin-bottom: var(--space-sm);
+  --card-body-margin-bottom: var(--space-sm);
+}

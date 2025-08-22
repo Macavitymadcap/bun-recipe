@@ -1,0 +1,19 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: "Lato", Tahoma, sans-serif;
+  line-height: 1.6;
+  color: var(--colour-text);
+  background-color: var(--colour-background);
+  padding: var(--space-md);
+}

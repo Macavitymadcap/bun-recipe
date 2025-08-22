@@ -1,0 +1,35 @@
+details {
+  margin-bottom: var(--space-md);
+  border: 1px solid var(--colour-surface-highest);
+  border-radius: 4px;
+}
+
+details summary {
+  padding: var(--space-md);
+  background-color: var(--colour-background);
+  border-bottom: 0.25em solid var(--colour-surface-lowest);
+  cursor: pointer;
+  list-style: none;
+  font-weight: bold;
+}
+
+details summary::after {
+  content: "▼";
+  float: right;
+  font-size: 0.8em;
+  transition: transform 0.2s;
+  transform: rotate(0deg);
+}
+
+details[open] summary {
+  border-bottom: 0.25em solid var(--colour-surface-highest);
+  color: var(--colour-surface-lowest);
+}
+
+details[open] summary::after {
+  transform: rotate(180deg);
+}
+
+details .content {
+  padding: var(--space-md);
+}

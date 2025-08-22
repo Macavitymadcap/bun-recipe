@@ -1,0 +1,213 @@
+/* Ensure selects and textareas always stretch in all contexts */
+select,
+textarea {
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  display: inline-block !important;
+  flex: 0 1 0 !important;
+  align-self: stretch !important;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+input[type="time"],
+input[type="datetime-local"],
+input[type="search"],
+textarea,
+select {
+  padding: var(--space-sm);
+  border: 1px solid var(--colour-surface-highest);
+  border-radius: 4px;
+  font-family: "Lato", Tahoma, sans-serif;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  display: block;
+  flex: 1 1 0%;
+  background-color: var(--colour-background);
+  color: var(--colour-text);
+  align-self: stretch;
+  outline: none;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus,
+input[type="datetime-local"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--colour-primary); 
+  box-shadow: 0 0 0 3px rgba(74, 110, 181, 0.25);
+}
+
+.switch {
+  margin: 0;
+  appearance: none;
+  position: relative;
+  display: inline-block;
+  background: var(--switch-background);
+  height: 1.65rem;
+  width: 2.75rem;
+  vertical-align: middle;
+  border-radius: 2rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) inset;
+  transition: 0.25s linear background;
+  cursor: pointer;
+}
+
+.switch::before {
+  content: "";
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
+  background: var(--switch-thumb);
+  border-radius: 1.2rem;
+  position: absolute;
+  top: 0.2rem;
+  left: 0.2rem;
+  box-shadow: var(--switch-shadow);
+  transition: 0.25s linear transform;
+  transform: translateX(0rem);
+}
+
+.switch:checked {
+  background-color: var(--switch-checked-background);
+}
+
+.switch:not(:checked):focus-visible {
+  background-color: var(
+    --colour-surface-high
+  );
+}
+
+.switch:checked::before {
+  transform: translateX(1rem);
+}
+
+.switch:focus-visible {
+  outline: 2px solid var(--switch-focus-outline);
+  outline-offset: 2px;
+}
+
+.switch-primary:checked {
+  background-color: var(--colour-primary);
+}
+
+.switch-secondary:checked {
+  background-color: var(--colour-secondary);
+}
+
+.switch-success:checked {
+  background-color: var(--colour-success);
+}
+
+.switch-warning:checked {
+  background-color: var(--colour-warning);
+}
+
+.switch-danger:checked {
+  background-color: var(--colour-danger);
+}
+
+/* Form Group */
+.form-group {
+  margin-bottom: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+}
+
+label[for="theme-switch"] {
+  flex-direction: row;
+  align-items: center;
+}
+
+.form-group,
+.grid > .form-group,
+.wrapped-row > .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group > label,
+.form-group > span,
+.form-group > legend {
+  flex: 0 0 auto;
+}
+
+.form-group > input,
+.form-group > select,
+.form-group > textarea {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+fieldset {
+  border: 1px solid var(--colour-surface-lowest);
+  padding: var(--space-md);
+  border-radius: 4px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+legend {
+  font-weight: bold;
+  margin-bottom: var(--space-sm);
+}
+
+label {
+  display: block;
+  margin-bottom: var(--space-xs);
+  font-weight: bold;
+}
+
+label:has(input[type="checkbox"]) {
+  * {
+    display: block;
+  }
+}
+
+/* Validation */
+.form-control.error,
+input.error,
+textarea.error,
+select.error {
+  border-color: var(--colour-danger);
+  box-shadow: 0 0 0 3px rgba(201, 74, 74, 0.25);
+}
+
+.text-danger {
+  color: var(--colour-danger);
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.form-group .text-danger {
+  display: block;
+  margin-top: 0.25rem;
+}

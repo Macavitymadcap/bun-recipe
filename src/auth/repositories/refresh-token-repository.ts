@@ -1,4 +1,7 @@
-import { BaseEntity, BaseRepository } from "../../database/repositories/base-repository";
+import {
+  BaseEntity,
+  BaseRepository,
+} from "../../database/repositories/base-repository";
 
 export interface RefreshTokenEntity extends BaseEntity {
   user_id: number;
@@ -132,22 +135,19 @@ export class RefreshTokenRepository extends BaseRepository<RefreshTokenEntity> {
     return true;
   }
 
-
   deleteExpiredTokens(): number {
     const now = new Date().toISOString();
 
-    this.dbContext.query(
-      `DELETE FROM refresh_tokens WHERE expires_at < $now`,
-      { $now: now }
-    );
+    this.dbContext.query(`DELETE FROM refresh_tokens WHERE expires_at < $now`, {
+      $now: now,
+    });
 
     const result = this.dbContext.queryOne<{ changes: number }>(
-      `SELECT changes() as changes`
+      `SELECT changes() as changes`,
     );
 
     return result?.changes || 0;
   }
-
 
   getByUserId(userId: number): RefreshTokenEntity[] {
     return this.dbContext.query<RefreshTokenEntity>(

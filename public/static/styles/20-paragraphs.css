@@ -1,0 +1,4 @@
+p {
+  margin: var(--space-sm) 0;
+  line-height: 1.5;
+}

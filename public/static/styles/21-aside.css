@@ -1,0 +1,8 @@
+aside#alerts {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  overflow-y: auto;
+  z-index: 1000;
+}

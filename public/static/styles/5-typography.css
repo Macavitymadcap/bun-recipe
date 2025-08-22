@@ -1,0 +1,132 @@
+.font-sans-family {
+  font-family: "Lato", Tahoma, sans-serif;
+}
+
+.font-sans-lato {
+  font-family: "Lato";
+}
+
+.font-sans-tahoma {
+  font-family: Tahoma;
+}
+
+.font-sans {
+  font-family: sans-serif;
+}
+
+.font-serif-family {
+  font-family: "Crimson Text", Georgia, serif;
+}
+
+.font-serif-crimson-text {
+  font-family: "Crimson Text";
+}
+
+.font-serif-georgia {
+  font-family: Georgia;
+}
+
+.font-serif {
+  font-family: serif;
+}
+
+.font-mono-family {
+  font-family: "Ubuntu Mono", "Courier New", monospace;
+}
+
+.font-mono-ubuntu-mono {
+  font-family: "Ubuntu Mono";
+}
+
+.font-mono-courier-new {
+  font-family: "Courier New";
+}
+
+.font-mono {
+  font-family: monospace;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-justify {
+  text-align: justify;
+}
+
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+.text-lowercase {
+  text-transform: lowercase;
+}
+
+.text-capitalise {
+  text-transform: capitalize;
+}
+
+.text-wrap {
+  white-space: normal;
+  overflow-wrap: break-word;
+  word-break: normal;
+}
+
+.text-nowrap {
+  white-space: nowrap;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.text-break {
+  word-break: break-all;
+  overflow-wrap: break-word;
+}
+
+.text-xs {
+  font-size: 0.75rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+}
+
+.text-base {
+  font-size: 1rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+}
+
+.text-xl {
+  font-size: 1.25rem;
+}
+
+.text-2xl {
+  font-size: 1.5rem;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+}
+
+.text-4xl {
+  font-size: 2.25rem;
+}
+
+.font-normal {
+  font-weight: 400;
+}
+
+.font-bold {
+  font-weight: 700;
+}
