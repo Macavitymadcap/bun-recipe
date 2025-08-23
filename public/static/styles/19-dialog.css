@@ -1,8 +1,11 @@
+
 dialog,
 dialog.card {
   margin: auto;
   scale: 0.9;
   opacity: 0;
+  max-height: 90vh; /* Prevent stretching beyond viewport */
+  overflow-y: auto; /* Allow scrolling within dialog */
 }
 
 dialog[open] {
@@ -15,4 +18,47 @@ dialog::backdrop {
   background: rgba(0, 0, 0, 0.45);
   backdrop-filter: blur(2px);
   transition: background 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced mobile responsiveness */
+@media (max-width: 576px) {
+  dialog {
+    width: 95vw;
+    max-width: 95vw;
+    max-height: 90vh; /* Ensure it doesn't exceed viewport */
+    padding: var(--space-sm);
+    margin: 5vh auto; /* Add some margin from top/bottom */
+    overflow-y: auto; /* Enable scrolling */
+  }
+  
+  /* Make sure dialog content doesn't overflow */
+  dialog .card-body {
+    max-height: calc(90vh - 120px); /* Account for header and footer */
+    overflow-y: auto;
+  }
+  
+  /* Ensure form fieldsets are properly sized */
+  dialog fieldset {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Make textareas more mobile-friendly */
+  dialog textarea {
+    min-height: 80px; /* Reduce from 100px on mobile */
+  }
+}
+
+/* For very small screens */
+@media (max-width: 480px) {
+  dialog {
+    width: 98vw;
+    max-height: 95vh;
+    margin: 2.5vh auto;
+    padding: var(--space-xs);
+  }
+  
+  dialog .card-body {
+    max-height: calc(95vh - 100px);
+  }
 }
