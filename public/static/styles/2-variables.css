@@ -31,7 +31,7 @@
 
   --switch-thumb: #181a1b;
   --switch-checked-background: var(--colour-surface-low);
-  --switch-focus-outline:  rgb(127, 255, 212);
+  --switch-focus-outline: rgb(127, 255, 212);
   --switch-shadow: 0 1px 3px rgb(255, 255, 255);
 
   /* Alert Colors */

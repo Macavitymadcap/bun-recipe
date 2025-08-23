@@ -23,18 +23,16 @@ export class TagRepository extends BaseRepository<TagEntity> {
   }
 
   create(entity: Omit<TagEntity, "id">): TagEntity | null {
-    return this.dbContext.transaction(() => {
-      this.dbContext.queryOne(`INSERT INTO tags (name) VALUES ($name);`, {
-        $name: entity.name,
-      });
-
-      const lastId = this.dbContext.getLastInsertedId();
-      if (lastId === null) {
-        return null;
-      }
-
-      return this.read(lastId);
+    this.dbContext.queryOne(`INSERT INTO tags (name) VALUES ($name);`, {
+      $name: entity.name,
     });
+
+    const lastId = this.dbContext.getLastInsertedId();
+    if (lastId === null) {
+      return null;
+    }
+
+    return this.read(lastId);
   }
 
   read(id: number): TagEntity | null {
@@ -49,19 +47,17 @@ export class TagRepository extends BaseRepository<TagEntity> {
   }
 
   update(entity: TagEntity): TagEntity | null {
-    return this.dbContext.transaction(() => {
-      const existing = this.read(entity.id);
-      if (!existing) {
-        return null;
-      }
+    const existing = this.read(entity.id);
+    if (!existing) {
+      return null;
+    }
 
-      this.dbContext.queryOne(`UPDATE tags SET name = $name WHERE id = $id;`, {
-        $id: entity.id,
-        $name: entity.name,
-      });
-
-      return this.read(entity.id);
+    this.dbContext.queryOne(`UPDATE tags SET name = $name WHERE id = $id;`, {
+      $id: entity.id,
+      $name: entity.name,
     });
+
+    return this.read(entity.id);
   }
 
   delete(id: number): boolean {

@@ -1,86 +1,133 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dan &amp; Stella's Recipes</title>
+    <link rel="stylesheet" href="static/styles/index.css" />
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Task Master</title>
-  <link rel="stylesheet" href="static/styles/index.css" />
+    <script src="//unpkg.com/alpinejs" defer></script>
 
-  <script src="//unpkg.com/alpinejs" defer></script>
+    <script
+      src="https://unpkg.com/htmx.org@2.0.4"
+      integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+"
+      crossorigin="anonymous"
+    ></script>
 
-  <script src="https://unpkg.com/htmx.org@2.0.4"
-    integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+"
-    crossorigin="anonymous"></script>
+    <script src="static/scripts/index.js" defer></script>
+  </head>
 
-  <script src="static/scripts/index.js" defer></script>
-</head>
+  <body>
+    <header id="header" class="container">
+      <h1 class="text-center">Dan &amp; Stella's Recipes</h1>
 
-<body>
-  <header id="header" class="container">
-    <h1 class="text-center">Dan &amp; Stella's Recipes</h1>
+      <menu id="main-menu">
+        <li class="form-group">
+          <label for="create-button">Add</label>
 
-    <menu id="main-menu">
-      <li class="form-group">
-        <label for="create-button">Add</label>
+          <button
+            class="btn btn-icon btn-outline-success"
+            title="Add new recipe"
+            hx-get="/form/create"
+            hx-target="dialog"
+            hx-on:htmx:after-request="if (event.detail.successful) { htmx.removeClass('dialog', 'card-outline-danger'); htmx.removeClass('card-outline-secondary'); htmx.removeClass('dialog', 'card-outline-primary'); htmx.addClass('dialog', 'card-outline-success'); htmx.find('dialog').showModal(); }"
+          >
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          </button>
+        </li>
 
-        <button class="btn btn-icon btn-outline-success" title="Add new recipe" hx-get="/form/create" hx-target="dialog"
-          hx-on:htmx:after-request="if (event.detail.successful) { htmx.removeClass('dialog', 'card-outline-danger'); htmx.removeClass('card-outline-secondary'); htmx.removeClass('dialog', 'card-outline-primary'); htmx.addClass('dialog', 'card-outline-success'); htmx.find('dialog').showModal(); }">
-          <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
-        </button>
-      </li>
+        <li class="form-group">
+          <label for="search-button">Search</label>
 
-      <li class="form-group">
-        <label for="search-button">Search</label>
+          <button
+            class="btn btn-icon btn-outline-primary"
+            title="Search recipes"
+            hx-get="/form/search"
+            hx-target="dialog"
+            hx-on:htmx:after-request="if (event.detail.successful) { htmx.removeClass('dialog', 'card-outline-danger'); htmx.removeClass('card-outline-secondary'); htmx.removeClass('dialog', 'card-outline-success'); htmx.addClass('dialog', 'card-outline-primary'); htmx.find('dialog').showModal(); }"
+          >
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="11" cy="11" r="7"></circle>
+              <line x1="16" y1="16" x2="20" y2="20"></line>
+            </svg>
+          </button>
+        </li>
 
-        <button class="btn btn-icon btn-outline-primary" title="Search recipes" hx-get="/form/search" hx-target="dialog"
-          hx-on:htmx:after-request="if (event.detail.successful) { htmx.removeClass('dialog', 'card-outline-danger'); htmx.removeClass('card-outline-secondary'); htmx.removeClass('dialog', 'card-outline-success'); htmx.addClass('dialog', 'card-outline-primary'); htmx.find('dialog').showModal(); }">
-          <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="11" cy="11" r="7"></circle>
-            <line x1="16" y1="16" x2="20" y2="20"></line>
-          </svg>
-        </button>
-      </li>
+        <li class="form-group">
+          <label for="get-all-button">Refresh</label>
 
-      <li class="form-group">
-        <label for="get-all-button">Refresh</label>
+          <button
+            class="btn btn-icon btn-outline-warning"
+            title="Refresh recipes"
+            hx-get="/recipe"
+            hx-target="#recipes"
+          >
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M23 4v6h-6"></path>
+              <path d="M1 20v-6h6"></path>
+              <path d="M3.51 9a9 9 0 0 1 14.13-3.36L23 10"></path>
+              <path d="M20.49 15a9 9 0 0 1-14.13 3.36L1 14"></path>
+            </svg>
+          </button>
+        </li>
+      </menu>
+    </header>
 
-        <button class="btn btn-icon btn-outline-warning" title="Refresh recipes" hx-get="/recipe" hx-target="#recipes">
-          <svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor"
-            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M23 4v6h-6"></path>
-            <path d="M1 20v-6h6"></path>
-            <path d="M3.51 9a9 9 0 0 1 14.13-3.36L23 10"></path>
-            <path d="M20.49 15a9 9 0 0 1-14.13 3.36L1 14"></path>
-          </svg>
-        </button>
-      </li>
-    </menu>
-  </header>
+    <main id="main-content" class="container">
+      <h2 class="text-center">Your Recipes</h2>
 
-  <main id="main-content" class="container">
-    <h2 class="text-center">Your Recipes</h2>
+      <section
+        id="recipes"
+        class="content wrapped-row"
+        hx-get="/recipe"
+        hx-trigger="load once, recipeDeleted from:body, recipeSearchFailed from:body"
+        hx-indicator="#loading"
+      ></section>
+    </main>
 
-    <section id="recipes" class="content wrapped-row" hx-get="/recipe"
-      hx-trigger="load once, recipeDeleted from:body, recipeSearchFailed from:body" hx-indicator="#loading"></section>
-  </main>
+    <dialog class="card"></dialog>
 
-  <dialog class="card"></dialog>
+    <aside id="alerts" class="container">
+      <div id="loading" class="alert alert-primary htmx-indicator">
+        <strong>Loading...</strong>
+      </div>
+    </aside>
 
-  <aside id="alerts" class="container">
-    <div id="loading" class="alert alert-primary htmx-indicator">
-      <strong>Loading...</strong>
-    </div>
-  </aside>
-
-  <footer class="container">
-    <p>&copy; 2025 Dan Kiernan</p>
-  </footer>
-</body>
-
+    <footer class="container">
+      <p>&copy; 2025 Dan Kiernan</p>
+    </footer>
+  </body>
 </html>

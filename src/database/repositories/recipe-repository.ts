@@ -37,30 +37,28 @@ export class RecipeRepository extends BaseRepository<RecipeEntity> {
   create(
     entity: Omit<RecipeEntity, "id" | "created_at" | "updated_at">,
   ): RecipeEntity | null {
-    return this.dbContext.transaction(() => {
-      const now = new Date().toISOString();
+    const now = new Date().toISOString();
 
-      this.dbContext.queryOne(
-        `INSERT INTO recipes (name, servings, calories_per_portion, preparation_time, cooking_time, created_at, updated_at) 
+    this.dbContext.queryOne(
+      `INSERT INTO recipes (name, servings, calories_per_portion, preparation_time, cooking_time, created_at, updated_at) 
          VALUES ($name, $servings, $calories_per_portion, $preparation_time, $cooking_time, $created_at, $updated_at);`,
-        {
-          $name: entity.name,
-          $servings: entity.servings,
-          $calories_per_portion: entity.calories_per_portion || null,
-          $preparation_time: entity.preparation_time || null,
-          $cooking_time: entity.cooking_time || null,
-          $created_at: now,
-          $updated_at: now,
-        },
-      );
+      {
+        $name: entity.name,
+        $servings: entity.servings,
+        $calories_per_portion: entity.calories_per_portion || null,
+        $preparation_time: entity.preparation_time || null,
+        $cooking_time: entity.cooking_time || null,
+        $created_at: now,
+        $updated_at: now,
+      },
+    );
 
-      const lastId = this.dbContext.getLastInsertedId();
-      if (lastId === null) {
-        return null;
-      }
+    const lastId = this.dbContext.getLastInsertedId();
+    if (lastId === null) {
+      return null;
+    }
 
-      return this.read(lastId);
-    });
+    return this.read(lastId);
   }
 
   read(id: number): RecipeEntity | null {
@@ -77,16 +75,15 @@ export class RecipeRepository extends BaseRepository<RecipeEntity> {
   }
 
   update(entity: RecipeEntity): RecipeEntity | null {
-    return this.dbContext.transaction(() => {
-      const existing = this.read(entity.id);
-      if (!existing) {
-        return null;
-      }
+    const existing = this.read(entity.id);
+    if (!existing) {
+      return null;
+    }
 
-      const now = new Date().toISOString();
+    const now = new Date().toISOString();
 
-      this.dbContext.queryOne(
-        `UPDATE recipes SET
+    this.dbContext.queryOne(
+      `UPDATE recipes SET
         name = $name,
         servings = $servings,
         calories_per_portion = $calories_per_portion,
@@ -94,19 +91,18 @@ export class RecipeRepository extends BaseRepository<RecipeEntity> {
         cooking_time = $cooking_time,
         updated_at = $updated_at
       WHERE id = $id;`,
-        {
-          $id: entity.id,
-          $name: entity.name,
-          $servings: entity.servings,
-          $calories_per_portion: entity.calories_per_portion || null,
-          $preparation_time: entity.preparation_time || null,
-          $cooking_time: entity.cooking_time || null,
-          $updated_at: now,
-        },
-      );
+      {
+        $id: entity.id,
+        $name: entity.name,
+        $servings: entity.servings,
+        $calories_per_portion: entity.calories_per_portion || null,
+        $preparation_time: entity.preparation_time || null,
+        $cooking_time: entity.cooking_time || null,
+        $updated_at: now,
+      },
+    );
 
-      return this.read(entity.id);
-    });
+    return this.read(entity.id);
   }
 
   delete(id: number): boolean {

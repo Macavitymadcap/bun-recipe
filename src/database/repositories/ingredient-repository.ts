@@ -39,26 +39,24 @@ export class IngredientRepository extends BaseRepository<IngredientEntity> {
   }
 
   create(entity: Omit<IngredientEntity, "id">): IngredientEntity | null {
-    return this.dbContext.transaction(() => {
-      this.dbContext.queryOne(
-        `INSERT INTO ingredients (recipe_id, quantity, unit, name, order_index) 
+    this.dbContext.queryOne(
+      `INSERT INTO ingredients (recipe_id, quantity, unit, name, order_index) 
          VALUES ($recipe_id, $quantity, $unit, $name, $order_index);`,
-        {
-          $recipe_id: entity.recipe_id,
-          $quantity: entity.quantity,
-          $unit: entity.unit || null,
-          $name: entity.name,
-          $order_index: entity.order_index,
-        },
-      );
+      {
+        $recipe_id: entity.recipe_id,
+        $quantity: entity.quantity,
+        $unit: entity.unit || null,
+        $name: entity.name,
+        $order_index: entity.order_index,
+      },
+    );
 
-      const lastId = this.dbContext.getLastInsertedId();
-      if (lastId === null) {
-        return null;
-      }
+    const lastId = this.dbContext.getLastInsertedId();
+    if (lastId === null) {
+      return null;
+    }
 
-      return this.read(lastId);
-    });
+    return this.read(lastId);
   }
 
   read(id: number): IngredientEntity | null {
@@ -73,32 +71,30 @@ export class IngredientRepository extends BaseRepository<IngredientEntity> {
   }
 
   update(entity: IngredientEntity): IngredientEntity | null {
-    return this.dbContext.transaction(() => {
-      const existing = this.read(entity.id);
-      if (!existing) {
-        return null;
-      }
+    const existing = this.read(entity.id);
+    if (!existing) {
+      return null;
+    }
 
-      this.dbContext.queryOne(
-        `UPDATE ingredients SET
+    this.dbContext.queryOne(
+      `UPDATE ingredients SET
           recipe_id = $recipe_id,
           quantity = $quantity,
           unit = $unit,
           name = $name,
           order_index = $order_index
         WHERE id = $id;`,
-        {
-          $id: entity.id,
-          $recipe_id: entity.recipe_id,
-          $quantity: entity.quantity,
-          $unit: entity.unit || null,
-          $name: entity.name,
-          $order_index: entity.order_index,
-        },
-      );
+      {
+        $id: entity.id,
+        $recipe_id: entity.recipe_id,
+        $quantity: entity.quantity,
+        $unit: entity.unit || null,
+        $name: entity.name,
+        $order_index: entity.order_index,
+      },
+    );
 
-      return this.read(entity.id);
-    });
+    return this.read(entity.id);
   }
 
   delete(id: number): boolean {

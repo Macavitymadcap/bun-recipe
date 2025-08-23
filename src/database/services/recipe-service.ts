@@ -15,12 +15,14 @@ import {
 import { RecipeTagRepository } from "../repositories/recipe-tag-repository";
 import { TagRepository, TagEntity } from "../repositories/tag-repository";
 
-export interface CompleteRecipe extends RecipeEntity {
+interface RecipeConstiuents {
   ingredients: IngredientEntity[];
   methodSteps: MethodStepEntity[];
   cooksNotes: string[];
   tags: string[];
 }
+
+export interface CompleteRecipe extends RecipeEntity, RecipeConstiuents {}
 
 export interface CreateRecipeData {
   name: string;
@@ -49,29 +51,17 @@ export class RecipeService {
     private tagRepository: TagRepository,
     private recipeTagRepository: RecipeTagRepository,
     private dbContext: DbContext,
-  ) { }
+  ) {}
 
   getCompleteRecipe(id: number): CompleteRecipe | null {
     const recipe = this.recipeRepository.read(id);
     if (!recipe) return null;
 
-    const ingredients = this.ingredientRepository.getByRecipeId(id);
-    const methodSteps = this.methodStepRepository.getByRecipeId(id);
-    const cooksNotes = this.cooksNoteRepository.getByRecipeId(id);
-
-    // Get tags through the junction table
-    const recipeTags = this.recipeTagRepository.getByRecipeId(id);
-    const tags = recipeTags
-      .map((rt) => this.tagRepository.read(rt.tag_id))
-      .filter((tag) => tag !== null)
-      .map((tag) => tag!.name);
+    const constiuents = this.getRecipeConstiuents(id);
 
     return {
       ...recipe,
-      ingredients,
-      methodSteps,
-      cooksNotes: cooksNotes.map((n) => n.note),
-      tags,
+      ...constiuents,
     };
   }
 
@@ -80,24 +70,11 @@ export class RecipeService {
 
     return recipes.map((recipe) => {
       const id = recipe.id;
-
-      const ingredients = this.ingredientRepository.getByRecipeId(id);
-      const methodSteps = this.methodStepRepository.getByRecipeId(id);
-      const cooksNotes = this.cooksNoteRepository.getByRecipeId(id);
-
-      // Get tags through the junction table
-      const recipeTags = this.recipeTagRepository.getByRecipeId(id);
-      const tags = recipeTags
-        .map((rt) => this.tagRepository.read(rt.tag_id))
-        .filter((tag) => tag !== null)
-        .map((tag) => tag!.name);
+      const constiuents = this.getRecipeConstiuents(id);
 
       return {
         ...recipe,
-        ingredients,
-        methodSteps,
-        cooksNotes: cooksNotes.map((n) => n.note),
-        tags,
+        ...constiuents,
       };
     });
   }
@@ -240,23 +217,60 @@ export class RecipeService {
     return this.recipeRepository.delete(id);
   }
 
-  searchRecipesByTag(tagName: string): RecipeEntity[] {
+  searchRecipesByTag(tagName: string): CompleteRecipe[] {
     const tag = this.tagRepository.findByName(tagName);
     if (!tag) return [];
 
     const recipeTags = this.recipeTagRepository.getByTagId(tag.id);
-    const recipes = recipeTags
+    return recipeTags
       .map((rt) => this.recipeRepository.read(rt.recipe_id))
-      .filter((recipe) => recipe !== null) as RecipeEntity[];
+      .filter((recipe) => recipe !== null)
+      .map((rcp) => {
+        const id = rcp.id;
+        const constiuents = this.getRecipeConstiuents(id);
 
-    return recipes;
+        return {
+          ...rcp,
+          ...constiuents,
+        };
+      });
   }
 
-  searchRecipesByName(searchTerm: string): RecipeEntity[] {
-    return this.recipeRepository.searchByName(searchTerm);
+  searchRecipesByName(searchTerm: string): CompleteRecipe[] {
+    const recipes = this.recipeRepository.searchByName(searchTerm);
+    if (recipes.length === 0) return [];
+    return recipes.map((recipe) => {
+      const id = recipe.id;
+      const constiuents = this.getRecipeConstiuents(id);
+
+      return {
+        ...recipe,
+        ...constiuents,
+      };
+    });
   }
 
   getAllTags(): TagEntity[] {
     return this.tagRepository.readAll();
+  }
+
+  private getRecipeConstiuents(id: number): RecipeConstiuents {
+    const ingredients = this.ingredientRepository.getByRecipeId(id);
+    const methodSteps = this.methodStepRepository.getByRecipeId(id);
+    const cooksNotes = this.cooksNoteRepository.getByRecipeId(id);
+
+    // Get tags through the junction table
+    const recipeTags = this.recipeTagRepository.getByRecipeId(id);
+    const tags = recipeTags
+      .map((rt) => this.tagRepository.read(rt.tag_id))
+      .filter((tag) => tag !== null)
+      .map((tag) => tag!.name);
+
+    return {
+      ingredients,
+      methodSteps,
+      cooksNotes: cooksNotes.map((n) => n.note),
+      tags,
+    };
   }
 }

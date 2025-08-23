@@ -35,24 +35,22 @@ export class MethodStepRepository extends BaseRepository<MethodStepEntity> {
   }
 
   create(entity: Omit<MethodStepEntity, "id">): MethodStepEntity | null {
-    return this.dbContext.transaction(() => {
-      this.dbContext.queryOne(
-        `INSERT INTO method_steps (recipe_id, order_index, instruction) 
+    this.dbContext.queryOne(
+      `INSERT INTO method_steps (recipe_id, order_index, instruction) 
          VALUES ($recipe_id, $order_index, $instruction);`,
-        {
-          $recipe_id: entity.recipe_id,
-          $order_index: entity.order_index,
-          $instruction: entity.instruction,
-        },
-      );
+      {
+        $recipe_id: entity.recipe_id,
+        $order_index: entity.order_index,
+        $instruction: entity.instruction,
+      },
+    );
 
-      const lastId = this.dbContext.getLastInsertedId();
-      if (lastId === null) {
-        return null;
-      }
+    const lastId = this.dbContext.getLastInsertedId();
+    if (lastId === null) {
+      return null;
+    }
 
-      return this.read(lastId);
-    });
+    return this.read(lastId);
   }
 
   read(id: number): MethodStepEntity | null {
@@ -69,28 +67,26 @@ export class MethodStepRepository extends BaseRepository<MethodStepEntity> {
   }
 
   update(entity: MethodStepEntity): MethodStepEntity | null {
-    return this.dbContext.transaction(() => {
-      const existing = this.read(entity.id);
-      if (!existing) {
-        return null;
-      }
+    const existing = this.read(entity.id);
+    if (!existing) {
+      return null;
+    }
 
-      this.dbContext.queryOne(
-        `UPDATE method_steps SET
+    this.dbContext.queryOne(
+      `UPDATE method_steps SET
           recipe_id = $recipe_id,
           order_index = $order_index,
           instruction = $instruction
         WHERE id = $id;`,
-        {
-          $id: entity.id,
-          $recipe_id: entity.recipe_id,
-          $order_index: entity.order_index,
-          $instruction: entity.instruction,
-        },
-      );
+      {
+        $id: entity.id,
+        $recipe_id: entity.recipe_id,
+        $order_index: entity.order_index,
+        $instruction: entity.instruction,
+      },
+    );
 
-      return this.read(entity.id);
-    });
+    return this.read(entity.id);
   }
 
   delete(id: number): boolean {

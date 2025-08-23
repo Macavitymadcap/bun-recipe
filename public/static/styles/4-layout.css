@@ -234,7 +234,7 @@ section {
   display: flex;
 }
 
-.flex-column {
+.flex-cutartumn {
   flex-direction: column;
 }
 
@@ -252,6 +252,10 @@ section {
 
 .align-items-center {
   align-items: center;
+}
+
+.align-items-end {
+  align-content: end;
 }
 
 /* Flexbox row layout for wrapping cards and colour swatches */

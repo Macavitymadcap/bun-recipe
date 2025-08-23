@@ -33,22 +33,20 @@ export class CooksNoteRepository extends BaseRepository<CooksNoteEntity> {
   }
 
   create(entity: Omit<CooksNoteEntity, "id">): CooksNoteEntity | null {
-    return this.dbContext.transaction(() => {
-      this.dbContext.queryOne(
-        `INSERT INTO cooks_notes (recipe_id, note) VALUES ($recipe_id, $note);`,
-        {
-          $recipe_id: entity.recipe_id,
-          $note: entity.note,
-        },
-      );
+    this.dbContext.queryOne(
+      `INSERT INTO cooks_notes (recipe_id, note) VALUES ($recipe_id, $note);`,
+      {
+        $recipe_id: entity.recipe_id,
+        $note: entity.note,
+      },
+    );
 
-      const lastId = this.dbContext.getLastInsertedId();
-      if (lastId === null) {
-        return null;
-      }
+    const lastId = this.dbContext.getLastInsertedId();
+    if (lastId === null) {
+      return null;
+    }
 
-      return this.read(lastId);
-    });
+    return this.read(lastId);
   }
 
   read(id: number): CooksNoteEntity | null {
@@ -63,26 +61,24 @@ export class CooksNoteRepository extends BaseRepository<CooksNoteEntity> {
   }
 
   update(entity: CooksNoteEntity): CooksNoteEntity | null {
-    return this.dbContext.transaction(() => {
-      const existing = this.read(entity.id);
-      if (!existing) {
-        return null;
-      }
+    const existing = this.read(entity.id);
+    if (!existing) {
+      return null;
+    }
 
-      this.dbContext.queryOne(
-        `UPDATE cooks_notes SET
+    this.dbContext.queryOne(
+      `UPDATE cooks_notes SET
           recipe_id = $recipe_id,
           note = $note
         WHERE id = $id;`,
-        {
-          $id: entity.id,
-          $recipe_id: entity.recipe_id,
-          $note: entity.note,
-        },
-      );
+      {
+        $id: entity.id,
+        $recipe_id: entity.recipe_id,
+        $note: entity.note,
+      },
+    );
 
-      return this.read(entity.id);
-    });
+    return this.read(entity.id);
   }
 
   delete(id: number): boolean {

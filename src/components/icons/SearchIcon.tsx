@@ -1,0 +1,23 @@
+interface SearchIconProps {
+  width?: number;
+  height?: number;
+}
+
+export const SearchIcon = ({ height, width }: SearchIconProps) => {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      width={width ?? 24}
+      height={height ?? 24}
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <circle cx="11" cy="11" r="7"></circle>
+      <line x1="16" y1="16" x2="20" y2="20"></line>
+    </svg>
+  );
+};

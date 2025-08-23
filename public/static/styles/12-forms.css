@@ -54,7 +54,7 @@ input[type="datetime-local"]:focus,
 input[type="search"]:focus,
 textarea:focus,
 select:focus {
-  border-color: var(--colour-primary); 
+  border-color: var(--colour-primary);
   box-shadow: 0 0 0 3px rgba(74, 110, 181, 0.25);
 }
 
@@ -93,9 +93,7 @@ select:focus {
 }
 
 .switch:not(:checked):focus-visible {
-  background-color: var(
-    --colour-surface-high
-  );
+  background-color: var(--colour-surface-high);
 }
 
 .switch:checked::before {
@@ -171,6 +169,31 @@ fieldset {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
+
+  ol,
+  ul {
+    list-style: none;
+  }
+}
+
+fieldset.primary {
+  border: 1px solid var(--colour-primary);
+}
+
+fieldset.secondary {
+  border: 1px solid var(--colour-secondary);
+}
+
+fieldset.success {
+  border: 1px solid var(--colour-success);
+}
+
+fieldset.warning {
+  border: 1px solid var(--colour-warning);
+}
+
+fieldset.danger {
+  border: 1px solid var(--colour-danger);
 }
 
 legend {
