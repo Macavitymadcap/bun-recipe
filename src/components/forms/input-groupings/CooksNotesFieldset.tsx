@@ -1,4 +1,4 @@
-import { CloseIcon } from "../../icons/CloseIcon";
+import { DeleteIcon } from "../../icons/DeleteIcon";
 
 interface CooksNotesFieldsetProps {
   isUpdateForm: boolean;
@@ -48,7 +48,7 @@ export const CooksNotesFieldset = ({
                   title="Remove note"
                   x-on:click="removeCooksNote(index)"
                 >
-                  <CloseIcon />
+                <DeleteIcon />
                 </button>
               </div>
             </div>

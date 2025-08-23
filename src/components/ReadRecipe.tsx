@@ -1,4 +1,4 @@
-import { CloseIcon } from "./icons/CloseIcon";
+import { DeleteIcon } from "./icons/DeleteIcon";
 import { UpdateIcon } from "./icons/UpdateIcon";
 
 interface ReadRecipeProps {
@@ -81,7 +81,7 @@ const ReadRecipe = ({
           hx-target="dialog"
           {...hxOnAfterRequestSuccessful("delete")}
         >
-          <CloseIcon />
+          <DeleteIcon />
         </button>
       </div>
 

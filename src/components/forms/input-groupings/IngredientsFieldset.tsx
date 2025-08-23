@@ -1,4 +1,4 @@
-import { CloseIcon } from "../../icons/CloseIcon";
+import { DeleteIcon } from "../../icons/DeleteIcon";
 
 export interface IngredientFieldsetProps {
   isUpdateForm: boolean;
@@ -118,11 +118,6 @@ export const IngredientsFieldset = ({
               </div>
 
               <div className="col-1">
-                {isUpdateForm ? (
-                  <label x-show="index === 0">&nbsp;</label>
-                ) : (
-                  <label>&nbsp;</label>
-                )}
                 <button
                   type="button"
                   className="btn btn-icon btn-outline-danger"
@@ -132,7 +127,7 @@ export const IngredientsFieldset = ({
                     isUpdateForm ? "ingredients.length <= 1" : undefined
                   }
                 >
-                  <CloseIcon />
+                  <DeleteIcon />
                 </button>
               </div>
             </div>

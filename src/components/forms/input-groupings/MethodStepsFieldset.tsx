@@ -1,4 +1,4 @@
-import { CloseIcon } from "../../icons/CloseIcon";
+import { DeleteIcon } from "../../icons/DeleteIcon";
 
 interface MethodStepsFieldsetProps {
   isUpdateForm: boolean;
@@ -54,7 +54,7 @@ export const MethodStepsFieldset = ({
                   x-on:click="removeMethodStep(index)"
                   x-bind:disabled="methodSteps.length <= 1"
                 >
-                  <CloseIcon />
+                <DeleteIcon />
                 </button>
               </div>
             </div>
