@@ -17,12 +17,6 @@ interface UpdateRecipeFormProps {
 }
 
 const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
-  const hxOnUpdateSuccessful = {
-    "hx-on:htmx:after-request":
-      "if(event.detail.successful) { htmx.find('dialog').close(); }",
-  };
-
-  // Prepare data for Alpine.js
   const alpineData = {
     ingredients: recipe.ingredients.map((ing) => ({
       quantity: ing.quantity,
@@ -35,6 +29,20 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
     cooksNotes: recipe.cooksNotes.map((note) => note || note),
     tags: recipe.tags,
   };
+
+  const hxOnUpdateSuccessful = {
+    "hx-on:htmx:after-request":
+      "if(event.detail.successful) { htmx.find('dialog').close(); }",
+  };
+
+  const resetAction = {
+    "x-on:click.prevent":`
+      ingredients = ${JSON.stringify(alpineData.ingredients)};
+      methodSteps = ${JSON.stringify(alpineData.methodSteps)};
+      cooksNotes = ${JSON.stringify(alpineData.cooksNotes)};
+      tags = ${JSON.stringify(alpineData.tags)};
+    `
+  }
 
   return (
     <form
@@ -146,12 +154,7 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
         <button
           className="btn btn-outline-warning"
           title="Reset Form"
-          x-on:click={`
-            ingredients = ${JSON.stringify(alpineData.ingredients)};
-            methodSteps = ${JSON.stringify(alpineData.methodSteps)};
-            cooksNotes = ${JSON.stringify(alpineData.cooksNotes)};
-            tags = ${JSON.stringify(alpineData.tags)};
-          `}
+          {...resetAction}
         >
           Reset
         </button>

@@ -7,6 +7,14 @@
   font-weight: bold;
   background-color: var(--colour-surface-lowest);
   color: var(--colour-background);
+
+  button {
+    background: none; 
+    border: none; 
+    color: inherit; 
+    cursor: pointer; 
+    font-size: 0.8em;
+  }
 }
 
 .badge-low {

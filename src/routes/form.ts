@@ -6,6 +6,7 @@ import { CreateRecipeForm } from "../components/forms/CreateRecipeForm";
 import { AlertProps } from "../components/Alert";
 import { GetUpdateRecipeFormResponse } from "../components/responses/GetUpdateRecipeFormResponse";
 import { GetDeleteRecipeFormResponse } from "../components/responses/GetDeleteRecipeFormResponse";
+import { SearchRecipesForm } from "../components/forms/SearchRecipesForm";
 
 export class FormRoute extends BaseRoute {
   private recipeService: RecipeService;
@@ -17,6 +18,7 @@ export class FormRoute extends BaseRoute {
 
   protected initializeRoutes(): void {
     this.app.get("/create", this.getCreateRecipeForm.bind(this));
+    this.app.get("/search", this.getSearchRecipesForm.bind(this));
     this.app.get("/update/:id", this.getUpdateRecipeForm.bind(this));
     this.app.get("/delete/:id", this.getDeleteRecipeForm.bind(this));
   }
@@ -25,6 +27,12 @@ export class FormRoute extends BaseRoute {
     const availableTags = this.recipeService.getAllTags();
 
     return context.html(CreateRecipeForm({ availableTags }));
+  }
+
+  private getSearchRecipesForm(context: Context) {
+    const availableTags = this.recipeService.getAllTags();
+
+    return context.html(SearchRecipesForm({ availableTags }));
   }
 
   private getUpdateRecipeForm(context: Context) {

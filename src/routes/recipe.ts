@@ -1,5 +1,6 @@
 import { Context } from "hono";
 import {
+  CompleteRecipe,
   CreateRecipeData,
   RecipeService,
 } from "../database/services/recipe-service";
@@ -25,7 +26,7 @@ export class RecipeRoute extends BaseRoute {
     this.app.get("/", this.getAllRecipes.bind(this));
     this.app.put("/:id", this.updateRecipe.bind(this));
     this.app.delete("/:id", this.deleteRecipe.bind(this));
-    // this.app.post("/search", this.searchRecipes.bind(this));
+    this.app.post("/search", this.searchRecipes.bind(this));
   }
 
   private async createRecipe(context: Context): Promise<Response> {
@@ -124,6 +125,86 @@ export class RecipeRoute extends BaseRoute {
         message: "Failed to load recipes",
       };
       return context.html(Alert(alert));
+    }
+  }
+
+  private async searchRecipes(context: Context): Promise<Response> {
+    console.log("Searching recipes...");
+    let alert: AlertProps | undefined;
+    
+    try {
+      const formData = await context.req.formData();
+      const searchType = formData.get("searchType") as string;
+      const recipeName = formData.get("recipeName") as string;
+      const recipeTag = formData.get("recipeTag") as string;
+      
+      let recipes: CompleteRecipe[] = [];
+      
+      if (searchType === "name" && recipeName?.trim()) {
+        recipes = this.recipeService.searchRecipesByName(recipeName.trim());
+        
+        if (recipes.length === 0) {
+          alert = {
+            alertType: "warning",
+            title: "No Results",
+            message: `No recipes found containing "${recipeName}".`,
+          };
+        } else {
+          alert = {
+            alertType: "success",
+            title: "Search Results",
+            message: `Found ${recipes.length} recipe${recipes.length === 1 ? '' : 's'} containing "${recipeName}".`,
+          };
+        }
+      } else if (searchType === "tag" && recipeTag?.trim()) {
+        recipes = this.recipeService.searchRecipesByTag(recipeTag.trim());
+        
+        if (recipes.length === 0) {
+          alert = {
+            alertType: "warning",
+            title: "No Results",
+            message: `No recipes found with tag "${recipeTag}".`,
+          };
+        } else {
+          alert = {
+            alertType: "success",
+            title: "Search Results",
+            message: `Found ${recipes.length} recipe${recipes.length === 1 ? '' : 's'} with tag "${recipeTag}".`,
+          };
+        }
+      } else {
+        alert = {
+          alertType: "danger",
+          title: "Validation Error",
+          message: "Please enter a search term.",
+        };
+      }
+
+      return context.html(
+        `<div hx-swap-oob="beforeend:#alerts">
+          ${Alert(alert)}
+        </div>
+        ${recipes.map((recipe: ReadRecipeProps) => ReadRecipe(recipe)).join("")}`,
+        {
+          headers: recipes.length === 0 ? { "HX-Trigger": "recipeSearchFailed" } : {},
+        }
+      );
+    } catch (error) {
+      console.error("Error searching recipes:", error);
+      alert = {
+        alertType: "danger",
+        title: "Error",
+        message: `Failed to search recipes: ${(error as Error).message}`,
+      };
+
+      return context.html(
+        `<div hx-swap-oob="beforeend:#alerts">
+          ${Alert(alert)}
+        </div>`,
+        {
+          headers: { "HX-Trigger": "recipeSearchFailed" },
+        }
+      );
     }
   }
 

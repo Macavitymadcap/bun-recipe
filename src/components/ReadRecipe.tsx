@@ -61,28 +61,31 @@ const ReadRecipe = ({
     <article {...props}>
       {/* Recipe Header with Actions */}
       <div className="content grid">
+        <span className="col-1">
+          <button
+            title="Update Recipe"
+            className="btn btn-icon btn-outline-secondary"
+            hx-get={`/form/update/${id}`}
+            hx-target="dialog"
+            {...hxOnAfterRequestSuccessful("update")}
+          >
+            <UpdateIcon />
+          </button>
+        </span>
         <span className="col-10">
           <h2 className="card-header text-center">{name}</h2>
         </span>
-        <button
-          title="Update Recipe"
-          className="btn btn-icon btn-outline-secondary"
-          hx-get={`/form/update/${id}`}
-          hx-target="dialog"
-          {...hxOnAfterRequestSuccessful("update")}
-        >
-          <UpdateIcon />
-        </button>
-
-        <button
-          title="Delete Recipe"
-          className="btn btn-icon btn-outline-danger"
-          hx-get={`/form/delete/${id}`}
-          hx-target="dialog"
-          {...hxOnAfterRequestSuccessful("delete")}
-        >
-          <DeleteIcon />
-        </button>
+        <div className="col-1">
+          <button
+            title="Delete Recipe"
+            className="btn btn-icon btn-outline-danger"
+            hx-get={`/form/delete/${id}`}
+            hx-target="dialog"
+            {...hxOnAfterRequestSuccessful("delete")}
+          >
+            <DeleteIcon />
+          </button>
+        </div>
       </div>
 
       {/* Recipe Basic Info */}
@@ -112,7 +115,7 @@ const ReadRecipe = ({
         {tags.length > 0 && (
           <div className="mt-3">
             {tags.map((tag, index) => (
-              <span key={index} className="badge badge-primary ml-1">
+              <span key={index} className="badge badge-high ml-1">
                 {tag}
               </span>
             ))}
