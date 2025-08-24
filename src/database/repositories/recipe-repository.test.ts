@@ -17,7 +17,7 @@ const sampleRecipe = (
 ): Omit<RecipeEntity, "id" | "created_at" | "updated_at"> => ({
   name: "Test Recipe",
   servings: "4-6",
-  calories_per_portion: 350,
+  calories_per_serving: 350,
   preparation_time: "30 minutes",
   cooking_time: "1 hour",
   ...overrides,
@@ -66,8 +66,8 @@ describe("RecipeRepository", () => {
       expect(result.id).toBeGreaterThan(0);
       expect(result.name).toBe(recipeData.name);
       expect(result.servings).toBe(recipeData.servings);
-      expect(result.calories_per_portion).toBe(
-        recipeData.calories_per_portion!,
+      expect(result.calories_per_serving).toBe(
+        recipeData.calories_per_serving!,
       );
       expect(result.preparation_time).toBe(recipeData.preparation_time!);
       expect(result.cooking_time).toBe(recipeData.cooking_time!);
@@ -78,7 +78,7 @@ describe("RecipeRepository", () => {
     test("should create a recipe with only required fields", () => {
       // Arrange
       const recipeData = sampleRecipe({
-        calories_per_portion: undefined,
+        calories_per_serving: undefined,
         preparation_time: undefined,
         cooking_time: undefined,
       });
@@ -92,7 +92,7 @@ describe("RecipeRepository", () => {
       expect(result.id).toBeGreaterThan(0);
       expect(result.name).toBe(recipeData.name);
       expect(result.servings).toBe(recipeData.servings);
-      expect(result.calories_per_portion).toBeNull();
+      expect(result.calories_per_serving).toBeNull();
       expect(result.preparation_time).toBeNull();
       expect(result.cooking_time).toBeNull();
     });
@@ -131,8 +131,8 @@ describe("RecipeRepository", () => {
       expect(result.id).toBe(createdRecipe.id);
       expect(result.name).toBe(recipeData.name);
       expect(result.servings).toBe(recipeData.servings);
-      expect(result.calories_per_portion).toBe(
-        recipeData.calories_per_portion!,
+      expect(result.calories_per_serving).toBe(
+        recipeData.calories_per_serving!,
       );
       expect(result.preparation_time).toBe(recipeData.preparation_time!);
       expect(result.cooking_time).toBe(recipeData.cooking_time!);
@@ -197,7 +197,7 @@ describe("RecipeRepository", () => {
         ...originalRecipe,
         name: "Updated Recipe",
         servings: "8-10",
-        calories_per_portion: 450,
+        calories_per_serving: 450,
         preparation_time: "45 minutes",
         cooking_time: "1.5 hours",
       };
@@ -211,8 +211,8 @@ describe("RecipeRepository", () => {
       expect(result.id).toBe(originalRecipe.id);
       expect(result.name).toBe(updatedData.name);
       expect(result.servings).toBe(updatedData.servings);
-      expect(result.calories_per_portion).toBe(
-        updatedData.calories_per_portion!,
+      expect(result.calories_per_serving).toBe(
+        updatedData.calories_per_serving!,
       );
       expect(result.preparation_time).toBe(updatedData.preparation_time!);
       expect(result.cooking_time).toBe(updatedData.cooking_time!);
@@ -229,7 +229,7 @@ describe("RecipeRepository", () => {
 
       const updatedData: RecipeEntity = {
         ...originalRecipe,
-        calories_per_portion: undefined,
+        calories_per_serving: undefined,
         preparation_time: undefined,
         cooking_time: undefined,
       };
@@ -239,7 +239,7 @@ describe("RecipeRepository", () => {
 
       // Assert
       expect(result).not.toBeNull();
-      expect(result.calories_per_portion).toBeNull();
+      expect(result.calories_per_serving).toBeNull();
       expect(result.preparation_time).toBeNull();
       expect(result.cooking_time).toBeNull();
     });

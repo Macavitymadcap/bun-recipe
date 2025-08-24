@@ -212,7 +212,7 @@ describe("TagRepository", () => {
     });
   });
 
-  describe("findByName", () => {
+  describe("readByName", () => {
     test("Should return an entity with a name that exactly matches the query", () => {
       // Arrange
       const tag = tagRepository.create(
@@ -220,7 +220,7 @@ describe("TagRepository", () => {
       ) as TagEntity;
 
       // Act
-      const result = tagRepository.findByName(tag.name) as TagEntity;
+      const result = tagRepository.readByName(tag.name) as TagEntity;
 
       // Assert
       expect(result).toBeDefined();
@@ -234,7 +234,7 @@ describe("TagRepository", () => {
       tagRepository.create(sampleTag({ name: "North Indian" }));
 
       // Act
-      const result = tagRepository.findByName("Indian");
+      const result = tagRepository.readByName("Indian");
 
       // Assert
       expect(result).toBeNull();
@@ -245,14 +245,14 @@ describe("TagRepository", () => {
       tagRepository.create(sampleTag({ name: "Healthy" }));
 
       // Act
-      const result = tagRepository.findByName("Opulent");
+      const result = tagRepository.readByName("Opulent");
 
       // Assert
       expect(result).toBeNull();
     });
   });
 
-  describe("createOrFind", () => {
+  describe("createOrRead", () => {
     test("should return an existing entity when given a name that belongs to an existing tag", () => {
       // Arrange
       const existingName = "Barbecue";
@@ -261,7 +261,7 @@ describe("TagRepository", () => {
       ) as TagEntity;
 
       // Act
-      const result = tagRepository.createOrFind(existingName) as TagEntity;
+      const result = tagRepository.createOrRead(existingName) as TagEntity;
 
       // Assert
       expect(result).toBeDefined();
@@ -273,10 +273,10 @@ describe("TagRepository", () => {
     test("should create a new entity when given a name that does already have a tag", () => {
       // Arrange
       const nonExistantName = "Hearty";
-      expect(tagRepository.findByName(nonExistantName)).toBeNull();
+      expect(tagRepository.readByName(nonExistantName)).toBeNull();
 
       // Act
-      const result = tagRepository.createOrFind(nonExistantName);
+      const result = tagRepository.createOrRead(nonExistantName);
 
       // Assert
       expect(result).toBeDefined();

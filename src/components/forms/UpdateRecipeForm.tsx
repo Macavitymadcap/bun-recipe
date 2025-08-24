@@ -3,7 +3,7 @@ import { CompleteRecipe } from "../../database/services/recipe-service";
 import { TagEntity } from "../../database/repositories/tag-repository";
 import { RecipeNameInput } from "./input-groupings/RecipeNameInput";
 import { ServingsInput } from "./input-groupings/ServingsInput";
-import { CaloriesPerPortionInput } from "./input-groupings/CaloriesPerPortionInput";
+import { CaloriesPerServingInput } from "./input-groupings/CaloriesPerServingInput";
 import { PreperationTimeInput } from "./input-groupings/PreperationTimeInput";
 import { CookingTimeInput } from "./input-groupings/CookingTimeInput";
 import { TagInput } from "./input-groupings/TagInput";
@@ -36,13 +36,13 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
   };
 
   const resetAction = {
-    "x-on:click.prevent":`
+    "x-on:click.prevent": `
       ingredients = ${JSON.stringify(alpineData.ingredients)};
       methodSteps = ${JSON.stringify(alpineData.methodSteps)};
       cooksNotes = ${JSON.stringify(alpineData.cooksNotes)};
       tags = ${JSON.stringify(alpineData.tags)};
-    `
-  }
+    `,
+  };
 
   return (
     <form
@@ -118,7 +118,7 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
         <h2 className="text-center col-10">Update Recipe</h2>
 
         <button
-          className="btn btn-icon btn-outline-danger col-1"
+          className="btn btn-icon btn-outline-danger col-1 col-push-right"
           type="button"
           title="Cancel Recipe Update"
           x-on:click="htmx.find('dialog').close()"
@@ -131,7 +131,7 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
         <div className="grid">
           <RecipeNameInput value={recipe.name} />
           <ServingsInput value={recipe.servings} />
-          <CaloriesPerPortionInput value={recipe.calories_per_portion} />
+          <CaloriesPerServingInput value={recipe.calories_per_serving} />
           <PreperationTimeInput value={recipe.preparation_time} />
           <CookingTimeInput value={recipe.cooking_time} />
         </div>

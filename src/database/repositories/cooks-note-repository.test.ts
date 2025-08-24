@@ -248,7 +248,7 @@ describe("CooksNoteRepository", () => {
     });
   });
 
-  describe("getByRecipeId", () => {
+  describe("readByRecipeId", () => {
     test("should return all CooksNotes that have the given recipe_id", () => {
       // Arrange
       const recipeId = 30;
@@ -263,7 +263,7 @@ describe("CooksNoteRepository", () => {
       );
 
       // Act
-      const result = cooksNoteRepository.getByRecipeId(recipeId);
+      const result = cooksNoteRepository.readByRecipeId(recipeId);
 
       // Assert
       expect(result).toBeArrayOfSize(3);
@@ -275,7 +275,7 @@ describe("CooksNoteRepository", () => {
       const nonExistantRecipeId = 50;
 
       // Act
-      const result = cooksNoteRepository.getByRecipeId(nonExistantRecipeId);
+      const result = cooksNoteRepository.readByRecipeId(nonExistantRecipeId);
 
       // Assert
       expect(result).toBeArrayOfSize(0);
@@ -320,7 +320,7 @@ describe("CooksNoteRepository", () => {
       expect(result).toBe(true);
 
       // Verify deletion of CooksNotes
-      const remainingCooksNotes = cooksNoteRepository.getByRecipeId(recipeId);
+      const remainingCooksNotes = cooksNoteRepository.readByRecipeId(recipeId);
       expect(remainingCooksNotes).toBeArrayOfSize(0);
     });
   });

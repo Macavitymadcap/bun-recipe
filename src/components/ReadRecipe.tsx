@@ -1,11 +1,12 @@
 import { DeleteIcon } from "./icons/DeleteIcon";
+import { MaximiseIcon } from "./icons/MaximiseIcon";
 import { UpdateIcon } from "./icons/UpdateIcon";
 
 interface ReadRecipeProps {
   id: number;
   name: string;
   servings: string;
-  calories_per_portion?: number;
+  calories_per_serving?: number;
   preparation_time?: string;
   cooking_time?: string;
   ingredients: Array<{
@@ -44,7 +45,7 @@ const ReadRecipe = ({
   id,
   name,
   servings,
-  calories_per_portion,
+  calories_per_serving,
   preparation_time,
   cooking_time,
   ingredients,
@@ -61,7 +62,23 @@ const ReadRecipe = ({
     <article {...props}>
       {/* Recipe Header with Actions */}
       <div className="content grid">
-        <span className="col-1">
+        <span className="col-9 col-push-left">
+          <h2 className="card-header col-9 push -left">{name}</h2>
+        </span>
+
+        <span className="col-1 push-right">
+          <a
+            href={`/recipe/${id}/view`}
+            target="_blank"
+            title="Open in new page"
+            className="btn btn-icon btn-outline-primary"
+
+          >
+            <MaximiseIcon />
+          </a>
+        </span>
+
+        <span className="col-1 col-push-right">
           <button
             title="Update Recipe"
             className="btn btn-icon btn-outline-secondary"
@@ -72,10 +89,8 @@ const ReadRecipe = ({
             <UpdateIcon />
           </button>
         </span>
-        <span className="col-10">
-          <h2 className="card-header text-center">{name}</h2>
-        </span>
-        <div className="col-1">
+
+        <span className="col-1 col-push-right">
           <button
             title="Delete Recipe"
             className="btn btn-icon btn-outline-danger"
@@ -85,7 +100,7 @@ const ReadRecipe = ({
           >
             <DeleteIcon />
           </button>
-        </div>
+        </span>
       </div>
 
       {/* Recipe Basic Info */}
@@ -94,9 +109,9 @@ const ReadRecipe = ({
           <div className="col-6">
             <strong>Servings:</strong> {servings}
           </div>
-          {calories_per_portion && (
+          {calories_per_serving && (
             <div className="col-6">
-              <strong>Calories per portion:</strong> {calories_per_portion}
+              <strong>Calories per portion:</strong> {calories_per_serving}
             </div>
           )}
           {preparation_time && (

@@ -11,6 +11,8 @@ import { GetRecipeByIDResponse } from "../components/responses/GetRecipeByIdResp
 import { ReadRecipe, ReadRecipeProps } from "../components/ReadRecipe";
 import { CreateRecipeResponse } from "../components/responses/CreateRecipeResponse";
 import { UpdateRecipeResponse } from "../components/responses/UpdateRecipeResponse";
+import { FullPageError } from "../components/FullPageError";
+import { FullPageRecipe } from "../components/FullPageRecipe";
 
 export class RecipeRoute extends BaseRoute {
   private recipeService: RecipeService;
@@ -24,6 +26,7 @@ export class RecipeRoute extends BaseRoute {
     this.app.post("/", this.createRecipe.bind(this));
     this.app.get("/:id", this.getRecipeById.bind(this));
     this.app.get("/", this.getAllRecipes.bind(this));
+    this.app.get("/:id/view", this.getFullPageRecipe.bind(this));
     this.app.put("/:id", this.updateRecipe.bind(this));
     this.app.delete("/:id", this.deleteRecipe.bind(this));
     this.app.post("/search", this.searchRecipes.bind(this));
@@ -128,21 +131,47 @@ export class RecipeRoute extends BaseRoute {
     }
   }
 
+  private async getFullPageRecipe(context: Context): Promise<Response> {
+    console.log("Fetching full page recipe ...");
+    const id = this.parseRecipeIdFromContext(context);
+
+    try {
+      const recipe = this.recipeService.getCompleteRecipe(id);
+
+      if (!recipe){
+        const title = "Recipe Not Found";
+        const message = `No Recipe found with ID ${id}`;
+
+        return context.html(FullPageError({title, message}));
+      }
+
+      return context.html(FullPageRecipe(recipe));
+    } catch (error) {
+      console.error("Error fetching full page recipe", error);
+
+      const title = "Error Loading Recipe";
+      const message = `Error loading recipe: ${(error as Error).message}`;
+
+      return context.html(FullPageError({title, message}));
+    }
+  }
+
   private async searchRecipes(context: Context): Promise<Response> {
     console.log("Searching recipes...");
     let alert: AlertProps | undefined;
-    
+
     try {
       const formData = await context.req.formData();
       const searchType = formData.get("searchType") as string;
       const recipeName = formData.get("recipeName") as string;
       const recipeTag = formData.get("recipeTag") as string;
-      
+      const recipeIngredient = formData.get("recipeIngredient") as string;
+
       let recipes: CompleteRecipe[] = [];
-      
+
       if (searchType === "name" && recipeName?.trim()) {
         recipes = this.recipeService.searchRecipesByName(recipeName.trim());
-        
+
         if (recipes.length === 0) {
           alert = {
             alertType: "warning",
@@ -153,12 +182,12 @@ export class RecipeRoute extends BaseRoute {
           alert = {
             alertType: "success",
             title: "Search Results",
-            message: `Found ${recipes.length} recipe${recipes.length === 1 ? '' : 's'} containing "${recipeName}".`,
+            message: `Found ${recipes.length} recipe${recipes.length === 1 ? "" : "s"} containing "${recipeName}".`,
           };
         }
       } else if (searchType === "tag" && recipeTag?.trim()) {
         recipes = this.recipeService.searchRecipesByTag(recipeTag.trim());
-        
+
         if (recipes.length === 0) {
           alert = {
             alertType: "warning",
@@ -169,7 +198,25 @@ export class RecipeRoute extends BaseRoute {
           alert = {
             alertType: "success",
             title: "Search Results",
-            message: `Found ${recipes.length} recipe${recipes.length === 1 ? '' : 's'} with tag "${recipeTag}".`,
+            message: `Found ${recipes.length} recipe${recipes.length === 1 ? "" : "s"} with tag "${recipeTag}".`,
+          };
+        }
+      } else if (searchType === "ingredient" && recipeIngredient?.trim()) {
+        recipes = this.recipeService.searchRecipesByIngredient(
+          recipeIngredient.trim(),
+        );
+
+        if (recipes.length === 0) {
+          alert = {
+            alertType: "warning",
+            title: "No Results",
+            message: `No recipes found containing ingredient "${recipeIngredient}".`,
+          };
+        } else {
+          alert = {
+            alertType: "success",
+            title: "Search Results",
+            message: `Found ${recipes.length} recipe${recipes.length === 1 ? "" : "s"} containing ingredient "${recipeIngredient}".`,
           };
         }
       } else {
@@ -186,8 +233,9 @@ export class RecipeRoute extends BaseRoute {
         </div>
         ${recipes.map((recipe: ReadRecipeProps) => ReadRecipe(recipe)).join("")}`,
         {
-          headers: recipes.length === 0 ? { "HX-Trigger": "recipeSearchFailed" } : {},
-        }
+          headers:
+            recipes.length === 0 ? { "HX-Trigger": "recipeSearchFailed" } : {},
+        },
       );
     } catch (error) {
       console.error("Error searching recipes:", error);
@@ -203,7 +251,7 @@ export class RecipeRoute extends BaseRoute {
         </div>`,
         {
           headers: { "HX-Trigger": "recipeSearchFailed" },
-        }
+        },
       );
     }
   }
@@ -295,8 +343,8 @@ export class RecipeRoute extends BaseRoute {
     // Parse basic fields
     const name = formData.get("name") as string;
     const servings = formData.get("servings") as string;
-    const calories_per_portion = formData.get("calories_per_portion")
-      ? parseInt(formData.get("calories_per_portion") as string)
+    const calories_per_serving = formData.get("calories_per_serving")
+      ? parseInt(formData.get("calories_per_serving") as string)
       : undefined;
     const preparation_time =
       (formData.get("preparation_time") as string) || undefined;
@@ -371,7 +419,7 @@ export class RecipeRoute extends BaseRoute {
     return {
       name,
       servings,
-      calories_per_portion,
+      calories_per_serving,
       preparation_time,
       cooking_time,
       ingredients,

@@ -120,7 +120,7 @@ export class RefreshTokenRepository extends BaseRepository<RefreshTokenEntity> {
     });
   }
 
-  findByTokenHash(tokenHash: string): RefreshTokenEntity | null {
+  readByTokenHash(tokenHash: string): RefreshTokenEntity | null {
     return this.dbContext.queryOne<RefreshTokenEntity>(
       `SELECT * FROM refresh_tokens WHERE token_hash = $token_hash;`,
       { $token_hash: tokenHash },

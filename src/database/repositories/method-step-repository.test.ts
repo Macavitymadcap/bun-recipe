@@ -261,7 +261,7 @@ describe("MethodStepRepository", () => {
     });
   });
 
-  describe("getByRecipeId", () => {
+  describe("readByRecipeId", () => {
     test("should return all MethodSteps that have the given recipe_id", () => {
       // Arrange
       const recipeId = 30;
@@ -284,7 +284,7 @@ describe("MethodStepRepository", () => {
       );
 
       // Act
-      const result = methodStepRepository.getByRecipeId(recipeId);
+      const result = methodStepRepository.readByRecipeId(recipeId);
 
       // Assert
       expect(result).toBeArrayOfSize(3);
@@ -296,7 +296,7 @@ describe("MethodStepRepository", () => {
       const nonExistantRecipeId = 50;
 
       // Act
-      const result = methodStepRepository.getByRecipeId(nonExistantRecipeId);
+      const result = methodStepRepository.readByRecipeId(nonExistantRecipeId);
 
       // Assert
       expect(result).toBeArrayOfSize(0);
@@ -345,7 +345,8 @@ describe("MethodStepRepository", () => {
       expect(result).toBe(true);
 
       // Verify deletion of MethodSteps
-      const remainingMethodSteps = methodStepRepository.getByRecipeId(recipeId);
+      const remainingMethodSteps =
+        methodStepRepository.readByRecipeId(recipeId);
       expect(remainingMethodSteps).toBeArrayOfSize(0);
     });
   });

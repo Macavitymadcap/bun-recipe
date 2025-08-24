@@ -1,6 +1,6 @@
 import { TagEntity } from "../../database/repositories/tag-repository";
 import { CloseIcon } from "../icons/CloseIcon";
-import { CaloriesPerPortionInput } from "./input-groupings/CaloriesPerPortionInput";
+import { CaloriesPerServingInput } from "./input-groupings/CaloriesPerServingInput";
 import { CookingTimeInput } from "./input-groupings/CookingTimeInput";
 import { CooksNotesFieldset } from "./input-groupings/CooksNotesFieldset";
 import { IngredientsFieldset } from "./input-groupings/IngredientsFieldset";
@@ -35,7 +35,7 @@ export const CreateRecipeForm = ({ availableTags }: CreateRecipeFormProps) => {
         <h2 className="text-center col-10">Add New Recipe</h2>
 
         <button
-          className="btn btn-icon btn-outline-danger col-1"
+          className="btn btn-icon btn-outline-danger col-1 col-push-right"
           type="button"
           title="Cancel Recipe Creation"
           x-on:click="htmx.find('dialog').close()"
@@ -48,7 +48,7 @@ export const CreateRecipeForm = ({ availableTags }: CreateRecipeFormProps) => {
         <div className="grid">
           <RecipeNameInput />
           <ServingsInput />
-          <CaloriesPerPortionInput />
+          <CaloriesPerServingInput />
           <PreperationTimeInput />
           <CookingTimeInput />
         </div>

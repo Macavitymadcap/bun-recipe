@@ -32,7 +32,7 @@ export class AuthService {
   ) {}
 
   async login(credentials: LoginCredentials): Promise<AuthTokens | null> {
-    const user = this.userRepository.findByUsername(credentials.username);
+    const user = this.userRepository.readByUsername(credentials.username);
     if (!user) {
       return null;
     }
@@ -62,7 +62,7 @@ export class AuthService {
 
     // Find refresh token in database
     const tokenHash = await this.passwordService.hash(refreshToken);
-    const storedToken = this.refreshTokenRepository.findByTokenHash(tokenHash);
+    const storedToken = this.refreshTokenRepository.readByTokenHash(tokenHash);
 
     if (!storedToken || storedToken.user_id !== payload.userId) {
       return null;
@@ -97,7 +97,7 @@ export class AuthService {
     password: string,
   ): Promise<UserEntity | null> {
     // Check if user already exists
-    const existingUser = this.userRepository.findByUsername(username);
+    const existingUser = this.userRepository.readByUsername(username);
     if (existingUser) {
       return null;
     }

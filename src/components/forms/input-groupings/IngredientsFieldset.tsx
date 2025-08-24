@@ -58,7 +58,7 @@ export const IngredientsFieldset = ({
                   <>
                     <label
                       x-bind:for="`ingredient-unit-${index}`"
-                      x-text="index === 0 ? 'Unit (Optional)' : ''"
+                      x-text="index === 0 ? 'Unit' : ''"
                     ></label>
                     <input
                       type="text"
@@ -70,9 +70,7 @@ export const IngredientsFieldset = ({
                   </>
                 ) : (
                   <>
-                    <label x-bind:for="'ingredient-unit-' + index">
-                      Unit (Optional)
-                    </label>
+                    <label x-bind:for="'ingredient-unit-' + index">Unit</label>
                     <input
                       type="text"
                       x-bind:id="'ingredient-unit-' + index"

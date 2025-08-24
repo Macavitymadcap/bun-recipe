@@ -9,7 +9,7 @@ export const CooksNotesFieldset = ({
 }: CooksNotesFieldsetProps) => {
   return (
     <fieldset className={isUpdateForm ? "secondary" : "success"}>
-      <legend>Cook's Notes (Optional)</legend>
+      <legend>Cook's Notes</legend>
       <ul id="notes-list" x-show="cooksNotes.length > 0">
         <template x-for="(note, index) in cooksNotes" x-bind:key="index">
           <li x-data="{ note }" className="mb-3">
@@ -48,7 +48,7 @@ export const CooksNotesFieldset = ({
                   title="Remove note"
                   x-on:click="removeCooksNote(index)"
                 >
-                <DeleteIcon />
+                  <DeleteIcon />
                 </button>
               </div>
             </div>

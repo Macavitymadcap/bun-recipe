@@ -6,7 +6,7 @@ interface DeleteRecipeFormProps {
 }
 
 const DeleteRecipeForm = ({ recipeId, recipeName }: DeleteRecipeFormProps) => {
-  const hxOnDeleteTask = {
+  const hxOnDeleteRecipe = {
     "hx-on:htmx:after-request":
       'if(event.detail.successful) { this.reset(); htmx.find("dialog").close(); }',
   };
@@ -17,7 +17,7 @@ const DeleteRecipeForm = ({ recipeId, recipeName }: DeleteRecipeFormProps) => {
       hx-delete={`/recipe/${recipeId}`}
       hx-target="#alerts"
       hx-swap="beforeend"
-      {...hxOnDeleteTask}
+      {...hxOnDeleteRecipe}
     >
       <section class="card-header grid">
         <span class="col-1"></span>
@@ -25,9 +25,9 @@ const DeleteRecipeForm = ({ recipeId, recipeName }: DeleteRecipeFormProps) => {
 
         <span class="col-1">
           <button
-            class="btn btn-icon btn-outline-danger col-1"
+            class="btn btn-icon btn-outline-danger col-1 col-push-right"
             type="button"
-            title="Cancel Task Deletion"
+            title="Cancel Recipe Deletion"
             x-on:click="htmx.find('dialog').close()"
           >
             <CloseIcon />
@@ -44,7 +44,7 @@ const DeleteRecipeForm = ({ recipeId, recipeName }: DeleteRecipeFormProps) => {
       <section class="card-footer wrapped-row">
         <button
           type="submit"
-          title="Delete Task"
+          title="Delete Recipe"
           class="btn btn-outline-danger"
         >
           Delete

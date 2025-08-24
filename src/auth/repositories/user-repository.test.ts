@@ -253,13 +253,13 @@ describe("UserRepository", () => {
     });
   });
 
-  describe("findByUsername", () => {
+  describe("readByUsername", () => {
     test("should find user by username", () => {
       // Arrange
       const user = userRepository.create(sampleUser({ username: "findme" }));
 
       // Act
-      const result = userRepository.findByUsername("findme");
+      const result = userRepository.readByUsername("findme");
 
       // Assert
       expect(result).not.toBeNull();
@@ -269,7 +269,7 @@ describe("UserRepository", () => {
 
     test("should return null when username not found", () => {
       // Act
-      const result = userRepository.findByUsername("notfound");
+      const result = userRepository.readByUsername("notfound");
 
       // Assert
       expect(result).toBeNull();
@@ -280,8 +280,8 @@ describe("UserRepository", () => {
       userRepository.create(sampleUser({ username: "TestUser" }));
 
       // Act
-      const result1 = userRepository.findByUsername("testuser");
-      const result2 = userRepository.findByUsername("TestUser");
+      const result1 = userRepository.readByUsername("testuser");
+      const result2 = userRepository.readByUsername("TestUser");
 
       // Assert
       expect(result1).toBeNull();

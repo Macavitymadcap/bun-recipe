@@ -28,7 +28,7 @@ describe("RecipeService", () => {
     id: 1,
     name: "Test Recipe",
     servings: "4-6",
-    calories_per_portion: 350,
+    calories_per_serving: 350,
     preparation_time: "30 minutes",
     cooking_time: "1 hour",
     created_at: "2025-01-01T00:00:00.000Z",
@@ -86,30 +86,30 @@ describe("RecipeService", () => {
 
     mockIngredientRepository = {
       create: mock(() => sampleIngredients[0]),
-      getByRecipeId: mock(() => sampleIngredients),
+      readByRecipeId: mock(() => sampleIngredients),
       deleteByRecipeId: mock(() => true),
     };
 
     mockMethodStepRepository = {
       create: mock(() => sampleMethodSteps[0]),
-      getByRecipeId: mock(() => sampleMethodSteps),
+      readByRecipeId: mock(() => sampleMethodSteps),
       deleteByRecipeId: mock(() => true),
     };
 
     mockCooksNoteRepository = {
       create: mock(() => sampleCooksNotes[0]),
-      getByRecipeId: mock(() => sampleCooksNotes),
+      readByRecipeId: mock(() => sampleCooksNotes),
       deleteByRecipeId: mock(() => true),
     };
 
     mockTagRepository = {
       create: mock(() => sampleTags[0]),
       read: mock((id: number) => sampleTags.find((t) => t.id === id) || null),
-      createOrFind: mock(
+      createOrRead: mock(
         (name: string) =>
           sampleTags.find((t) => t.name === name) || { id: 3, name },
       ),
-      findByName: mock(
+      readByName: mock(
         (name: string) => sampleTags.find((t) => t.name === name) || null,
       ),
       readAll: mock(() => sampleTags),
@@ -117,8 +117,8 @@ describe("RecipeService", () => {
 
     mockRecipeTagRepository = {
       create: mock(() => sampleRecipeTags[0]),
-      getByRecipeId: mock(() => sampleRecipeTags),
-      getByTagId: mock((tagId: number) =>
+      readByRecipeId: mock(() => sampleRecipeTags),
+      readByTagId: mock((tagId: number) =>
         sampleRecipeTags.filter((rt) => rt.tag_id === tagId),
       ),
       deleteByRecipeId: mock(() => true),
@@ -158,10 +158,10 @@ describe("RecipeService", () => {
 
       // Verify repository calls
       expect(mockRecipeRepository.read).toHaveBeenCalledWith(1);
-      expect(mockIngredientRepository.getByRecipeId).toHaveBeenCalledWith(1);
-      expect(mockMethodStepRepository.getByRecipeId).toHaveBeenCalledWith(1);
-      expect(mockCooksNoteRepository.getByRecipeId).toHaveBeenCalledWith(1);
-      expect(mockRecipeTagRepository.getByRecipeId).toHaveBeenCalledWith(1);
+      expect(mockIngredientRepository.readByRecipeId).toHaveBeenCalledWith(1);
+      expect(mockMethodStepRepository.readByRecipeId).toHaveBeenCalledWith(1);
+      expect(mockCooksNoteRepository.readByRecipeId).toHaveBeenCalledWith(1);
+      expect(mockRecipeTagRepository.readByRecipeId).toHaveBeenCalledWith(1);
     });
 
     test("should return null when recipe does not exist", () => {
@@ -175,12 +175,12 @@ describe("RecipeService", () => {
       expect(result).toBeNull();
       expect(mockRecipeRepository.read).toHaveBeenCalledWith(999);
       // Should not call other repositories if recipe doesn't exist
-      expect(mockIngredientRepository.getByRecipeId).not.toHaveBeenCalled();
+      expect(mockIngredientRepository.readByRecipeId).not.toHaveBeenCalled();
     });
 
     test("should handle recipes with no tags", () => {
       // Arrange
-      mockRecipeTagRepository.getByRecipeId = mock(() => []);
+      mockRecipeTagRepository.readByRecipeId = mock(() => []);
 
       // Act
       const result = recipeService.getCompleteRecipe(1);
@@ -209,7 +209,7 @@ describe("RecipeService", () => {
     const createRecipeData: CreateRecipeData = {
       name: "New Recipe",
       servings: "4",
-      calories_per_portion: 300,
+      calories_per_serving: 300,
       preparation_time: "20 minutes",
       cooking_time: "45 minutes",
       ingredients: [
@@ -244,7 +244,7 @@ describe("RecipeService", () => {
       expect(mockRecipeRepository.create).toHaveBeenCalledWith({
         name: "New Recipe",
         servings: "4",
-        calories_per_portion: 300,
+        calories_per_serving: 300,
         preparation_time: "20 minutes",
         cooking_time: "45 minutes",
       });
@@ -271,7 +271,7 @@ describe("RecipeService", () => {
       expect(mockCooksNoteRepository.create).toHaveBeenCalledTimes(2);
 
       // Verify tags creation
-      expect(mockTagRepository.createOrFind).toHaveBeenCalledTimes(2);
+      expect(mockTagRepository.createOrRead).toHaveBeenCalledTimes(2);
       expect(mockRecipeTagRepository.create).toHaveBeenCalledTimes(2);
 
       getCompleteRecipeSpy.mockRestore();
@@ -320,14 +320,14 @@ describe("RecipeService", () => {
       // Assert
       expect(result).not.toBeNull();
       expect(mockCooksNoteRepository.create).not.toHaveBeenCalled();
-      expect(mockTagRepository.createOrFind).not.toHaveBeenCalled();
+      expect(mockTagRepository.createOrRead).not.toHaveBeenCalled();
 
       getCompleteRecipeSpy.mockRestore();
     });
 
     test("should continue creating tags even if one fails", () => {
       // Arrange
-      mockTagRepository.createOrFind = mock((name: string) =>
+      mockTagRepository.createOrRead = mock((name: string) =>
         name === "Dessert" ? null : { id: 2, name },
       );
 
@@ -358,7 +358,7 @@ describe("RecipeService", () => {
     const updateRecipeData: CreateRecipeData = {
       name: "Updated Recipe",
       servings: "6-8",
-      calories_per_portion: 400,
+      calories_per_serving: 400,
       preparation_time: "40 minutes",
       cooking_time: "1.5 hours",
       ingredients: [
@@ -408,7 +408,7 @@ describe("RecipeService", () => {
       expect(mockIngredientRepository.create).toHaveBeenCalledTimes(2);
       expect(mockMethodStepRepository.create).toHaveBeenCalledTimes(2);
       expect(mockCooksNoteRepository.create).toHaveBeenCalledTimes(1);
-      expect(mockTagRepository.createOrFind).toHaveBeenCalledTimes(2);
+      expect(mockTagRepository.createOrRead).toHaveBeenCalledTimes(2);
 
       getCompleteRecipeSpy.mockRestore();
     });
@@ -474,7 +474,7 @@ describe("RecipeService", () => {
       // Assert
       expect(result).not.toBeNull();
       expect(mockCooksNoteRepository.create).not.toHaveBeenCalled();
-      expect(mockTagRepository.createOrFind).not.toHaveBeenCalled();
+      expect(mockTagRepository.createOrRead).not.toHaveBeenCalled();
 
       getCompleteRecipeSpy.mockRestore();
     });
@@ -511,20 +511,20 @@ describe("RecipeService", () => {
       // Assert
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual(sampleRecipe);
-      expect(mockTagRepository.findByName).toHaveBeenCalledWith("Dessert");
-      expect(mockRecipeTagRepository.getByTagId).toHaveBeenCalledWith(1);
+      expect(mockTagRepository.readByName).toHaveBeenCalledWith("Dessert");
+      expect(mockRecipeTagRepository.readByTagId).toHaveBeenCalledWith(1);
     });
 
     test("should return empty array when tag does not exist", () => {
       // Arrange
-      mockTagRepository.findByName = mock(() => null);
+      mockTagRepository.readByName = mock(() => null);
 
       // Act
       const result = recipeService.searchRecipesByTag("NonExistent");
 
       // Assert
       expect(result).toEqual([]);
-      expect(mockRecipeTagRepository.getByTagId).not.toHaveBeenCalled();
+      expect(mockRecipeTagRepository.readByTagId).not.toHaveBeenCalled();
     });
 
     test("should filter out null recipes", () => {
@@ -532,7 +532,7 @@ describe("RecipeService", () => {
       mockRecipeRepository.read = mock((id: number) =>
         id === 1 ? sampleRecipe : null,
       );
-      mockRecipeTagRepository.getByTagId = mock(() => [
+      mockRecipeTagRepository.readByTagId = mock(() => [
         { id: 1, recipe_id: 1, tag_id: 1 },
         { id: 2, recipe_id: 999, tag_id: 1 },
       ]);
@@ -547,7 +547,7 @@ describe("RecipeService", () => {
 
     test("should return empty array when no recipes have the tag", () => {
       // Arrange
-      mockRecipeTagRepository.getByTagId = mock(() => []);
+      mockRecipeTagRepository.readByTagId = mock(() => []);
 
       // Act
       const result = recipeService.searchRecipesByTag("Dessert");
