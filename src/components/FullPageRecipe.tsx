@@ -27,25 +27,11 @@ export const FullPageRecipe = ({
     </head>
     <body>
       <header class="container">
-        <div class="grid">
-          <div class="col-2">
-            <button onclick="window.close()" class="btn btn-outline-secondary">
-              Close Window
-            </button>
-          </div>
-          <div class="col-8">
-            <h1 class="text-center">${name}</h1>
-          </div>
-          <div class="col-2">
-            <button onclick="window.print()" class="btn btn-outline-primary">
-              Print Recipe
-            </button>
-          </div>
-        </div>
+        <h1 class="text-center">${name}</h1>
       </header>
 
       <main class="container">
-        <article class="card">
+        <article>
           <!-- Recipe Basic Info -->
           <div class="card-body">
             <div class="grid">
