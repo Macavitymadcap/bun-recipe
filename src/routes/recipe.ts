@@ -11,6 +11,8 @@ import { GetRecipeByIDResponse } from "../components/responses/GetRecipeByIdResp
 import { ReadRecipe, ReadRecipeProps } from "../components/ReadRecipe";
 import { CreateRecipeResponse } from "../components/responses/CreateRecipeResponse";
 import { UpdateRecipeResponse } from "../components/responses/UpdateRecipeResponse";
+import { FullPageError } from "../components/FullPageError";
+import { FullPageRecipe } from "../components/FullPageRecipe";
 
 export class RecipeRoute extends BaseRoute {
   private recipeService: RecipeService;
@@ -24,6 +26,7 @@ export class RecipeRoute extends BaseRoute {
     this.app.post("/", this.createRecipe.bind(this));
     this.app.get("/:id", this.getRecipeById.bind(this));
     this.app.get("/", this.getAllRecipes.bind(this));
+    this.app.get("/:id/view", this.getFullPageRecipe.bind(this));
     this.app.put("/:id", this.updateRecipe.bind(this));
     this.app.delete("/:id", this.deleteRecipe.bind(this));
     this.app.post("/search", this.searchRecipes.bind(this));
@@ -125,6 +128,31 @@ export class RecipeRoute extends BaseRoute {
         message: "Failed to load recipes",
       };
       return context.html(Alert(alert));
+    }
+  }
+
+  private async getFullPageRecipe(context: Context): Promise<Response> {
+    console.log("Fetching full page recipe ...");
+    const id = this.parseRecipeIdFromContext(context);
+
+    try {
+      const recipe = this.recipeService.getCompleteRecipe(id);
+
+      if (!recipe){
+        const title = "Recipe Not Found";
+        const message = `No Recipe found with ID ${id}`;
+
+        return context.html(FullPageError({title, message}));
+      }
+
+      return context.html(FullPageRecipe(recipe));
+    } catch (error) {
+      console.error("Error fetching full page recipe", error);
+
+      const title = "Error Loading Recipe";
+      const message = `Error loading recipe: ${(error as Error).message}`;
+
+      return context.html(FullPageError({title, message}));
     }
   }
 
