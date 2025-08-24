@@ -66,6 +66,13 @@ export class MethodStepRepository extends BaseRepository<MethodStepEntity> {
     );
   }
 
+  readByRecipeId(recipeId: number): MethodStepEntity[] {
+    return this.dbContext.query<MethodStepEntity>(
+      `SELECT * FROM method_steps WHERE recipe_id = $recipe_id ORDER BY order_index;`,
+      { $recipe_id: recipeId },
+    );
+  }
+
   update(entity: MethodStepEntity): MethodStepEntity | null {
     const existing = this.read(entity.id);
     if (!existing) {
@@ -104,21 +111,14 @@ export class MethodStepRepository extends BaseRepository<MethodStepEntity> {
     });
   }
 
-  getByRecipeId(recipeId: number): MethodStepEntity[] {
-    return this.dbContext.query<MethodStepEntity>(
-      `SELECT * FROM method_steps WHERE recipe_id = $recipe_id ORDER BY order_index;`,
-      { $recipe_id: recipeId },
-    );
-  }
-
   deleteByRecipeId(recipeId: number): boolean {
-    if (this.getByRecipeId(recipeId).length === 0) return false;
+    if (this.readByRecipeId(recipeId).length === 0) return false;
 
     this.dbContext.queryOne(
       `DELETE FROM method_steps WHERE recipe_id = $recipe_id;`,
       { $recipe_id: recipeId },
     );
 
-    return this.getByRecipeId(recipeId).length === 0;
+    return this.readByRecipeId(recipeId).length === 0;
   }
 }

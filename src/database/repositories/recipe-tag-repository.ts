@@ -63,6 +63,27 @@ export class RecipeTagRepository extends BaseRepository<RecipeTagEntity> {
     return this.dbContext.query<RecipeTagEntity>(`SELECT * FROM recipe_tags;`);
   }
 
+  readByTagId(tagId: number): RecipeTagEntity[] {
+    return this.dbContext.query<RecipeTagEntity>(
+      `SELECT * FROM recipe_tags WHERE tag_id = $tag_id;`,
+      { $tag_id: tagId },
+    );
+  }
+
+  readByRecipeId(recipeId: number): RecipeTagEntity[] {
+    return this.dbContext.query<RecipeTagEntity>(
+      `SELECT * FROM recipe_tags WHERE recipe_id = $recipe_id;`,
+      { $recipe_id: recipeId },
+    );
+  }
+
+  readByRecipeAndTag(recipeId: number, tagId: number): RecipeTagEntity | null {
+    return this.dbContext.queryOne<RecipeTagEntity>(
+      `SELECT * FROM recipe_tags WHERE recipe_id = $recipe_id AND tag_id = $tag_id;`,
+      { $recipe_id: recipeId, $tag_id: tagId },
+    );
+  }
+
   update(entity: RecipeTagEntity): RecipeTagEntity | null {
     const existing = this.read(entity.id);
     if (!existing) {
@@ -99,35 +120,14 @@ export class RecipeTagRepository extends BaseRepository<RecipeTagEntity> {
     });
   }
 
-  getByRecipeId(recipeId: number): RecipeTagEntity[] {
-    return this.dbContext.query<RecipeTagEntity>(
-      `SELECT * FROM recipe_tags WHERE recipe_id = $recipe_id;`,
-      { $recipe_id: recipeId },
-    );
-  }
-
-  getByTagId(tagId: number): RecipeTagEntity[] {
-    return this.dbContext.query<RecipeTagEntity>(
-      `SELECT * FROM recipe_tags WHERE tag_id = $tag_id;`,
-      { $tag_id: tagId },
-    );
-  }
-
   deleteByRecipeId(recipeId: number): boolean {
-    if (this.getByRecipeId(recipeId).length === 0) return false;
+    if (this.readByRecipeId(recipeId).length === 0) return false;
 
     this.dbContext.queryOne(
       `DELETE FROM recipe_tags WHERE recipe_id = $recipe_id;`,
       { $recipe_id: recipeId },
     );
 
-    return this.getByRecipeId(recipeId).length === 0;
-  }
-
-  findByRecipeAndTag(recipeId: number, tagId: number): RecipeTagEntity | null {
-    return this.dbContext.queryOne<RecipeTagEntity>(
-      `SELECT * FROM recipe_tags WHERE recipe_id = $recipe_id AND tag_id = $tag_id;`,
-      { $recipe_id: recipeId, $tag_id: tagId },
-    );
+    return this.readByRecipeId(recipeId).length === 0;
   }
 }

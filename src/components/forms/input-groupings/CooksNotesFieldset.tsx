@@ -48,7 +48,7 @@ export const CooksNotesFieldset = ({
                   title="Remove note"
                   x-on:click="removeCooksNote(index)"
                 >
-                <DeleteIcon />
+                  <DeleteIcon />
                 </button>
               </div>
             </div>

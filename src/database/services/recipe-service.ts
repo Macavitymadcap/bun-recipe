@@ -125,7 +125,7 @@ export class RecipeService {
       // Add tags
       if (data.tags) {
         data.tags.forEach((tagName) => {
-          const tag = this.tagRepository.createOrFind(tagName);
+          const tag = this.tagRepository.createOrRead(tagName);
           if (tag) {
             this.recipeTagRepository.create({
               recipe_id: recipe.id,
@@ -198,7 +198,7 @@ export class RecipeService {
       // Recreate tags
       if (data.tags) {
         data.tags.forEach((tagName) => {
-          const tag = this.tagRepository.createOrFind(tagName);
+          const tag = this.tagRepository.createOrRead(tagName);
           if (tag) {
             this.recipeTagRepository.create({
               recipe_id: id,
@@ -218,10 +218,10 @@ export class RecipeService {
   }
 
   searchRecipesByTag(tagName: string): CompleteRecipe[] {
-    const tag = this.tagRepository.findByName(tagName);
+    const tag = this.tagRepository.readByName(tagName);
     if (!tag) return [];
 
-    const recipeTags = this.recipeTagRepository.getByTagId(tag.id);
+    const recipeTags = this.recipeTagRepository.readByTagId(tag.id);
     return recipeTags
       .map((rt) => this.recipeRepository.read(rt.recipe_id))
       .filter((recipe) => recipe !== null)
@@ -250,17 +250,36 @@ export class RecipeService {
     });
   }
 
+  searchRecipesByIngredient(ingredientName: string): CompleteRecipe[] {
+    const matchingIngredients =
+      this.ingredientRepository.searchByName(ingredientName);
+
+    if (matchingIngredients.length === 0) return [];
+
+    const recipeIds = [
+      ...new Set(matchingIngredients.map((ingredient) => ingredient.recipe_id)),
+    ];
+
+    return recipeIds
+      .map((id) => this.recipeRepository.read(id))
+      .filter((recipe) => recipe !== null)
+      .map((recipe) => {
+        const constiuents = this.getRecipeConstiuents(recipe.id);
+        return { ...recipe, ...constiuents };
+      });
+  }
+
   getAllTags(): TagEntity[] {
     return this.tagRepository.readAll();
   }
 
   private getRecipeConstiuents(id: number): RecipeConstiuents {
-    const ingredients = this.ingredientRepository.getByRecipeId(id);
-    const methodSteps = this.methodStepRepository.getByRecipeId(id);
-    const cooksNotes = this.cooksNoteRepository.getByRecipeId(id);
+    const ingredients = this.ingredientRepository.readByRecipeId(id);
+    const methodSteps = this.methodStepRepository.readByRecipeId(id);
+    const cooksNotes = this.cooksNoteRepository.readByRecipeId(id);
 
     // Get tags through the junction table
-    const recipeTags = this.recipeTagRepository.getByRecipeId(id);
+    const recipeTags = this.recipeTagRepository.readByRecipeId(id);
     const tags = recipeTags
       .map((rt) => this.tagRepository.read(rt.tag_id))
       .filter((tag) => tag !== null)

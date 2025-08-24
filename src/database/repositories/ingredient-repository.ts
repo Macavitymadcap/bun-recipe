@@ -70,6 +70,13 @@ export class IngredientRepository extends BaseRepository<IngredientEntity> {
     return this.dbContext.query<IngredientEntity>(`SELECT * FROM ingredients;`);
   }
 
+  readByRecipeId(recipeId: number): IngredientEntity[] {
+    return this.dbContext.query<IngredientEntity>(
+      `SELECT * FROM ingredients WHERE recipe_id = $recipe_id ORDER BY order_index;`,
+      { $recipe_id: recipeId },
+    );
+  }
+
   update(entity: IngredientEntity): IngredientEntity | null {
     const existing = this.read(entity.id);
     if (!existing) {
@@ -112,21 +119,23 @@ export class IngredientRepository extends BaseRepository<IngredientEntity> {
     });
   }
 
-  getByRecipeId(recipeId: number): IngredientEntity[] {
-    return this.dbContext.query<IngredientEntity>(
-      `SELECT * FROM ingredients WHERE recipe_id = $recipe_id ORDER BY order_index;`,
-      { $recipe_id: recipeId },
-    );
-  }
-
   deleteByRecipeId(recipeId: number): boolean {
-    if (this.getByRecipeId(recipeId).length === 0) return false;
+    if (this.readByRecipeId(recipeId).length === 0) return false;
 
     this.dbContext.queryOne(
       `DELETE FROM ingredients WHERE recipe_id = $recipe_id;`,
       { $recipe_id: recipeId },
     );
 
-    return this.getByRecipeId(recipeId).length === 0;
+    return this.readByRecipeId(recipeId).length === 0;
+  }
+
+  searchByName(searchTerm: string): IngredientEntity[] {
+    return this.dbContext.query<IngredientEntity>(
+      `SELECT * FROM ingredients 
+      WHERE name LIKE $searchTerm 
+      ORDER BY name;`,
+      { $searchTerm: `%${searchTerm}%` },
+    );
   }
 }

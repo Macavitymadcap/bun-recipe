@@ -54,7 +54,7 @@ export const MethodStepsFieldset = ({
                   x-on:click="removeMethodStep(index)"
                   x-bind:disabled="methodSteps.length <= 1"
                 >
-                <DeleteIcon />
+                  <DeleteIcon />
                 </button>
               </div>
             </div>

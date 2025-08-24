@@ -122,7 +122,7 @@ export class UserRepository extends BaseRepository<UserEntity> {
     });
   }
 
-  findByUsername(username: string): UserEntity | null {
+  readByUsername(username: string): UserEntity | null {
     return this.dbContext.queryOne<UserEntity>(
       `SELECT * FROM users WHERE username = $username;`,
       { $username: username },

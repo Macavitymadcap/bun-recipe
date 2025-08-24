@@ -46,6 +46,22 @@ export class TagRepository extends BaseRepository<TagEntity> {
     return this.dbContext.query<TagEntity>(`SELECT * FROM tags ORDER BY name;`);
   }
 
+  readByName(name: string): TagEntity | null {
+    return this.dbContext.queryOne<TagEntity>(
+      `SELECT * FROM tags WHERE name = $name;`,
+      { $name: name },
+    );
+  }
+
+  createOrRead(name: string): TagEntity | null {
+    const existing = this.readByName(name);
+    if (existing) {
+      return existing;
+    }
+
+    return this.create({ name });
+  }
+
   update(entity: TagEntity): TagEntity | null {
     const existing = this.read(entity.id);
     if (!existing) {
@@ -71,21 +87,5 @@ export class TagRepository extends BaseRepository<TagEntity> {
 
       return this.read(id) === null;
     });
-  }
-
-  findByName(name: string): TagEntity | null {
-    return this.dbContext.queryOne<TagEntity>(
-      `SELECT * FROM tags WHERE name = $name;`,
-      { $name: name },
-    );
-  }
-
-  createOrFind(name: string): TagEntity | null {
-    const existing = this.findByName(name);
-    if (existing) {
-      return existing;
-    }
-
-    return this.create({ name });
   }
 }

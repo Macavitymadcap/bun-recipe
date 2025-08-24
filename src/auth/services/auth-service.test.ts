@@ -29,7 +29,7 @@ describe("AuthService", () => {
 
   beforeEach(() => {
     mockUserRepository = {
-      findByUsername: mock(() => testUser),
+      readByUsername: mock(() => testUser),
       read: mock(() => testUser),
       create: mock(() => testUser),
       update: mock(() => testUser),
@@ -44,7 +44,7 @@ describe("AuthService", () => {
         expires_at: "2025-01-08",
         created_at: "2025-01-01",
       })),
-      findByTokenHash: mock(() => ({
+      readByTokenHash: mock(() => ({
         id: 1,
         user_id: 1,
         token_hash: "hash",
@@ -102,7 +102,7 @@ describe("AuthService", () => {
       expect(result).not.toBeNull();
       expect(result!.accessToken).toBe(testTokens.accessToken);
       expect(result!.refreshToken).toBe(testTokens.refreshToken);
-      expect(mockUserRepository.findByUsername).toHaveBeenCalledWith(
+      expect(mockUserRepository.readByUsername).toHaveBeenCalledWith(
         "testuser",
       );
       expect(mockPasswordService.verify).toHaveBeenCalledWith(
@@ -114,7 +114,7 @@ describe("AuthService", () => {
 
     test("should return null for non-existent user", async () => {
       // Arrange
-      mockUserRepository.findByUsername = mock(() => null);
+      mockUserRepository.readByUsername = mock(() => null);
       const credentials: LoginCredentials = {
         username: "nonexistent",
         password: "password123",
@@ -150,7 +150,7 @@ describe("AuthService", () => {
       // Arrange
       const futureDate = new Date();
       futureDate.setDate(futureDate.getDate() + 7);
-      mockRefreshTokenRepository.findByTokenHash = mock(() => ({
+      mockRefreshTokenRepository.readByTokenHash = mock(() => ({
         id: 1,
         user_id: 1,
         token_hash: "hash",
@@ -183,7 +183,7 @@ describe("AuthService", () => {
       // Arrange
       const pastDate = new Date();
       pastDate.setDate(pastDate.getDate() - 1);
-      mockRefreshTokenRepository.findByTokenHash = mock(() => ({
+      mockRefreshTokenRepository.readByTokenHash = mock(() => ({
         id: 1,
         user_id: 1,
         token_hash: "hash",
@@ -201,7 +201,7 @@ describe("AuthService", () => {
 
     test("should return null when token not found in database", async () => {
       // Arrange
-      mockRefreshTokenRepository.findByTokenHash = mock(() => null);
+      mockRefreshTokenRepository.readByTokenHash = mock(() => null);
 
       // Act
       const result = await authService.refreshTokens("not.in.database");
@@ -212,7 +212,7 @@ describe("AuthService", () => {
 
     test("should return null when user ID mismatch", async () => {
       // Arrange
-      mockRefreshTokenRepository.findByTokenHash = mock(() => ({
+      mockRefreshTokenRepository.readByTokenHash = mock(() => ({
         id: 1,
         user_id: 2, // Different user ID
         token_hash: "hash",
@@ -241,7 +241,7 @@ describe("AuthService", () => {
   describe("createUser", () => {
     test("should create new user", async () => {
       // Arrange
-      mockUserRepository.findByUsername = mock(() => null);
+      mockUserRepository.readByUsername = mock(() => null);
 
       // Act
       const result = await authService.createUser("newuser", "password123");

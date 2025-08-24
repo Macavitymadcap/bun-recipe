@@ -36,13 +36,13 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
   };
 
   const resetAction = {
-    "x-on:click.prevent":`
+    "x-on:click.prevent": `
       ingredients = ${JSON.stringify(alpineData.ingredients)};
       methodSteps = ${JSON.stringify(alpineData.methodSteps)};
       cooksNotes = ${JSON.stringify(alpineData.cooksNotes)};
       tags = ${JSON.stringify(alpineData.tags)};
-    `
-  }
+    `,
+  };
 
   return (
     <form

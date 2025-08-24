@@ -131,18 +131,19 @@ export class RecipeRoute extends BaseRoute {
   private async searchRecipes(context: Context): Promise<Response> {
     console.log("Searching recipes...");
     let alert: AlertProps | undefined;
-    
+
     try {
       const formData = await context.req.formData();
       const searchType = formData.get("searchType") as string;
       const recipeName = formData.get("recipeName") as string;
       const recipeTag = formData.get("recipeTag") as string;
-      
+      const recipeIngredient = formData.get("recipeIngredient") as string;
+
       let recipes: CompleteRecipe[] = [];
-      
+
       if (searchType === "name" && recipeName?.trim()) {
         recipes = this.recipeService.searchRecipesByName(recipeName.trim());
-        
+
         if (recipes.length === 0) {
           alert = {
             alertType: "warning",
@@ -153,12 +154,12 @@ export class RecipeRoute extends BaseRoute {
           alert = {
             alertType: "success",
             title: "Search Results",
-            message: `Found ${recipes.length} recipe${recipes.length === 1 ? '' : 's'} containing "${recipeName}".`,
+            message: `Found ${recipes.length} recipe${recipes.length === 1 ? "" : "s"} containing "${recipeName}".`,
           };
         }
       } else if (searchType === "tag" && recipeTag?.trim()) {
         recipes = this.recipeService.searchRecipesByTag(recipeTag.trim());
-        
+
         if (recipes.length === 0) {
           alert = {
             alertType: "warning",
@@ -169,7 +170,25 @@ export class RecipeRoute extends BaseRoute {
           alert = {
             alertType: "success",
             title: "Search Results",
-            message: `Found ${recipes.length} recipe${recipes.length === 1 ? '' : 's'} with tag "${recipeTag}".`,
+            message: `Found ${recipes.length} recipe${recipes.length === 1 ? "" : "s"} with tag "${recipeTag}".`,
+          };
+        }
+      } else if (searchType === "ingredient" && recipeIngredient?.trim()) {
+        recipes = this.recipeService.searchRecipesByIngredient(
+          recipeIngredient.trim(),
+        );
+
+        if (recipes.length === 0) {
+          alert = {
+            alertType: "warning",
+            title: "No Results",
+            message: `No recipes found containing ingredient "${recipeIngredient}".`,
+          };
+        } else {
+          alert = {
+            alertType: "success",
+            title: "Search Results",
+            message: `Found ${recipes.length} recipe${recipes.length === 1 ? "" : "s"} containing ingredient "${recipeIngredient}".`,
           };
         }
       } else {
@@ -186,8 +205,9 @@ export class RecipeRoute extends BaseRoute {
         </div>
         ${recipes.map((recipe: ReadRecipeProps) => ReadRecipe(recipe)).join("")}`,
         {
-          headers: recipes.length === 0 ? { "HX-Trigger": "recipeSearchFailed" } : {},
-        }
+          headers:
+            recipes.length === 0 ? { "HX-Trigger": "recipeSearchFailed" } : {},
+        },
       );
     } catch (error) {
       console.error("Error searching recipes:", error);
@@ -203,7 +223,7 @@ export class RecipeRoute extends BaseRoute {
         </div>`,
         {
           headers: { "HX-Trigger": "recipeSearchFailed" },
-        }
+        },
       );
     }
   }

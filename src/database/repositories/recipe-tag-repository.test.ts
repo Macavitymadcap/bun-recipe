@@ -335,7 +335,7 @@ describe("RecipeTagRepository", () => {
     });
   });
 
-  describe("getByRecipeId", () => {
+  describe("readByRecipeId", () => {
     test("should return all recipe-tag relationships for a given recipe", () => {
       // Arrange
       const recipe = recipeRepository.create({
@@ -360,7 +360,7 @@ describe("RecipeTagRepository", () => {
       });
 
       // Act
-      const result = recipeTagRepository.getByRecipeId(recipe.id);
+      const result = recipeTagRepository.readByRecipeId(recipe.id);
 
       // Assert
       expect(result).toBeArrayOfSize(3);
@@ -375,14 +375,14 @@ describe("RecipeTagRepository", () => {
       }) as RecipeEntity;
 
       // Act
-      const result = recipeTagRepository.getByRecipeId(recipe.id);
+      const result = recipeTagRepository.readByRecipeId(recipe.id);
 
       // Assert
       expect(result).toBeArrayOfSize(0);
     });
   });
 
-  describe("getByTagId", () => {
+  describe("readByTagId", () => {
     test("should return all recipe-tag relationships for a given tag", () => {
       // Arrange
       const tag = tagRepository.create({ name: "Healthy" }) as TagEntity;
@@ -413,7 +413,7 @@ describe("RecipeTagRepository", () => {
       });
 
       // Act
-      const result = recipeTagRepository.getByTagId(tag.id);
+      const result = recipeTagRepository.readByTagId(tag.id);
 
       // Assert
       expect(result).toBeArrayOfSize(3);
@@ -425,7 +425,7 @@ describe("RecipeTagRepository", () => {
       const unusedTag = tagRepository.create({ name: "Unused" }) as TagEntity;
 
       // Act
-      const result = recipeTagRepository.getByTagId(unusedTag.id);
+      const result = recipeTagRepository.readByTagId(unusedTag.id);
 
       // Assert
       expect(result).toBeArrayOfSize(0);
@@ -462,14 +462,14 @@ describe("RecipeTagRepository", () => {
       recipeTagRepository.create({ recipe_id: recipe.id, tag_id: tag3.id });
 
       // Verify tags exist before deletion
-      expect(recipeTagRepository.getByRecipeId(recipe.id)).toBeArrayOfSize(3);
+      expect(recipeTagRepository.readByRecipeId(recipe.id)).toBeArrayOfSize(3);
 
       // Act
       const result = recipeTagRepository.deleteByRecipeId(recipe.id);
 
       // Assert
       expect(result).toBe(true);
-      expect(recipeTagRepository.getByRecipeId(recipe.id)).toBeArrayOfSize(0);
+      expect(recipeTagRepository.readByRecipeId(recipe.id)).toBeArrayOfSize(0);
     });
 
     test("should only delete tags for specified recipe", () => {
@@ -492,12 +492,12 @@ describe("RecipeTagRepository", () => {
 
       // Assert
       expect(result).toBe(true);
-      expect(recipeTagRepository.getByRecipeId(recipe1.id)).toBeArrayOfSize(0);
-      expect(recipeTagRepository.getByRecipeId(recipe2.id)).toBeArrayOfSize(1);
+      expect(recipeTagRepository.readByRecipeId(recipe1.id)).toBeArrayOfSize(0);
+      expect(recipeTagRepository.readByRecipeId(recipe2.id)).toBeArrayOfSize(1);
     });
   });
 
-  describe("findByRecipeAndTag", () => {
+  describe("readByRecipeAndTag", () => {
     let testRecipe: RecipeEntity;
     let testTag: TagEntity;
 
@@ -517,7 +517,7 @@ describe("RecipeTagRepository", () => {
       }) as RecipeTagEntity;
 
       // Act
-      const result = recipeTagRepository.findByRecipeAndTag(
+      const result = recipeTagRepository.readByRecipeAndTag(
         testRecipe.id,
         testTag.id,
       );
@@ -531,7 +531,7 @@ describe("RecipeTagRepository", () => {
 
     test("should return null when relationship does not exist", () => {
       // Act
-      const result = recipeTagRepository.findByRecipeAndTag(
+      const result = recipeTagRepository.readByRecipeAndTag(
         testRecipe.id,
         testTag.id,
       );
@@ -542,12 +542,12 @@ describe("RecipeTagRepository", () => {
 
     test("should return null for non-existent recipe or tag ids", () => {
       // Act
-      const result1 = recipeTagRepository.findByRecipeAndTag(999, testTag.id);
-      const result2 = recipeTagRepository.findByRecipeAndTag(
+      const result1 = recipeTagRepository.readByRecipeAndTag(999, testTag.id);
+      const result2 = recipeTagRepository.readByRecipeAndTag(
         testRecipe.id,
         999,
       );
-      const result3 = recipeTagRepository.findByRecipeAndTag(999, 999);
+      const result3 = recipeTagRepository.readByRecipeAndTag(999, 999);
 
       // Assert
       expect(result1).toBeNull();

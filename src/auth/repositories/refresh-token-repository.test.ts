@@ -254,7 +254,7 @@ describe("RefreshTokenRepository", () => {
     });
   });
 
-  describe("findByTokenHash", () => {
+  describe("readByTokenHash", () => {
     test("should find token by hash", () => {
       // Arrange
       const tokenHash = "unique_token_hash";
@@ -266,7 +266,7 @@ describe("RefreshTokenRepository", () => {
       );
 
       // Act
-      const result = refreshTokenRepository.findByTokenHash(tokenHash);
+      const result = refreshTokenRepository.readByTokenHash(tokenHash);
 
       // Assert
       expect(result).not.toBeNull();
@@ -276,7 +276,7 @@ describe("RefreshTokenRepository", () => {
 
     test("should return null when token hash not found", () => {
       // Act
-      const result = refreshTokenRepository.findByTokenHash("notfound");
+      const result = refreshTokenRepository.readByTokenHash("notfound");
 
       // Assert
       expect(result).toBeNull();

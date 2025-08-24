@@ -1,4 +1,3 @@
-
 dialog,
 dialog.card {
   margin: auto;
@@ -30,19 +29,19 @@ dialog::backdrop {
     margin: 5vh auto; /* Add some margin from top/bottom */
     overflow-y: auto; /* Enable scrolling */
   }
-  
+
   /* Make sure dialog content doesn't overflow */
   dialog .card-body {
     max-height: calc(90vh - 120px); /* Account for header and footer */
     overflow-y: auto;
   }
-  
+
   /* Ensure form fieldsets are properly sized */
   dialog fieldset {
     width: 100%;
     box-sizing: border-box;
   }
-  
+
   /* Make textareas more mobile-friendly */
   dialog textarea {
     min-height: 80px; /* Reduce from 100px on mobile */
@@ -57,7 +56,7 @@ dialog::backdrop {
     margin: 2.5vh auto;
     padding: var(--space-xs);
   }
-  
+
   dialog .card-body {
     max-height: calc(95vh - 100px);
   }

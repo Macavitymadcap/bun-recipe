@@ -81,6 +81,13 @@ export class CooksNoteRepository extends BaseRepository<CooksNoteEntity> {
     return this.read(entity.id);
   }
 
+  readByRecipeId(recipeId: number): CooksNoteEntity[] {
+    return this.dbContext.query<CooksNoteEntity>(
+      `SELECT * FROM cooks_notes WHERE recipe_id = $recipe_id;`,
+      { $recipe_id: recipeId },
+    );
+  }
+
   delete(id: number): boolean {
     return this.dbContext.transaction(() => {
       const existing = this.read(id);
@@ -96,21 +103,14 @@ export class CooksNoteRepository extends BaseRepository<CooksNoteEntity> {
     });
   }
 
-  getByRecipeId(recipeId: number): CooksNoteEntity[] {
-    return this.dbContext.query<CooksNoteEntity>(
-      `SELECT * FROM cooks_notes WHERE recipe_id = $recipe_id;`,
-      { $recipe_id: recipeId },
-    );
-  }
-
   deleteByRecipeId(recipeId: number): boolean {
-    if (this.getByRecipeId(recipeId).length === 0) return false;
+    if (this.readByRecipeId(recipeId).length === 0) return false;
 
     this.dbContext.queryOne(
       `DELETE FROM cooks_notes WHERE recipe_id = $recipe_id;`,
       { $recipe_id: recipeId },
     );
 
-    return this.getByRecipeId(recipeId).length === 0;
+    return this.readByRecipeId(recipeId).length === 0;
   }
 }

@@ -296,7 +296,7 @@ describe("IngredientRepository", () => {
     });
   });
 
-  describe("getByRecipeId", () => {
+  describe("readByRecipeId", () => {
     test("should return all Ingredients that have the given recipe_id", () => {
       // Arrange
       const recipeId = 30;
@@ -325,7 +325,7 @@ describe("IngredientRepository", () => {
       );
 
       // Act
-      const result = ingredientRepository.getByRecipeId(recipeId);
+      const result = ingredientRepository.readByRecipeId(recipeId);
 
       // Assert
       expect(result).toBeArrayOfSize(3);
@@ -337,7 +337,7 @@ describe("IngredientRepository", () => {
       const nonExistantRecipeId = 50;
 
       // Act
-      const result = ingredientRepository.getByRecipeId(nonExistantRecipeId);
+      const result = ingredientRepository.readByRecipeId(nonExistantRecipeId);
 
       // Assert
       expect(result).toBeArrayOfSize(0);
@@ -380,7 +380,8 @@ describe("IngredientRepository", () => {
       expect(result).toBe(true);
 
       // Verify deletion of Ingredients
-      const remainingIngredients = ingredientRepository.getByRecipeId(recipeId);
+      const remainingIngredients =
+        ingredientRepository.readByRecipeId(recipeId);
       expect(remainingIngredients).toBeArrayOfSize(0);
     });
   });
