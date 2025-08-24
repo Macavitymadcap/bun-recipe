@@ -11,7 +11,7 @@ export const CaloriesPerPortionInput = ({
       <input
         type="number"
         id="calories"
-        name="calories_per_portion"
+        name="calories_per_serving"
         placeholder="Optional"
         value={value ?? ""}
       />

@@ -131,7 +131,7 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
         <div className="grid">
           <RecipeNameInput value={recipe.name} />
           <ServingsInput value={recipe.servings} />
-          <CaloriesPerPortionInput value={recipe.calories_per_portion} />
+          <CaloriesPerPortionInput value={recipe.calories_per_serving} />
           <PreperationTimeInput value={recipe.preparation_time} />
           <CookingTimeInput value={recipe.cooking_time} />
         </div>

@@ -27,7 +27,7 @@ export interface CompleteRecipe extends RecipeEntity, RecipeConstiuents {}
 export interface CreateRecipeData {
   name: string;
   servings: string;
-  calories_per_portion?: number;
+  calories_per_serving?: number;
   preparation_time?: string;
   cooking_time?: string;
   ingredients: Array<{
@@ -85,7 +85,7 @@ export class RecipeService {
       const recipe = this.recipeRepository.create({
         name: data.name,
         servings: data.servings,
-        calories_per_portion: data.calories_per_portion,
+        calories_per_serving: data.calories_per_serving,
         preparation_time: data.preparation_time,
         cooking_time: data.cooking_time,
       });
@@ -152,7 +152,7 @@ export class RecipeService {
         ...existingRecipe,
         name: data.name,
         servings: data.servings,
-        calories_per_portion: data.calories_per_portion,
+        calories_per_serving: data.calories_per_serving,
         preparation_time: data.preparation_time,
         cooking_time: data.cooking_time,
       });

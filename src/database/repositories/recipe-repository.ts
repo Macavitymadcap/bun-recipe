@@ -3,7 +3,7 @@ import { BaseEntity, BaseRepository } from "./base-repository";
 export interface RecipeEntity extends BaseEntity {
   name: string;
   servings: string;
-  calories_per_portion?: number;
+  calories_per_serving?: number;
   preparation_time?: string;
   cooking_time?: string;
   created_at: string;
@@ -25,7 +25,7 @@ export class RecipeRepository extends BaseRepository<RecipeEntity> {
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       servings TEXT NOT NULL,
-      calories_per_portion INTEGER,
+      calories_per_serving INTEGER,
       preparation_time TEXT,
       cooking_time TEXT,
       created_at TEXT NOT NULL,
@@ -40,12 +40,12 @@ export class RecipeRepository extends BaseRepository<RecipeEntity> {
     const now = new Date().toISOString();
 
     this.dbContext.queryOne(
-      `INSERT INTO recipes (name, servings, calories_per_portion, preparation_time, cooking_time, created_at, updated_at) 
-         VALUES ($name, $servings, $calories_per_portion, $preparation_time, $cooking_time, $created_at, $updated_at);`,
+      `INSERT INTO recipes (name, servings, calories_per_serving, preparation_time, cooking_time, created_at, updated_at) 
+         VALUES ($name, $servings, $calories_per_serving, $preparation_time, $cooking_time, $created_at, $updated_at);`,
       {
         $name: entity.name,
         $servings: entity.servings,
-        $calories_per_portion: entity.calories_per_portion || null,
+        $calories_per_serving: entity.calories_per_serving || null,
         $preparation_time: entity.preparation_time || null,
         $cooking_time: entity.cooking_time || null,
         $created_at: now,
@@ -86,7 +86,7 @@ export class RecipeRepository extends BaseRepository<RecipeEntity> {
       `UPDATE recipes SET
         name = $name,
         servings = $servings,
-        calories_per_portion = $calories_per_portion,
+        calories_per_serving = $calories_per_serving,
         preparation_time = $preparation_time,
         cooking_time = $cooking_time,
         updated_at = $updated_at
@@ -95,7 +95,7 @@ export class RecipeRepository extends BaseRepository<RecipeEntity> {
         $id: entity.id,
         $name: entity.name,
         $servings: entity.servings,
-        $calories_per_portion: entity.calories_per_portion || null,
+        $calories_per_serving: entity.calories_per_serving || null,
         $preparation_time: entity.preparation_time || null,
         $cooking_time: entity.cooking_time || null,
         $updated_at: now,

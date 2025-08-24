@@ -28,7 +28,7 @@ describe("RecipeService", () => {
     id: 1,
     name: "Test Recipe",
     servings: "4-6",
-    calories_per_portion: 350,
+    calories_per_serving: 350,
     preparation_time: "30 minutes",
     cooking_time: "1 hour",
     created_at: "2025-01-01T00:00:00.000Z",
@@ -209,7 +209,7 @@ describe("RecipeService", () => {
     const createRecipeData: CreateRecipeData = {
       name: "New Recipe",
       servings: "4",
-      calories_per_portion: 300,
+      calories_per_serving: 300,
       preparation_time: "20 minutes",
       cooking_time: "45 minutes",
       ingredients: [
@@ -244,7 +244,7 @@ describe("RecipeService", () => {
       expect(mockRecipeRepository.create).toHaveBeenCalledWith({
         name: "New Recipe",
         servings: "4",
-        calories_per_portion: 300,
+        calories_per_serving: 300,
         preparation_time: "20 minutes",
         cooking_time: "45 minutes",
       });
@@ -358,7 +358,7 @@ describe("RecipeService", () => {
     const updateRecipeData: CreateRecipeData = {
       name: "Updated Recipe",
       servings: "6-8",
-      calories_per_portion: 400,
+      calories_per_serving: 400,
       preparation_time: "40 minutes",
       cooking_time: "1.5 hours",
       ingredients: [

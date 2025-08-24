@@ -295,8 +295,8 @@ export class RecipeRoute extends BaseRoute {
     // Parse basic fields
     const name = formData.get("name") as string;
     const servings = formData.get("servings") as string;
-    const calories_per_portion = formData.get("calories_per_portion")
-      ? parseInt(formData.get("calories_per_portion") as string)
+    const calories_per_serving = formData.get("calories_per_serving")
+      ? parseInt(formData.get("calories_per_serving") as string)
       : undefined;
     const preparation_time =
       (formData.get("preparation_time") as string) || undefined;
@@ -371,7 +371,7 @@ export class RecipeRoute extends BaseRoute {
     return {
       name,
       servings,
-      calories_per_portion,
+      calories_per_serving,
       preparation_time,
       cooking_time,
       ingredients,

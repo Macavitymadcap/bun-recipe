@@ -5,7 +5,7 @@ interface ReadRecipeProps {
   id: number;
   name: string;
   servings: string;
-  calories_per_portion?: number;
+  calories_per_serving?: number;
   preparation_time?: string;
   cooking_time?: string;
   ingredients: Array<{
@@ -44,7 +44,7 @@ const ReadRecipe = ({
   id,
   name,
   servings,
-  calories_per_portion,
+  calories_per_serving,
   preparation_time,
   cooking_time,
   ingredients,
@@ -94,9 +94,9 @@ const ReadRecipe = ({
           <div className="col-6">
             <strong>Servings:</strong> {servings}
           </div>
-          {calories_per_portion && (
+          {calories_per_serving && (
             <div className="col-6">
-              <strong>Calories per portion:</strong> {calories_per_portion}
+              <strong>Calories per portion:</strong> {calories_per_serving}
             </div>
           )}
           {preparation_time && (
