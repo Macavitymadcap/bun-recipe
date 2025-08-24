@@ -229,6 +229,14 @@ section {
   grid-column: span 12;
 }
 
+.col-push-right {
+  margin-left: auto !important;
+}
+
+.col-push-left {
+  margin-right: auto !important;
+}
+
 /* Flex */
 .d-flex {
   display: flex;

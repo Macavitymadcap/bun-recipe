@@ -25,7 +25,7 @@ const DeleteRecipeForm = ({ recipeId, recipeName }: DeleteRecipeFormProps) => {
 
         <span class="col-1">
           <button
-            class="btn btn-icon btn-outline-danger col-1"
+            class="btn btn-icon btn-outline-danger col-1 col-push-right"
             type="button"
             title="Cancel Task Deletion"
             x-on:click="htmx.find('dialog').close()"

@@ -27,7 +27,7 @@ export const SearchRecipesForm = ({ availableTags }: SearchRecipesFormProps) => 
         <button
           title="Cancel Search"
           type="button"
-          className="btn btn-icon btn-outline-danger col-1"
+          className="btn btn-icon btn-outline-danger col-1 col-push-right"
           x-on:click="htmx.find('dialog').close();"
         >
           <CloseIcon />

@@ -118,7 +118,7 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
         <h2 className="text-center col-10">Update Recipe</h2>
 
         <button
-          className="btn btn-icon btn-outline-danger col-1"
+          className="btn btn-icon btn-outline-danger col-1 col-push-right"
           type="button"
           title="Cancel Recipe Update"
           x-on:click="htmx.find('dialog').close()"

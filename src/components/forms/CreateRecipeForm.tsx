@@ -35,7 +35,7 @@ export const CreateRecipeForm = ({ availableTags }: CreateRecipeFormProps) => {
         <h2 className="text-center col-10">Add New Recipe</h2>
 
         <button
-          className="btn btn-icon btn-outline-danger col-1"
+          className="btn btn-icon btn-outline-danger col-1 col-push-right"
           type="button"
           title="Cancel Recipe Creation"
           x-on:click="htmx.find('dialog').close()"
