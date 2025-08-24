@@ -1,13 +1,13 @@
-interface CaloriesPerPortionInputProps {
+interface CaloriesPerServingInputProps {
   value?: number;
 }
 
-export const CaloriesPerPortionInput = ({
+export const CaloriesPerServingInput = ({
   value,
-}: CaloriesPerPortionInputProps) => {
+}: CaloriesPerServingInputProps) => {
   return (
     <div className="form-group col-6">
-      <label htmlFor="calories">Calories per Portion</label>
+      <label htmlFor="calories">Calories per serving</label>
       <input
         type="number"
         id="calories"

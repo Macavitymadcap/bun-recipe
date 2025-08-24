@@ -1,6 +1,6 @@
 import { TagEntity } from "../../database/repositories/tag-repository";
 import { CloseIcon } from "../icons/CloseIcon";
-import { CaloriesPerPortionInput } from "./input-groupings/CaloriesPerPortionInput";
+import { CaloriesPerServingInput } from "./input-groupings/CaloriesPerServingInput";
 import { CookingTimeInput } from "./input-groupings/CookingTimeInput";
 import { CooksNotesFieldset } from "./input-groupings/CooksNotesFieldset";
 import { IngredientsFieldset } from "./input-groupings/IngredientsFieldset";
@@ -48,7 +48,7 @@ export const CreateRecipeForm = ({ availableTags }: CreateRecipeFormProps) => {
         <div className="grid">
           <RecipeNameInput />
           <ServingsInput />
-          <CaloriesPerPortionInput />
+          <CaloriesPerServingInput />
           <PreperationTimeInput />
           <CookingTimeInput />
         </div>

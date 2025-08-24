@@ -3,7 +3,7 @@ import { CompleteRecipe } from "../../database/services/recipe-service";
 import { TagEntity } from "../../database/repositories/tag-repository";
 import { RecipeNameInput } from "./input-groupings/RecipeNameInput";
 import { ServingsInput } from "./input-groupings/ServingsInput";
-import { CaloriesPerPortionInput } from "./input-groupings/CaloriesPerPortionInput";
+import { CaloriesPerServingInput } from "./input-groupings/CaloriesPerServingInput";
 import { PreperationTimeInput } from "./input-groupings/PreperationTimeInput";
 import { CookingTimeInput } from "./input-groupings/CookingTimeInput";
 import { TagInput } from "./input-groupings/TagInput";
@@ -131,7 +131,7 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
         <div className="grid">
           <RecipeNameInput value={recipe.name} />
           <ServingsInput value={recipe.servings} />
-          <CaloriesPerPortionInput value={recipe.calories_per_serving} />
+          <CaloriesPerServingInput value={recipe.calories_per_serving} />
           <PreperationTimeInput value={recipe.preparation_time} />
           <CookingTimeInput value={recipe.cooking_time} />
         </div>
