@@ -62,22 +62,16 @@ const ReadRecipe = ({
     <article {...props}>
       {/* Recipe Header with Actions */}
       <div className="content grid">
-        <span className="col-9 col-push-left">
-          <h2 className="card-header col-9 push -left">{name}</h2>
-        </span>
-
-        <span className="col-1 push-right">
+        <span className="col-10 col-push-left">
           <a
             href={`/recipe/${id}/view`}
             target="_blank"
             title="Open in new page"
-            className="btn btn-icon btn-outline-primary"
 
           >
-            <MaximiseIcon />
+            <h2 className="card-header col-9 push -left">{name}</h2>
           </a>
         </span>
-
         <span className="col-1 col-push-right">
           <button
             title="Update Recipe"
