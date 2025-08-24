@@ -61,7 +61,10 @@ const ReadRecipe = ({
     <article {...props}>
       {/* Recipe Header with Actions */}
       <div className="content grid">
-        <span className="col-1">
+        <span className="col-10 col-push-left">
+          <h2 className="card-header text-center">{name}</h2>
+        </span>
+        <span className="col-1 col-push-right">
           <button
             title="Update Recipe"
             className="btn btn-icon btn-outline-secondary"
@@ -72,10 +75,7 @@ const ReadRecipe = ({
             <UpdateIcon />
           </button>
         </span>
-        <span className="col-10">
-          <h2 className="card-header text-center">{name}</h2>
-        </span>
-        <div className="col-1">
+        <div className="col-1 col-push-right">
           <button
             title="Delete Recipe"
             className="btn btn-icon btn-outline-danger"
