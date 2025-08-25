@@ -23,11 +23,11 @@ export class RecipeRoute extends BaseRoute {
 
   protected initializeRoutes(): void {
     this.app.post("/", this.createRecipe.bind(this));
-    this.app.get("/:id", this.getRecipeById.bind(this));
     this.app.get("/", this.getAllRecipes.bind(this));
+    this.app.post("/search", this.searchRecipes.bind(this));
+    this.app.get("/:id", this.getRecipeById.bind(this));
     this.app.put("/:id", this.updateRecipe.bind(this));
     this.app.delete("/:id", this.deleteRecipe.bind(this));
-    this.app.post("/search", this.searchRecipes.bind(this));
   }
 
   private async createRecipe(context: Context): Promise<Response> {

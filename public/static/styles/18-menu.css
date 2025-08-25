@@ -21,19 +21,3 @@ menu li.form-group {
   width: auto;
   justify-content: center;
 }
-
-#theme-switch {
-  background: linear-gradient(
-    to right,
-    var(--colour-surface-highest),
-    var(--colour-surface-high)
-  );
-}
-
-#theme-switch:checked {
-  background: linear-gradient(
-    to left,
-    var(--colour-surface-highest),
-    var(--colour-surface-lowest)
-  );
-}
