@@ -1,8 +1,8 @@
-interface CookingTimeInputProps {
+interface CookingTimeFormGroupProps {
   value?: string;
 }
 
-export const CookingTimeInput = ({ value }: CookingTimeInputProps) => {
+export const CookingTimeFormGroup = ({ value }: CookingTimeFormGroupProps) => {
   return (
     <div className="form-group col-6">
       <label htmlFor="cook-time">Cooking Time</label>

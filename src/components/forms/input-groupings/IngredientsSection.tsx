@@ -1,20 +1,37 @@
+import { AddIcon } from "../../icons/AddIcon";
 import { DeleteIcon } from "../../icons/DeleteIcon";
 
-export interface IngredientFieldsetProps {
+export interface IngredientSectionProps {
   isUpdateForm: boolean;
 }
 
-export const IngredientsFieldset = ({
+export const IngredientsSection = ({
   isUpdateForm,
-}: IngredientFieldsetProps) => {
+}: IngredientSectionProps) => {
   const quantityModel = {
     "x-model.number": "ingredient.quantity",
   };
 
   return (
-    <fieldset className={isUpdateForm ? "secondary" : "success"}>
-      <legend>Ingredients</legend>
-      <ul id="ingredients-list" x-show="ingredients.length > 0">
+    <section>
+      <header className="grid">
+        <h3 className="col-11">Ingredients</h3>
+
+        <button
+          type="button"
+          title="Add Ingredient"
+          className="btn btn-icon btn-outline-success col-1 col-push-right"
+          x-on:click="addIngredient()"
+        >
+          <AddIcon />
+        </button>
+      </header>
+
+      <ul
+        id="ingredients-list"
+        className="unstyled"
+        x-show="ingredients.length > 0"
+      >
         <template x-for="(ingredient, index) in ingredients" x-bind:key="index">
           <li x-data="{ ingredient }" className="mb-3">
             <div className="grid">
@@ -26,13 +43,12 @@ export const IngredientsFieldset = ({
                       x-text="index === 0 ? 'Quantity' : ''"
                     ></label>
                     <input
-                      type="number"
-                      step="0.01"
+                      type="text"
+                      list="fractions"
                       x-bind:id="`ingredient-quantity-${index}`"
                       x-bind:name="`ingredients[${index}][quantity]`"
                       {...quantityModel}
                       placeholder="2"
-                      required
                     />
                   </>
                 ) : (
@@ -41,16 +57,22 @@ export const IngredientsFieldset = ({
                       Quantity
                     </label>
                     <input
-                      type="number"
-                      step="0.01"
+                      type="text"
+                      list="fractions"
                       x-bind:id="'ingredient-quantity-' + index"
                       x-bind:name="'ingredients[' + index + '][quantity]'"
                       {...quantityModel}
                       placeholder="2"
-                      required
                     />
                   </>
                 )}
+                <datalist id="fractions">
+                  <option>&#x2154;</option>
+                  <option>&frac12;</option>
+                  <option>&#8531;</option>
+                  <option>&frac14;</option>
+                  <option>&#8539;</option>
+                </datalist>
               </div>
 
               <div className="form-group col-3">
@@ -80,6 +102,19 @@ export const IngredientsFieldset = ({
                     />
                   </>
                 )}
+                <datalist id="units">
+                  <option>ml</option>
+                  <option>l</option>
+                  <option>g</option>
+                  <option>kg</option>
+                  <option>tsp</option>
+                  <option>tsps</option>
+                  <option>tbsp</option>
+                  <option>tbsps</option>
+                  <option>cup</option>
+                  <option>cups</option>
+                  <option></option>
+                </datalist>
               </div>
 
               <div className="form-group col-5">
@@ -138,19 +173,9 @@ export const IngredientsFieldset = ({
         className="text-center text-surface-low mb-3"
       >
         <em>
-          No ingredients added yet. Click "Add Ingredient" to get started.
+          No ingredients added yet. Click add button above to get started.
         </em>
       </div>
-
-      <div className="wrapped-row">
-        <button
-          type="button"
-          className="btn btn-outline-success mt-3"
-          x-on:click="addIngredient()"
-        >
-          Add Ingredient
-        </button>
-      </div>
-    </fieldset>
+    </section>
   );
 };

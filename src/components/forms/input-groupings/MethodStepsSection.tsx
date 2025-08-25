@@ -1,16 +1,27 @@
+import { AddIcon } from "../../icons/AddIcon";
 import { DeleteIcon } from "../../icons/DeleteIcon";
 
-interface MethodStepsFieldsetProps {
+interface MethodStepsSectionProps {
   isUpdateForm: boolean;
 }
 
-export const MethodStepsFieldset = ({
+export const MethodStepsSection = ({
   isUpdateForm,
-}: MethodStepsFieldsetProps) => {
+}: MethodStepsSectionProps) => {
   return (
-    <fieldset className={isUpdateForm ? "secondary" : "success"}>
-      <legend>Method</legend>
-      <ol id="method-list" x-show="methodSteps.length > 0">
+    <section>
+      <header className="grid">
+        <h3 className="col-11">Method</h3>
+        <button
+          type="button"
+          className="btn btn-icon btn-outline-success"
+          x-on:click="addMethodStep()"
+        >
+          <AddIcon />
+        </button>
+      </header>
+
+      <ol id="method-list" className="unstyled" x-show="methodSteps.length > 0">
         <template x-for="(step, index) in methodSteps" x-bind:key="index">
           <li x-data="{ step }" className="mb-3">
             <div className="grid">
@@ -68,16 +79,6 @@ export const MethodStepsFieldset = ({
       >
         <em>No method steps added yet. Click "Add Step" to get started.</em>
       </div>
-
-      <div className="wrapped-row">
-        <button
-          type="button"
-          className="btn btn-outline-success mt-3"
-          x-on:click="addMethodStep()"
-        >
-          Add Step
-        </button>
-      </div>
-    </fieldset>
+    </section>
   );
 };

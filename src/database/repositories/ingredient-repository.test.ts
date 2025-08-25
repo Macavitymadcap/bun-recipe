@@ -17,7 +17,7 @@ const sampleIngredient = (
   overrides: Partial<Omit<IngredientEntity, "id">> = {},
 ): Omit<IngredientEntity, "id"> => ({
   recipe_id: 1,
-  quantity: 1,
+  quantity: "1",
   unit: "pinch",
   name: "salt",
   order_index: 1,
@@ -70,7 +70,7 @@ describe("IngredientRepository", () => {
       expect(result.id).toBeTypeOf("number");
       expect(result.id).toBeGreaterThan(0);
       expect(result.recipe_id).toBe(ingredientData.recipe_id);
-      expect(result.quantity).toBe(ingredientData.quantity);
+      expect(result.quantity).toBe(ingredientData.quantity!);
       expect(result.unit).toBe(ingredientData.unit!);
       expect(result.name).toBe(ingredientData.name);
     });
@@ -121,7 +121,7 @@ describe("IngredientRepository", () => {
       expect(result.id).toBe(createdIngredient.id);
       expect(result.name).toBe(ingredientData.name);
       expect(result.recipe_id).toBe(ingredientData.recipe_id);
-      expect(result.quantity).toBe(ingredientData.quantity);
+      expect(result.quantity).toBe(ingredientData.quantity!);
       expect(result.unit).toBe(ingredientData.unit!);
     });
 
@@ -176,7 +176,7 @@ describe("IngredientRepository", () => {
       ) as IngredientEntity;
       const updatedData: IngredientEntity = {
         ...originalIngredient,
-        quantity: 2,
+        quantity: "2",
         name: "Sugar",
       };
 
@@ -190,7 +190,7 @@ describe("IngredientRepository", () => {
       expect(result).not.toBeNull();
       expect(result.id).toBe(originalIngredient.id);
       expect(result.name).toBe(updatedData.name);
-      expect(result.quantity).toBe(updatedData.quantity);
+      expect(result.quantity).toBe(updatedData.quantity!);
       expect(result.unit).toBe(originalIngredient.unit!);
       expect(result.order_index).toBe(originalIngredient.order_index);
     });
@@ -221,7 +221,7 @@ describe("IngredientRepository", () => {
       const nonExistentIngredient: IngredientEntity = {
         id: 999,
         recipe_id: 999,
-        quantity: 5,
+        quantity: "5",
         name: "non-existant",
         order_index: 20,
       };
@@ -275,7 +275,7 @@ describe("IngredientRepository", () => {
       );
       ingredientRepository.create(
         sampleIngredient({
-          quantity: 150,
+          quantity: "150",
           unit: "g",
           name: "Minced Beef",
           order_index: 3,
@@ -364,7 +364,7 @@ describe("IngredientRepository", () => {
         sampleIngredient({ recipe_id: recipeId, unit: "bulb", name: "Garlic" }),
         sampleIngredient({
           recipe_id: recipeId,
-          quantity: 100,
+          quantity: "100",
           unit: "ml",
           name: "Chicken Stock",
         }),

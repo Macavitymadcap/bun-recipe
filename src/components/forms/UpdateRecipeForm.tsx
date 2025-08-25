@@ -1,15 +1,14 @@
-import { CloseIcon } from "../icons/CloseIcon";
 import { CompleteRecipe } from "../../database/services/recipe-service";
+import { RecipeNameFormGroup } from "./input-groupings/RecipeNameFormGroup";
+import { ServingsFormGroup } from "./input-groupings/ServingsFormGroup";
+import { CaloriesPerServingFormGroup } from "./input-groupings/CaloriesPerServingFormGroup";
+import { PreperationTimeFormGroup } from "./input-groupings/PreperationTimeFormGroup";
+import { CookingTimeFormGroup } from "./input-groupings/CookingTimeFormGroup";
+import { TagFormGroup } from "./input-groupings/TagFormGroup";
+import { IngredientsSection } from "./input-groupings/IngredientsSection";
+import { MethodStepsSection } from "./input-groupings/MethodStepsSection";
+import { CooksNotesSection } from "./input-groupings/CooksNotesSection";
 import { TagEntity } from "../../database/repositories/tag-repository";
-import { RecipeNameInput } from "./input-groupings/RecipeNameInput";
-import { ServingsInput } from "./input-groupings/ServingsInput";
-import { CaloriesPerServingInput } from "./input-groupings/CaloriesPerServingInput";
-import { PreperationTimeInput } from "./input-groupings/PreperationTimeInput";
-import { CookingTimeInput } from "./input-groupings/CookingTimeInput";
-import { TagInput } from "./input-groupings/TagInput";
-import { IngredientsFieldset } from "./input-groupings/IngredientsFieldset";
-import { MethodStepsFieldset } from "./input-groupings/MethodStepsFieldset";
-import { CooksNotesFieldset } from "./input-groupings/CooksNotesFieldset";
 
 interface UpdateRecipeFormProps {
   recipe: CompleteRecipe;
@@ -30,11 +29,6 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
     tags: recipe.tags,
   };
 
-  const hxOnUpdateSuccessful = {
-    "hx-on:htmx:after-request":
-      "if(event.detail.successful) { htmx.find('dialog').close(); }",
-  };
-
   const resetAction = {
     "x-on:click.prevent": `
       ingredients = ${JSON.stringify(alpineData.ingredients)};
@@ -48,9 +42,8 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
     <form
       id="update-recipe-form"
       hx-put={`/recipe/${recipe.id}`}
-      hx-target={`#recipe-${recipe.id}`}
-      hx-swap="outerHTML"
-      {...hxOnUpdateSuccessful}
+      hx-target="#main-content"
+      hx-swap="innerHTML"
       x-data={`{
         ingredients: ${JSON.stringify(alpineData.ingredients)},
         methodSteps: ${JSON.stringify(alpineData.methodSteps)},
@@ -112,37 +105,22 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
         }
       }`}
     >
-      <section className="card-header grid">
-        <span className="col-1"></span>
+      <h2 className="text-center">Update Recipe</h2>
 
-        <h2 className="text-center col-10">Update Recipe</h2>
-
-        <button
-          className="btn btn-icon btn-outline-danger col-1 col-push-right"
-          type="button"
-          title="Cancel Recipe Update"
-          x-on:click="htmx.find('dialog').close()"
-        >
-          <CloseIcon />
-        </button>
-      </section>
-
-      <div className="card-body">
-        <div className="grid">
-          <RecipeNameInput value={recipe.name} />
-          <ServingsInput value={recipe.servings} />
-          <CaloriesPerServingInput value={recipe.calories_per_serving} />
-          <PreperationTimeInput value={recipe.preparation_time} />
-          <CookingTimeInput value={recipe.cooking_time} />
-        </div>
-
-        <TagInput availableTags={availableTags} />
-        <IngredientsFieldset isUpdateForm={true} />
-        <MethodStepsFieldset isUpdateForm={true} />
-        <CooksNotesFieldset isUpdateForm={true} />
+      <div className="grid">
+        <RecipeNameFormGroup value={recipe.name} />
+        <ServingsFormGroup value={recipe.servings} />
+        <CaloriesPerServingFormGroup value={recipe.calories_per_serving} />
+        <PreperationTimeFormGroup value={recipe.preparation_time} />
+        <CookingTimeFormGroup value={recipe.cooking_time} />
       </div>
 
-      <div className="card-footer wrapped-row">
+      <TagFormGroup availbaleTags={availableTags} />
+      <IngredientsSection isUpdateForm={true} />
+      <MethodStepsSection isUpdateForm={true} />
+      <CooksNotesSection isUpdateForm={true} />
+
+      <div className="wrapped-row">
         <button
           className="btn btn-outline-secondary"
           type="submit"
@@ -157,6 +135,17 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
           {...resetAction}
         >
           Reset
+        </button>
+
+        <button
+          className="btn btn-outline-danger"
+          type="button"
+          title="Cancel Recipe Update"
+          hx-get="/info/default"
+          hx-target="#main-content"
+          hx-swap="innerHTML"
+        >
+          Cancel
         </button>
       </div>
     </form>

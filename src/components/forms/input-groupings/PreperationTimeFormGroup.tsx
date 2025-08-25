@@ -1,8 +1,10 @@
-interface PreperationTimeInputProps {
+interface PreperationTimeFormGroupProps {
   value?: string;
 }
 
-export const PreperationTimeInput = ({ value }: PreperationTimeInputProps) => {
+export const PreperationTimeFormGroup = ({
+  value,
+}: PreperationTimeFormGroupProps) => {
   return (
     <div className="form-group col-6">
       <label htmlFor="prep-time">Preparation Time</label>

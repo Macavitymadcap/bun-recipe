@@ -1,8 +1,8 @@
-interface RecipeNameInputProps {
+interface RecipeNameFormGroupProps {
   value?: string;
 }
 
-export const RecipeNameInput = ({ value }: RecipeNameInputProps) => {
+export const RecipeNameFormGroup = ({ value }: RecipeNameFormGroupProps) => {
   return (
     <div className="form-group col-12">
       <label htmlFor="name">Recipe Name</label>

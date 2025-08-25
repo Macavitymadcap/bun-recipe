@@ -1,5 +1,5 @@
 import { Alert, AlertProps } from "../Alert";
-import { ReadRecipe, type ReadRecipeProps } from "../ReadRecipe";
+import { ReadRecipe, type ReadRecipeProps } from "../RecipeCard";
 
 export interface CreateRecipeResponseProps {
   alert: AlertProps;

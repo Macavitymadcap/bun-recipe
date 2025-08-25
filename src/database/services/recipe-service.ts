@@ -31,7 +31,7 @@ export interface CreateRecipeData {
   preparation_time?: string;
   cooking_time?: string;
   ingredients: Array<{
-    quantity: number;
+    quantity?: string;
     unit?: string;
     name: string;
   }>;

@@ -1,12 +1,13 @@
-import { TagEntity } from "../../../database/repositories/tag-repository";
 import { AddIcon } from "../../icons/AddIcon";
 import { CloseIcon } from "../../icons/CloseIcon";
+import { AvailableTagsDataList } from "../../AvailableTagsDatalist";
+import { TagEntity } from "../../../database/repositories/tag-repository";
 
-interface TagsInputProps {
-  availableTags: TagEntity[];
+interface TagFormGroupProps {
+  availbaleTags: TagEntity[];
 }
 
-export const TagInput = ({ availableTags }: TagsInputProps) => {
+export const TagFormGroup = ({availbaleTags}: TagFormGroupProps) => {
   const tagInput = {
     "x-on:keydown.enter.prevent": "addTag()",
   };
@@ -41,20 +42,14 @@ export const TagInput = ({ availableTags }: TagsInputProps) => {
           id="tagAutocomplete"
           name="tagAutoComplete"
           placeholder="Type to add tags..."
-          list="availableTags"
+          list="inputTags"
           x-model="currentTagInput"
           {...tagInput}
           x-on:input="handleTagInput($event)"
           className="col-11"
         />
 
-        <datalist id="availableTags">
-          {availableTags.map((tag, index) => (
-            <option key={index} value={tag.name}>
-              {tag.name}
-            </option>
-          ))}
-        </datalist>
+        <AvailableTagsDataList availableTags={availbaleTags} datalistId="inputTags" />
 
         {/* Hidden input for form submission */}
         <input

@@ -6,13 +6,13 @@ import { TagEntity } from "../../database/repositories/tag-repository";
 interface GetUpdateRecipeFormResponseProps {
   alert?: AlertProps;
   recipe?: CompleteRecipe;
-  availableTags: TagEntity[];
+  availableTags: TagEntity[]
 }
 
 export const GetUpdateRecipeFormResponse = ({
   alert,
   recipe,
-  availableTags,
+  availableTags
 }: GetUpdateRecipeFormResponseProps) => {
   const alertHtml = alert ? Alert(alert) : "";
   const formHtml = recipe ? UpdateRecipeForm({ recipe, availableTags }) : "";

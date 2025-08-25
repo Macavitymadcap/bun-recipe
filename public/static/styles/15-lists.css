@@ -1,7 +1,12 @@
 ul,
 ol {
-  margin-left: var(--space-xl);
-  margin-bottom: var(--space-md);
+  margin-left: var(--space-sm);
+  margin-bottom: var(--space-sm);
+}
+
+ul.unstyled,
+ol.unstyled {
+  list-style: none;
 }
 
 li {

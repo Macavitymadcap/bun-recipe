@@ -8,11 +8,10 @@ import { Container } from "./container";
 import { BaseRoute } from "./base-route";
 import { Alert, type AlertProps } from "../components/Alert";
 import { GetRecipeByIDResponse } from "../components/responses/GetRecipeByIdResponse";
-import { ReadRecipe, ReadRecipeProps } from "../components/ReadRecipe";
+import { ReadRecipe, ReadRecipeProps } from "../components/RecipeCard";
 import { CreateRecipeResponse } from "../components/responses/CreateRecipeResponse";
-import { UpdateRecipeResponse } from "../components/responses/UpdateRecipeResponse";
-import { FullPageError } from "../components/FullPageError";
-import { FullPageRecipe } from "../components/FullPageRecipe";
+import { CreateUpdateRecipeResponse } from "../components/responses/CreateUpdateRecipeResponse";
+import { SearchRecipesResponse } from "../components/responses/SearchRecipesResponse";
 
 export class RecipeRoute extends BaseRoute {
   private recipeService: RecipeService;
@@ -24,12 +23,11 @@ export class RecipeRoute extends BaseRoute {
 
   protected initializeRoutes(): void {
     this.app.post("/", this.createRecipe.bind(this));
-    this.app.get("/:id", this.getRecipeById.bind(this));
     this.app.get("/", this.getAllRecipes.bind(this));
-    this.app.get("/:id/view", this.getFullPageRecipe.bind(this));
+    this.app.post("/search", this.searchRecipes.bind(this));
+    this.app.get("/:id", this.getRecipeById.bind(this));
     this.app.put("/:id", this.updateRecipe.bind(this));
     this.app.delete("/:id", this.deleteRecipe.bind(this));
-    this.app.post("/search", this.searchRecipes.bind(this));
   }
 
   private async createRecipe(context: Context): Promise<Response> {
@@ -67,9 +65,9 @@ export class RecipeRoute extends BaseRoute {
         };
       }
 
-      return context.html(
-        CreateRecipeResponse({ alert, recipe: recipe || undefined }),
-      );
+      return context.html(CreateUpdateRecipeResponse({ alert }), {
+        headers: recipe ? { "HX-Trigger": "recipe-created" } : {},
+      });
     } catch (error) {
       console.error("Error creating recipe:", error);
       alert = {
@@ -78,7 +76,7 @@ export class RecipeRoute extends BaseRoute {
         message: `Failed to create recipe: ${(error as Error).message}`,
       };
 
-      return context.html(CreateRecipeResponse({ alert, recipe: undefined }));
+      return context.html(CreateUpdateRecipeResponse({ alert }));
     }
   }
 
@@ -128,31 +126,6 @@ export class RecipeRoute extends BaseRoute {
         message: "Failed to load recipes",
       };
       return context.html(Alert(alert));
-    }
-  }
-
-  private async getFullPageRecipe(context: Context): Promise<Response> {
-    console.log("Fetching full page recipe ...");
-    const id = this.parseRecipeIdFromContext(context);
-
-    try {
-      const recipe = this.recipeService.getCompleteRecipe(id);
-
-      if (!recipe){
-        const title = "Recipe Not Found";
-        const message = `No Recipe found with ID ${id}`;
-
-        return context.html(FullPageError({title, message}));
-      }
-
-      return context.html(FullPageRecipe(recipe));
-    } catch (error) {
-      console.error("Error fetching full page recipe", error);
-
-      const title = "Error Loading Recipe";
-      const message = `Error loading recipe: ${(error as Error).message}`;
-
-      return context.html(FullPageError({title, message}));
     }
   }
 
@@ -228,14 +201,7 @@ export class RecipeRoute extends BaseRoute {
       }
 
       return context.html(
-        `<div hx-swap-oob="beforeend:#alerts">
-          ${Alert(alert)}
-        </div>
-        ${recipes.map((recipe: ReadRecipeProps) => ReadRecipe(recipe)).join("")}`,
-        {
-          headers:
-            recipes.length === 0 ? { "HX-Trigger": "recipeSearchFailed" } : {},
-        },
+        SearchRecipesResponse({alert, recipes})
       );
     } catch (error) {
       console.error("Error searching recipes:", error);
@@ -246,12 +212,7 @@ export class RecipeRoute extends BaseRoute {
       };
 
       return context.html(
-        `<div hx-swap-oob="beforeend:#alerts">
-          ${Alert(alert)}
-        </div>`,
-        {
-          headers: { "HX-Trigger": "recipeSearchFailed" },
-        },
+        SearchRecipesResponse({alert, recipes: []})
       );
     }
   }
@@ -274,7 +235,7 @@ export class RecipeRoute extends BaseRoute {
             "Name, servings, at least one ingredient, and at least one method step are required.",
         };
 
-        return context.html(UpdateRecipeResponse({ alert, recipe: undefined }));
+        return context.html(CreateUpdateRecipeResponse({ alert}));
       }
 
       const recipe = this.recipeService.updateCompleteRecipe(id, formData);
@@ -293,9 +254,9 @@ export class RecipeRoute extends BaseRoute {
         };
       }
 
-      return context.html(
-        UpdateRecipeResponse({ alert: alert, recipe: recipe || undefined }),
-      );
+      return context.html(CreateUpdateRecipeResponse({alert}), {
+        headers: recipe ? { "HX-Trigger": "recipe-created" } : {},
+      });
     } catch (error) {
       console.error("Error updating recipe:", error);
       alert = {
@@ -304,7 +265,7 @@ export class RecipeRoute extends BaseRoute {
         message: `Failed to update recipe: ${(error as Error).message}`,
       };
 
-      return context.html(UpdateRecipeResponse({ alert, recipe: undefined }));
+      return context.html(CreateUpdateRecipeResponse({alert}));
     }
   }
 
@@ -327,7 +288,7 @@ export class RecipeRoute extends BaseRoute {
         };
 
     return context.html(Alert(alert), {
-      headers: { "HX-Trigger": "recipeDeleted" },
+      headers: { "HX-Trigger": "recipe-deleted" },
     });
   }
 
@@ -352,16 +313,16 @@ export class RecipeRoute extends BaseRoute {
 
     // Parse ingredients array
     const ingredients: Array<{
-      quantity: number;
+      quantity?: string;
       unit?: string;
       name: string;
     }> = [];
     let ingredientIndex = 0;
 
     while (formData.has(`ingredients[${ingredientIndex}][name]`)) {
-      const quantity = parseFloat(
-        formData.get(`ingredients[${ingredientIndex}][quantity]`) as string,
-      );
+      const quantity =
+        (formData.get(`ingredients[${ingredientIndex}][quantity]`) as string) ||
+        undefined;
       const unit =
         (formData.get(`ingredients[${ingredientIndex}][unit]`) as string) ||
         undefined;
@@ -369,9 +330,9 @@ export class RecipeRoute extends BaseRoute {
         `ingredients[${ingredientIndex}][name]`,
       ) as string;
 
-      if (ingredientName && !isNaN(quantity)) {
+      if (ingredientName) {
         ingredients.push({
-          quantity,
+          quantity: quantity || undefined,
           unit: unit || undefined,
           name: ingredientName,
         });

@@ -1,16 +1,26 @@
+import { AddIcon } from "../../icons/AddIcon";
 import { DeleteIcon } from "../../icons/DeleteIcon";
 
-interface CooksNotesFieldsetProps {
+interface CooksNotesSectionProps {
   isUpdateForm: boolean;
 }
 
-export const CooksNotesFieldset = ({
-  isUpdateForm,
-}: CooksNotesFieldsetProps) => {
+export const CooksNotesSection = ({ isUpdateForm }: CooksNotesSectionProps) => {
   return (
-    <fieldset className={isUpdateForm ? "secondary" : "success"}>
-      <legend>Cook's Notes</legend>
-      <ul id="notes-list" x-show="cooksNotes.length > 0">
+    <section>
+      <header className="grid">
+        <h3 className="col-11">Cook's Notes</h3>
+        <button
+          type="button"
+          title="Add Cook's Note"
+          className="btn btn-icon btn-outline-success col1 col-push-right"
+          x-on:click="addCooksNote()"
+        >
+          <AddIcon />
+        </button>
+      </header>
+
+      <ul id="notes-list" className="unstyled" x-show="cooksNotes.length > 0">
         <template x-for="(note, index) in cooksNotes" x-bind:key="index">
           <li x-data="{ note }" className="mb-3">
             <div className="grid">
@@ -60,18 +70,8 @@ export const CooksNotesFieldset = ({
         x-show="cooksNotes.length === 0"
         className="text-center text-surface-low mb-3"
       >
-        <em>No notes added yet. Click "Add Note" to get started.</em>
+        <em>No notes added yet. Click the add button above to get started.</em>
       </div>
-
-      <div className="wrapped-row">
-        <button
-          type="button"
-          className="btn btn-outline-success mt-3"
-          x-on:click="addCooksNote()"
-        >
-          Add Note
-        </button>
-      </div>
-    </fieldset>
+    </section>
   );
 };

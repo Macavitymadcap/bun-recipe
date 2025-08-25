@@ -1,10 +1,10 @@
-interface CaloriesPerServingInputProps {
+interface CaloriesPerServingFormGroupProps {
   value?: number;
 }
 
-export const CaloriesPerServingInput = ({
+export const CaloriesPerServingFormGroup = ({
   value,
-}: CaloriesPerServingInputProps) => {
+}: CaloriesPerServingFormGroupProps) => {
   return (
     <div className="form-group col-6">
       <label htmlFor="calories">Calories per serving</label>
