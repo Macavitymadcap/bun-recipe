@@ -1,8 +1,8 @@
-interface ServingsInputProps {
+interface ServingsFormGroupProps {
   value?: string;
 }
 
-export const ServingsInput = ({ value }: ServingsInputProps) => {
+export const ServingsFormGroup = ({ value }: ServingsFormGroupProps) => {
   return (
     <div className="form-group col-6">
       <label htmlFor="servings">Servings</label>

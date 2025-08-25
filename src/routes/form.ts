@@ -17,35 +17,34 @@ export class FormRoute extends BaseRoute {
   }
 
   protected initializeRoutes(): void {
+    this.app.get("/search", this.getSearchRecipesForm.bind(this))
     this.app.get("/create", this.getCreateRecipeForm.bind(this));
-    this.app.get("/search", this.getSearchRecipesForm.bind(this));
     this.app.get("/update/:id", this.getUpdateRecipeForm.bind(this));
     this.app.get("/delete/:id", this.getDeleteRecipeForm.bind(this));
-  }
-
-  private getCreateRecipeForm(context: Context) {
-    const availableTags = this.recipeService.getAllTags();
-
-    return context.html(CreateRecipeForm({ availableTags }));
   }
 
   private getSearchRecipesForm(context: Context) {
     const availableTags = this.recipeService.getAllTags();
 
-    return context.html(SearchRecipesForm({ availableTags }));
+    return context.html(SearchRecipesForm({availableTags}))
+  } 
+  private getCreateRecipeForm(context: Context) {
+    const availableTags = this.recipeService.getAllTags();
+
+    return context.html(CreateRecipeForm({availableTags}));
   }
 
   private getUpdateRecipeForm(context: Context) {
     const id = this.parseIdFromRequest(context);
     const recipe = this.recipeService.getCompleteRecipe(id);
-    const availableTags = this.recipeService.getAllTags();
     const alert = this.getDangerAlertPropsForId(id);
+    const availableTags = this.recipeService.getAllTags();
 
     return context.html(
       GetUpdateRecipeFormResponse({
         alert: recipe ? undefined : alert,
         recipe: recipe ? recipe : undefined,
-        availableTags,
+        availableTags
       }),
     );
   }

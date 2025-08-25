@@ -8,7 +8,7 @@ interface DeleteRecipeFormProps {
 const DeleteRecipeForm = ({ recipeId, recipeName }: DeleteRecipeFormProps) => {
   const hxOnDeleteRecipe = {
     "hx-on:htmx:after-request":
-      'if(event.detail.successful) { this.reset(); htmx.find("dialog").close(); }',
+      'if(event.detail.successful) { this.reset(); htmx.find("dialog").close(); htmx.removeClass("dialog", "card-outline-danger"); }',
   };
   return (
     <form
@@ -28,7 +28,7 @@ const DeleteRecipeForm = ({ recipeId, recipeName }: DeleteRecipeFormProps) => {
             class="btn btn-icon btn-outline-danger col-1 col-push-right"
             type="button"
             title="Cancel Recipe Deletion"
-            x-on:click="htmx.find('dialog').close()"
+            x-on:click="htmx.removeClass('dialog', 'card-outline-danger'); htmx.find('dialog').close();"
           >
             <CloseIcon />
           </button>

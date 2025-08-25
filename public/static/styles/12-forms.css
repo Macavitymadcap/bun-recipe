@@ -169,31 +169,6 @@ fieldset {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-
-  ol,
-  ul {
-    list-style: none;
-  }
-}
-
-fieldset.primary {
-  border: 1px solid var(--colour-primary);
-}
-
-fieldset.secondary {
-  border: 1px solid var(--colour-secondary);
-}
-
-fieldset.success {
-  border: 1px solid var(--colour-success);
-}
-
-fieldset.warning {
-  border: 1px solid var(--colour-warning);
-}
-
-fieldset.danger {
-  border: 1px solid var(--colour-danger);
 }
 
 legend {

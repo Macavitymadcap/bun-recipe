@@ -26,10 +26,6 @@ footer {
   color: var(--colour-surface-low);
 }
 
-section {
-  margin-bottom: var(--space-xl);
-}
-
 /* Make .card directly under .content fill width and have 
    even horizontal margin like grid items */
 .content > .card {

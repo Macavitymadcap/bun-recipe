@@ -2,7 +2,7 @@ import { BaseEntity, BaseRepository } from "./base-repository";
 
 export interface IngredientEntity extends BaseEntity {
   recipe_id: number;
-  quantity: number;
+  quantity?: string;
   unit?: string;
   name: string;
   order_index: number;
@@ -23,7 +23,7 @@ export class IngredientRepository extends BaseRepository<IngredientEntity> {
       CREATE TABLE IF NOT EXISTS ingredients (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         recipe_id INTEGER NOT NULL,
-        quantity REAL NOT NULL,
+        quantity tTEXT,
         unit TEXT,
         name TEXT NOT NULL,
         order_index INTEGER NOT NULL,
@@ -44,7 +44,7 @@ export class IngredientRepository extends BaseRepository<IngredientEntity> {
          VALUES ($recipe_id, $quantity, $unit, $name, $order_index);`,
       {
         $recipe_id: entity.recipe_id,
-        $quantity: entity.quantity,
+        $quantity: entity.quantity || null,
         $unit: entity.unit || null,
         $name: entity.name,
         $order_index: entity.order_index,
@@ -94,7 +94,7 @@ export class IngredientRepository extends BaseRepository<IngredientEntity> {
       {
         $id: entity.id,
         $recipe_id: entity.recipe_id,
-        $quantity: entity.quantity,
+        $quantity: entity.quantity || null,
         $unit: entity.unit || null,
         $name: entity.name,
         $order_index: entity.order_index,

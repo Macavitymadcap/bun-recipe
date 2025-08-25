@@ -2,7 +2,7 @@ import { DeleteIcon } from "./icons/DeleteIcon";
 import { MaximiseIcon } from "./icons/MaximiseIcon";
 import { UpdateIcon } from "./icons/UpdateIcon";
 
-interface ReadRecipeProps {
+interface RecipeCardProps {
   id: number;
   name: string;
   servings: string;
@@ -11,7 +11,7 @@ interface ReadRecipeProps {
   cooking_time?: string;
   ingredients: Array<{
     id: number;
-    quantity: number;
+    quantity?: string;
     unit?: string;
     name: string;
     order_index: number;
@@ -25,23 +25,12 @@ interface ReadRecipeProps {
   tags: string[];
 }
 
-const hxOnAfterRequestSuccessful = (requestType: "update" | "delete") => {
-  const actions = [
-    `htmx.removeClass('card-outline-success')`,
-    `htmx.removeClass('dialog', 'card-outline-primary')`,
-    `htmx.removeClass('dialog', 'card-outline-secondary')`,
-    `htmx.removeClass('dialog', 'card-outline-danger')`,
-    `htmx.removeClass('dialog', 'card-outline-success')`,
-    `htmx.addClass('dialog', '${requestType === "update" ? "card-outline-secondary" : "card-outline-danger"}')`,
-    `htmx.find('dialog').showModal()`,
-  ];
-
-  return {
-    "hx-on:htmx:after-request": `if(event.detail.successful) { ${actions.join("; ")} }`,
-  };
+const hxOnAfterRequestSuccessful = {
+  "hx-on:htmx:after-request":
+    "if(event.detail.successful) { htmx.addClass('dialog', 'card-outline-danger'); htmx.find('dialog').showModal(); }",
 };
 
-const ReadRecipe = ({
+const RecipeCard = ({
   id,
   name,
   servings,
@@ -52,7 +41,7 @@ const ReadRecipe = ({
   methodSteps,
   cooksNotes,
   tags,
-}: ReadRecipeProps) => {
+}: RecipeCardProps) => {
   const props: { [key: string]: string } = {
     id: `recipe-${id}`,
     class: "card",
@@ -62,39 +51,35 @@ const ReadRecipe = ({
     <article {...props}>
       {/* Recipe Header with Actions */}
       <div className="content grid">
-        <span className="col-10 col-push-left">
-          <a
-            href={`/recipe/${id}/view`}
-            target="_blank"
-            title="Open in new page"
+        <h2 className="card-header col-9 push-left">{name}</h2>
 
-          >
-            <h2 className="card-header col-9 push -left">{name}</h2>
-          </a>
-        </span>
-        <span className="col-1 col-push-right">
-          <button
-            title="Update Recipe"
-            className="btn btn-icon btn-outline-secondary"
-            hx-get={`/form/update/${id}`}
-            hx-target="dialog"
-            {...hxOnAfterRequestSuccessful("update")}
-          >
-            <UpdateIcon />
-          </button>
-        </span>
+        <button
+          title="Full content view"
+          hx-get={`/recipe/${id}`}
+          className="btn btn-icon btn-outline-primary col-1 col-push-right"
+          hx-target="#main-content"
+        >
+          <MaximiseIcon />
+        </button>
+        
+        <button
+          title="Update Recipe"
+          className="btn btn-icon btn-outline-secondary col-1 col-push-right"
+          hx-get={`/form/update/${id}`}
+          hx-target="#main-content"
+        >
+          <UpdateIcon />
+        </button>
 
-        <span className="col-1 col-push-right">
-          <button
-            title="Delete Recipe"
-            className="btn btn-icon btn-outline-danger"
-            hx-get={`/form/delete/${id}`}
-            hx-target="dialog"
-            {...hxOnAfterRequestSuccessful("delete")}
-          >
-            <DeleteIcon />
-          </button>
-        </span>
+        <button
+          title="Delete Recipe"
+          className="btn btn-icon btn-outline-danger col-1 col-push-right"
+          hx-get={`/form/delete/${id}`}
+          hx-target="dialog"
+          {...hxOnAfterRequestSuccessful}
+        >
+          <DeleteIcon />
+        </button>
       </div>
 
       {/* Recipe Basic Info */}
@@ -190,4 +175,4 @@ const ReadRecipe = ({
   );
 };
 
-export { ReadRecipe, type ReadRecipeProps };
+export { RecipeCard as ReadRecipe, type RecipeCardProps as ReadRecipeProps };

@@ -1,5 +1,5 @@
 import { Alert, AlertProps } from "../Alert";
-import { ReadRecipe } from "../ReadRecipe";
+import { MainContentRecipe } from "../MainContentRecipe";
 
 export const GetRecipeByIDResponse = ({
   alert,
@@ -9,7 +9,7 @@ export const GetRecipeByIDResponse = ({
   recipe?: any;
 }) => {
   const alertHtml = alert ? Alert(alert) : "";
-  const recipeHtml = recipe ? ReadRecipe(recipe) : "";
+  const recipeHtml = recipe ? MainContentRecipe(recipe) : "";
 
   return `
     <div hx-swap-oob="beforeend:#alerts">

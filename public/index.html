@@ -23,14 +23,14 @@
 
       <menu id="main-menu">
         <li class="form-group">
-          <label for="create-button">Add</label>
+          <label for="create-button">Create</label>
 
           <button
             class="btn btn-icon btn-outline-success"
-            title="Add new recipe"
+            title="Create recipe"
             hx-get="/form/create"
-            hx-target="dialog"
-            hx-on:htmx:after-request="if (event.detail.successful) { htmx.removeClass('dialog', 'card-outline-danger'); htmx.removeClass('card-outline-secondary'); htmx.removeClass('dialog', 'card-outline-primary'); htmx.addClass('dialog', 'card-outline-success'); htmx.find('dialog').showModal(); }"
+            hx-target="#main-content"
+            name="create-button"
           >
             <svg
               aria-hidden="true"
@@ -57,7 +57,7 @@
             title="Search recipes"
             hx-get="/form/search"
             hx-target="dialog"
-            hx-on:htmx:after-request="if (event.detail.successful) { htmx.removeClass('dialog', 'card-outline-danger'); htmx.removeClass('card-outline-secondary'); htmx.removeClass('dialog', 'card-outline-success'); htmx.addClass('dialog', 'card-outline-primary'); htmx.find('dialog').showModal(); }"
+            hx-on:htmx:after-request="if (event.detail.successful) { htmx.addClass('dialog', 'card-outline-primary'); htmx.find('dialog').showModal(); }"
           >
             <svg
               aria-hidden="true"
@@ -77,13 +77,15 @@
         </li>
 
         <li class="form-group">
-          <label for="get-all-button">Refresh</label>
+          <label for="refresh-button">Refresh</label>
 
           <button
             class="btn btn-icon btn-outline-warning"
-            title="Refresh recipes"
-            hx-get="/recipe"
-            hx-target="#recipes"
+            title="Refresh content"
+            name="refesh-button"
+            hx-get="/info/default"
+            hx-target="#main-content"
+            hx-swap="innerHTML"
           >
             <svg
               aria-hidden="true"
@@ -106,16 +108,12 @@
       </menu>
     </header>
 
-    <main id="main-content" class="container">
-      <h2 class="text-center">Your Recipes</h2>
-
-      <section
-        id="recipes"
-        class="content wrapped-row"
-        hx-get="/recipe"
-        hx-trigger="load once, recipeDeleted from:body, recipeSearchFailed from:body"
-        hx-indicator="#loading"
-      ></section>
+    <main class="container">
+      <div
+        id="main-content"
+        hx-get="/info/default"
+        hx-trigger="load once"
+      ></div>
     </main>
 
     <dialog class="card"></dialog>

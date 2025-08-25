@@ -9,20 +9,20 @@ export const SearchRecipesForm = ({
   availableTags,
 }: SearchRecipesFormProps) => {
   const hxOnSearchSubmitted = {
-    "hx-on:htmx:after-request": "htmx.find('dialog').close();",
+    "hx-on:htmx:after-request": "this.reset(); htmx.find('dialog').close(); htmx.removeClass('dialog', 'card-outline-primary')",
   };
 
   return (
     <form
       id="search-recipes-form"
       hx-post="/recipe/search"
-      hx-target="#recipes"
+      hx-target="#main-content"
       hx-swap="innerHTML"
       method="dialog"
       x-data="{ searchType: 'name' }"
       {...hxOnSearchSubmitted}
     >
-      <section className="card-header grid">
+      <div className="card-header grid">
         <span className="col-1"></span>
         <h2 className="text-center col-10">Search Recipes</h2>
 
@@ -34,13 +34,10 @@ export const SearchRecipesForm = ({
         >
           <CloseIcon />
         </button>
-      </section>
+      </div>
 
       <search className="card-body grid">
-        <fieldset className="primary col-12">
-          <legend>Search Options</legend>
-
-          <div className="form-group">
+          <div className="form-group col-12">
             <label htmlFor="search-type">Search by:</label>
             <select
               id="search-type"
@@ -54,7 +51,7 @@ export const SearchRecipesForm = ({
             </select>
           </div>
 
-          <div className="form-group" x-show="searchType === 'name'">
+          <div className="form-group col-12" x-show="searchType === 'name'">
             <label htmlFor="recipe-name">Recipe Name</label>
             <input
               type="text"
@@ -65,7 +62,7 @@ export const SearchRecipesForm = ({
             />
           </div>
 
-          <div className="form-group" x-show="searchType === 'tag'">
+          <div className="form-group col-12" x-show="searchType === 'tag'">
             <label htmlFor="recipe-tag">Tag</label>
             <input
               type="text"
@@ -85,7 +82,7 @@ export const SearchRecipesForm = ({
           </div>
 
           <div 
-            className="form-group"
+            className="form-group col-12"
             x-show="searchType === 'ingredient'"
           >
             <label htmlFor="recipe-ingredient">Ingredient</label>
@@ -97,7 +94,6 @@ export const SearchRecipesForm = ({
               x-bind:required="searchType === 'ingredient'"
             />
           </div>
-        </fieldset>
       </search>
 
       <div className="card-footer wrapped-row">

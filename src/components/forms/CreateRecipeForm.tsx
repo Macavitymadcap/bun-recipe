@@ -1,71 +1,49 @@
 import { TagEntity } from "../../database/repositories/tag-repository";
-import { CloseIcon } from "../icons/CloseIcon";
-import { CaloriesPerServingInput } from "./input-groupings/CaloriesPerServingInput";
-import { CookingTimeInput } from "./input-groupings/CookingTimeInput";
-import { CooksNotesFieldset } from "./input-groupings/CooksNotesFieldset";
-import { IngredientsFieldset } from "./input-groupings/IngredientsFieldset";
-import { MethodStepsFieldset } from "./input-groupings/MethodStepsFieldset";
-import { PreperationTimeInput } from "./input-groupings/PreperationTimeInput";
-import { RecipeNameInput } from "./input-groupings/RecipeNameInput";
-import { ServingsInput } from "./input-groupings/ServingsInput";
-import { TagInput } from "./input-groupings/TagInput";
+import { CaloriesPerServingFormGroup } from "./input-groupings/CaloriesPerServingFormGroup";
+import { CookingTimeFormGroup } from "./input-groupings/CookingTimeFormGroup";
+import { CooksNotesSection } from "./input-groupings/CooksNotesSection";
+import { IngredientsSection } from "./input-groupings/IngredientsSection";
+import { MethodStepsSection } from "./input-groupings/MethodStepsSection";
+import { PreperationTimeFormGroup } from "./input-groupings/PreperationTimeFormGroup";
+import { RecipeNameFormGroup } from "./input-groupings/RecipeNameFormGroup";
+import { ServingsFormGroup } from "./input-groupings/ServingsFormGroup";
+import { TagFormGroup } from "./input-groupings/TagFormGroup";
 
 interface CreateRecipeFormProps {
   availableTags: TagEntity[];
 }
 
-export const CreateRecipeForm = ({ availableTags }: CreateRecipeFormProps) => {
-  const hxOnCreateSuccessful = {
-    "hx-on:htmx:after-request":
-      "if(event.detail.successful) { htmx.find('dialog').close(); }",
-  };
-
+export const CreateRecipeForm = ({availableTags}: CreateRecipeFormProps) => {
   return (
     <form
       id="create-recipe-form"
       hx-post="/recipe"
-      hx-target="#recipes"
-      hx-swap="beforeend"
-      {...hxOnCreateSuccessful}
+      hx-target="#main-content"
+      hx-swap="innerHTML"
       x-data="recipeForm()"
     >
-      <section className="card-header grid">
-        <span className="col-1"></span>
+      <h2 className="text-center">Create Recipe</h2>
 
-        <h2 className="text-center col-10">Add New Recipe</h2>
-
-        <button
-          className="btn btn-icon btn-outline-danger col-1 col-push-right"
-          type="button"
-          title="Cancel Recipe Creation"
-          x-on:click="htmx.find('dialog').close()"
-        >
-          <CloseIcon />
-        </button>
-      </section>
-
-      <div className="card-body">
-        <div className="grid">
-          <RecipeNameInput />
-          <ServingsInput />
-          <CaloriesPerServingInput />
-          <PreperationTimeInput />
-          <CookingTimeInput />
-        </div>
-
-        <TagInput availableTags={availableTags} />
-        <IngredientsFieldset isUpdateForm={false} />
-        <MethodStepsFieldset isUpdateForm={false} />
-        <CooksNotesFieldset isUpdateForm={false} />
+      <div className="grid">
+        <RecipeNameFormGroup />
+        <ServingsFormGroup />
+        <CaloriesPerServingFormGroup />
+        <PreperationTimeFormGroup />
+        <CookingTimeFormGroup />
       </div>
 
-      <div className="card-footer wrapped-row">
+      <TagFormGroup availbaleTags={availableTags} />
+      <IngredientsSection isUpdateForm={false} />
+      <MethodStepsSection isUpdateForm={false} />
+      <CooksNotesSection isUpdateForm={false} />
+
+      <div className="wrapped-row">
         <button
           className="btn btn-outline-success"
           type="submit"
-          title="Add Recipe"
+          title="Create Recipe"
         >
-          Add Recipe
+          Create
         </button>
 
         <button
@@ -74,6 +52,16 @@ export const CreateRecipeForm = ({ availableTags }: CreateRecipeFormProps) => {
           title="Reset Form"
         >
           Reset
+        </button>
+
+        <button
+          className="btn btn-outline-danger"
+          title="Cancel recipe creation"
+          hx-get="/info/default"
+          hx-target="#main-content"
+          hx-swap="innerHTML"
+        >
+          Cancel
         </button>
       </div>
     </form>
