@@ -58,9 +58,9 @@ export const DefaultContent = () => {
         <li>
           <button className="btn btn-icon btn-outline-secondary">
             <UpdateIcon />
-            &nbsp;
-            <b>Update:</b> Expand the current recipe into a full size update form.
           </button>
+          &nbsp;
+          <b>Update:</b> Expand the current recipe into a full size update form.
         </li>
         <li>
           <button className="btn btn-icon btn-outline-danger">
