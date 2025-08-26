@@ -15,8 +15,8 @@ const DeleteRecipeForm = ({ recipeId, recipeName }: DeleteRecipeFormProps) => {
       id="delete-task-form"
       method="dialog"
       hx-delete={`/recipe/${recipeId}`}
-      hx-target="#alerts"
-      hx-swap="beforeend"
+      hx-target="#main-content"
+      hx-swap="innerHTML"
       {...hxOnDeleteRecipe}
     >
       <section class="card-header grid">

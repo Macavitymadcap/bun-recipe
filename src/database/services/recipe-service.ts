@@ -35,7 +35,7 @@ export interface CreateRecipeData {
     unit?: string;
     name: string;
   }>;
-  method: Array<{
+  directions: Array<{
     instruction: string;
   }>;
   cooksNotes?: string[];
@@ -103,8 +103,8 @@ export class RecipeService {
         });
       });
 
-      // Add method steps
-      data.method.forEach((step, index) => {
+      // Add directions
+      data.directions.forEach((step, index) => {
         this.directionRepository.create({
           recipe_id: recipe.id,
           order_index: index + 1,
@@ -176,8 +176,8 @@ export class RecipeService {
         });
       });
 
-      // Recreate method steps
-      data.method.forEach((step, index) => {
+      // Recreate directions
+      data.directions.forEach((step, index) => {
         this.directionRepository.create({
           recipe_id: id,
           order_index: index + 1,

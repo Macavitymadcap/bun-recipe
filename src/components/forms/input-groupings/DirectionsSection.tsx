@@ -11,7 +11,7 @@ export const DirectionsSection = ({
   return (
     <section>
       <header className="grid">
-        <h3 className="col-11">Method</h3>
+        <h3 className="col-11">Directions</h3>
         <button
           type="button"
           className="btn btn-icon btn-outline-success"
@@ -21,7 +21,7 @@ export const DirectionsSection = ({
         </button>
       </header>
 
-      <ol id="method-list" className="unstyled" x-show="directions.length > 0">
+      <ol id="directions-list" className="unstyled" x-show="directions.length > 0">
         <template x-for="(step, index) in directions" x-bind:key="index">
           <li x-data="{ step }" className="mb-3">
             <div className="grid">
@@ -33,7 +33,7 @@ export const DirectionsSection = ({
                     </label>
                     <textarea
                       x-bind:id="`direction-${index}`"
-                      x-bind:name="`method[${index}][instruction]`"
+                      x-bind:name="`directions[${index}][instruction]`"
                       x-model="step.instruction"
                       placeholder="Describe this step..."
                       rows={2}
@@ -47,7 +47,7 @@ export const DirectionsSection = ({
                     </label>
                     <textarea
                       x-bind:id="'direction-' + index"
-                      x-bind:name="'method[' + index + '][instruction]'"
+                      x-bind:name="'directions[' + index + '][instruction]'"
                       x-model="step.instruction"
                       placeholder="Describe what to do in this step..."
                       rows={2}
@@ -61,7 +61,7 @@ export const DirectionsSection = ({
                 <button
                   type="button"
                   className="btn btn-icon btn-outline-danger"
-                  title="Remove step"
+                  title="Remove direction"
                   x-on:click="removeDirection(index)"
                   x-bind:disabled="directions.length <= 1"
                 >
@@ -77,7 +77,7 @@ export const DirectionsSection = ({
         x-show="directions.length === 0"
         className="text-center text-surface-low mb-3"
       >
-        <em>No method steps added yet. Click "Add Step" to get started.</em>
+        <em>No directions added yet. Click "Add " to get started.</em>
       </div>
     </section>
   );

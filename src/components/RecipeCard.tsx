@@ -139,7 +139,7 @@ const RecipeCard = ({
       {/* Method Section */}
       <details className="mt-3">
         <summary>
-          <strong>Method ({directions.length} steps)</strong>
+          <strong>Directions ({directions.length})</strong>
         </summary>
         <div className="content">
           <ol>

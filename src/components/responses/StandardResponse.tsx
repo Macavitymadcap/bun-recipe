@@ -1,12 +1,13 @@
 import { type AlertProps, Alert } from "../Alert";
 import { DefaultContent } from "../DefaultContent";
-interface CreateUpdateRecipeResponseProps {
+
+interface StandardResponseProps {
   alert?: AlertProps;
 }
 
-export const CreateUpdateRecipeResponse = ({
+export const StandardResponse = ({
   alert,
-}: CreateUpdateRecipeResponseProps) => {
+}: StandardResponseProps) => {
   const alertHtml = alert ? Alert(alert) : "";
 
   return `
