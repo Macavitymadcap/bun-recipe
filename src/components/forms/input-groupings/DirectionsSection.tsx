@@ -1,13 +1,13 @@
 import { AddIcon } from "../../icons/AddIcon";
 import { DeleteIcon } from "../../icons/DeleteIcon";
 
-interface directionsSectionProps {
+interface DirectionsSectionProps {
   isUpdateForm: boolean;
 }
 
-export const directionsSection = ({
+export const DirectionsSection = ({
   isUpdateForm,
-}: directionsSectionProps) => {
+}: DirectionsSectionProps) => {
   return (
     <section>
       <header className="grid">
@@ -15,7 +15,7 @@ export const directionsSection = ({
         <button
           type="button"
           className="btn btn-icon btn-outline-success"
-          x-on:click="adddirection()"
+          x-on:click="addDirection()"
         >
           <AddIcon />
         </button>
@@ -28,11 +28,11 @@ export const directionsSection = ({
               <div className="form-group col-11">
                 {isUpdateForm ? (
                   <>
-                    <label x-bind:for="`method-step-${index}`">
+                    <label x-bind:for="`direction-${index}`">
                       Step <span x-text="index + 1"></span>
                     </label>
                     <textarea
-                      x-bind:id="`method-step-${index}`"
+                      x-bind:id="`direction-${index}`"
                       x-bind:name="`method[${index}][instruction]`"
                       x-model="step.instruction"
                       placeholder="Describe this step..."
@@ -42,11 +42,11 @@ export const directionsSection = ({
                   </>
                 ) : (
                   <>
-                    <label x-bind:for="'method-step-' + index">
+                    <label x-bind:for="'direction-' + index">
                       Step <span x-text="index + 1"></span>
                     </label>
                     <textarea
-                      x-bind:id="'method-step-' + index"
+                      x-bind:id="'direction-' + index"
                       x-bind:name="'method[' + index + '][instruction]'"
                       x-model="step.instruction"
                       placeholder="Describe what to do in this step..."
@@ -62,7 +62,7 @@ export const directionsSection = ({
                   type="button"
                   className="btn btn-icon btn-outline-danger"
                   title="Remove step"
-                  x-on:click="removedirection(index)"
+                  x-on:click="removeDirection(index)"
                   x-bind:disabled="directions.length <= 1"
                 >
                   <DeleteIcon />

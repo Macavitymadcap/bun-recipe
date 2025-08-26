@@ -6,7 +6,7 @@ import { PreperationTimeFormGroup } from "./input-groupings/PreperationTimeFormG
 import { CookingTimeFormGroup } from "./input-groupings/CookingTimeFormGroup";
 import { TagFormGroup } from "./input-groupings/TagFormGroup";
 import { IngredientsSection } from "./input-groupings/IngredientsSection";
-import { directionsSection } from "./input-groupings/directionsSection";
+import { DirectionsSection } from "./input-groupings/DirectionsSection";
 import { CooksNotesSection } from "./input-groupings/CooksNotesSection";
 import { TagEntity } from "../../database/repositories/tag-repository";
 
@@ -61,11 +61,11 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
           }
         },
         
-        adddirection() {
+        addDirection() {
           this.directions.push({ instruction: '' });
         },
         
-        removedirection(index) {
+        removeDirection(index) {
           if (this.directions.length > 1) {
             this.directions.splice(index, 1);
           }
@@ -117,7 +117,7 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
 
       <TagFormGroup availbaleTags={availableTags} />
       <IngredientsSection isUpdateForm={true} />
-      <directionsSection isUpdateForm={true} />
+      <DirectionsSection isUpdateForm={true} />
       <CooksNotesSection isUpdateForm={true} />
 
       <div className="wrapped-row">

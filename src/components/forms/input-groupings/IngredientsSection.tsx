@@ -88,6 +88,7 @@ export const IngredientsSection = ({
                       x-bind:name="`ingredients[${index}][unit]`"
                       x-model="ingredient.unit"
                       placeholder="cups"
+                      list="units"
                     />
                   </>
                 ) : (
@@ -99,6 +100,7 @@ export const IngredientsSection = ({
                       x-bind:name="'ingredients[' + index + '][unit]'"
                       x-model="ingredient.unit"
                       placeholder="cups"
+                      list="units"
                     />
                   </>
                 )}
@@ -113,7 +115,6 @@ export const IngredientsSection = ({
                   <option>tbsps</option>
                   <option>cup</option>
                   <option>cups</option>
-                  <option></option>
                 </datalist>
               </div>
 

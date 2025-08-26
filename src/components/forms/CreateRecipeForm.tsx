@@ -3,7 +3,7 @@ import { CaloriesPerServingFormGroup } from "./input-groupings/CaloriesPerServin
 import { CookingTimeFormGroup } from "./input-groupings/CookingTimeFormGroup";
 import { CooksNotesSection } from "./input-groupings/CooksNotesSection";
 import { IngredientsSection } from "./input-groupings/IngredientsSection";
-import { directionsSection } from "./input-groupings/directionsSection";
+import { DirectionsSection } from "./input-groupings/DirectionsSection";
 import { PreperationTimeFormGroup } from "./input-groupings/PreperationTimeFormGroup";
 import { RecipeNameFormGroup } from "./input-groupings/RecipeNameFormGroup";
 import { ServingsFormGroup } from "./input-groupings/ServingsFormGroup";
@@ -41,14 +41,14 @@ export const CreateRecipeForm = ({ availableTags }: CreateRecipeFormProps) => {
           }
         },
 
-        adddirection() {
+        addDirection() {
           this.directions.push({
             id: Date.now(),
             instruction: "",
           });
         },
 
-        removedirection(index) {
+        removeDirection(index) {
           if (this.directions.length > 1) {
             this.directions.splice(index, 1);
           }
@@ -104,7 +104,7 @@ export const CreateRecipeForm = ({ availableTags }: CreateRecipeFormProps) => {
 
       <TagFormGroup availbaleTags={availableTags} />
       <IngredientsSection isUpdateForm={false} />
-      <directionsSection isUpdateForm={false} />
+      <DirectionsSection isUpdateForm={false} />
       <CooksNotesSection isUpdateForm={false} />
 
       <div className="wrapped-row">
