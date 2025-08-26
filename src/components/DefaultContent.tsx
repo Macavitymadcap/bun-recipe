@@ -6,6 +6,7 @@ import { DownloadIcon } from "./icons/DownloadIcon";
 import { MaximiseIcon } from "./icons/MaximiseIcon";
 import { RefreshIcon } from "./icons/RefreshIcon";
 import { SearchIcon } from "./icons/SearchIcon";
+import { UpdateIcon } from "./icons/UpdateIcon";
 
 export const DefaultContent = () => {
   return (
@@ -53,6 +54,13 @@ export const DefaultContent = () => {
           </button>
           &nbsp;
           <b>Maximise:</b> Expands the current recipe card to full content size.
+        </li>
+        <li>
+          <button className="btn btn-icon btn-outline-secondary">
+            <UpdateIcon />
+            &nbsp;
+            <b>Update:</b> Expand the current recipe into a full size update form.
+          </button>
         </li>
         <li>
           <button className="btn btn-icon btn-outline-danger">
