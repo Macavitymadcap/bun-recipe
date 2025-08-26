@@ -1,5 +1,7 @@
 // Create src/components/FullPageRecipe.tsx
 import { CompleteRecipe } from "../database/services/recipe-service";
+import { DeleteIcon } from "./icons/DeleteIcon";
+import { UpdateIcon } from "./icons/UpdateIcon";
 
 interface MainContentRecipeProps extends CompleteRecipe {}
 
@@ -15,9 +17,35 @@ export const MainContentRecipe = ({
   cooksNotes,
   tags,
 }: MainContentRecipeProps) => {
+  const hxOnAfterRequestSuccessful = {
+    "hx-on:htmx:after-request":
+      "if(event.detail.successful) { htmx.addClass('dialog', 'card-outline-danger'); htmx.find('dialog').showModal(); }",
+  };
   return (
     <article>
-      <h2 className="text-center">{name}</h2>
+      <div className="grid">
+      <h2 className="col-10">{name}</h2>
+      <button
+        title="Update Recipe"
+        className="btn btn-icon btn-outline-secondary col-1"
+        hx-get={`/form/update/${id}`}
+        hx-target="#main-content"
+      >
+        <UpdateIcon />
+      </button>
+
+      <button
+        title="Delete Recipe"
+        className="btn btn-icon btn-outline-danger col-1 col-push-right"
+        hx-get={`/form/delete/${id}`}
+        hx-target="dialog"
+        {...hxOnAfterRequestSuccessful}
+      >
+        <DeleteIcon />
+      </button>
+
+
+      </div>
       <div class="card-body">
         <div class="grid">
           <div class="col-6">
@@ -67,6 +95,7 @@ export const MainContentRecipe = ({
                 <li>
                   {ingredient.quantity}
                   {ingredient.unit ? ` ${ingredient.unit}` : ""}
+                  &nbsp;
                   {ingredient.name}
                 </li>
               ))}
@@ -75,7 +104,7 @@ export const MainContentRecipe = ({
       </details>
       <details class="mt-3" open>
         <summary>
-          <strong>Method ({directions.length} steps)</strong>
+          <strong>Directions ({directions.length})</strong>
         </summary>
         <div class="content">
           <ol>

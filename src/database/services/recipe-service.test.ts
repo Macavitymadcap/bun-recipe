@@ -214,7 +214,7 @@ describe("RecipeService", () => {
         { quantity: "2", unit: "cups", name: "flour" },
         { quantity: "1", unit: "cup", name: "milk" },
       ],
-      method: [{ instruction: "Mix ingredients" }, { instruction: "Bake" }],
+      directions: [{ instruction: "Mix ingredients" }, { instruction: "Bake" }],
       cooksNotes: ["Preheat oven", "Cool before serving"],
       tags: ["Dessert", "Easy"],
     };
@@ -257,7 +257,7 @@ describe("RecipeService", () => {
         order_index: 0,
       });
 
-      // Verify method steps creation
+      // Verify directions creation
       expect(mockdirectionRepository.create).toHaveBeenCalledTimes(2);
       expect(mockdirectionRepository.create).toHaveBeenCalledWith({
         recipe_id: 1,
@@ -293,7 +293,7 @@ describe("RecipeService", () => {
         name: "Simple Recipe",
         servings: "2",
         ingredients: [{ quantity: "1", name: "egg" }],
-        method: [{ instruction: "Cook egg" }],
+        directions: [{ instruction: "Cook egg" }],
       };
 
       const getCompleteRecipeSpy = jest.spyOn(
@@ -363,7 +363,7 @@ describe("RecipeService", () => {
         { quantity: "3", unit: "cups", name: "flour" },
         { quantity: "2", unit: "cups", name: "milk" },
       ],
-      method: [
+      directions: [
         { instruction: "Updated step 1" },
         { instruction: "Updated step 2" },
       ],
@@ -441,7 +441,7 @@ describe("RecipeService", () => {
         name: "Simple Updated Recipe",
         servings: "2",
         ingredients: [{ quantity: "1", name: "egg" }],
-        method: [{ instruction: "Cook egg differently" }],
+        directions: [{ instruction: "Cook egg differently" }],
       };
 
       const getCompleteRecipeSpy = jest.spyOn(

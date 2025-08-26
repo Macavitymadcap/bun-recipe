@@ -10,7 +10,7 @@ import { Alert, type AlertProps } from "../components/Alert";
 import { GetRecipeByIDResponse } from "../components/responses/GetRecipeByIdResponse";
 import { ReadRecipe, ReadRecipeProps } from "../components/RecipeCard";
 import { CreateRecipeResponse } from "../components/responses/CreateRecipeResponse";
-import { CreateUpdateRecipeResponse } from "../components/responses/CreateUpdateRecipeResponse";
+import { StandardResponse } from "../components/responses/StandardResponse";
 import { SearchRecipesResponse } from "../components/responses/SearchRecipesResponse";
 
 export class RecipeRoute extends BaseRoute {
@@ -43,7 +43,7 @@ export class RecipeRoute extends BaseRoute {
           alertType: "danger",
           title: "Validation Error",
           message:
-            "Name, servings, at least one ingredient, and at least one method step are required.",
+            "Name, servings, at least one ingredient, and at least one direction are required.",
         };
 
         return context.html(CreateRecipeResponse({ alert, recipe: undefined }));
@@ -65,7 +65,7 @@ export class RecipeRoute extends BaseRoute {
         };
       }
 
-      return context.html(CreateUpdateRecipeResponse({ alert }), {
+      return context.html(StandardResponse({ alert }), {
         headers: recipe ? { "HX-Trigger": "recipe-created" } : {},
       });
     } catch (error) {
@@ -76,7 +76,7 @@ export class RecipeRoute extends BaseRoute {
         message: `Failed to create recipe: ${(error as Error).message}`,
       };
 
-      return context.html(CreateUpdateRecipeResponse({ alert }));
+      return context.html(StandardResponse({ alert }));
     }
   }
 
@@ -228,10 +228,10 @@ export class RecipeRoute extends BaseRoute {
           alertType: "danger",
           title: "Validation Error",
           message:
-            "Name, servings, at least one ingredient, and at least one method step are required.",
+            "Name, servings, at least one ingredient, and at least one direction are required.",
         };
 
-        return context.html(CreateUpdateRecipeResponse({ alert }));
+        return context.html(StandardResponse({ alert }));
       }
 
       const recipe = this.recipeService.updateCompleteRecipe(id, formData);
@@ -250,9 +250,7 @@ export class RecipeRoute extends BaseRoute {
         };
       }
 
-      return context.html(CreateUpdateRecipeResponse({ alert }), {
-        headers: recipe ? { "HX-Trigger": "recipe-created" } : {},
-      });
+      return context.html(StandardResponse({ alert }));
     } catch (error) {
       console.error("Error updating recipe:", error);
       alert = {
@@ -261,7 +259,7 @@ export class RecipeRoute extends BaseRoute {
         message: `Failed to update recipe: ${(error as Error).message}`,
       };
 
-      return context.html(CreateUpdateRecipeResponse({ alert }));
+      return context.html(StandardResponse({ alert }));
     }
   }
 
@@ -283,9 +281,7 @@ export class RecipeRoute extends BaseRoute {
           message: `Failed to delete recipe with ID ${id}`,
         };
 
-    return context.html(Alert(alert), {
-      headers: { "HX-Trigger": "recipe-deleted" },
-    });
+    return context.html(StandardResponse({ alert }));
   }
 
   private parseRecipeIdFromContext(context: Context) {
@@ -336,19 +332,19 @@ export class RecipeRoute extends BaseRoute {
       ingredientIndex++;
     }
 
-    // Parse method steps array
-    const method: Array<{ instruction: string }> = [];
-    let methodIndex = 0;
+    // Parse directions array
+    const directions: Array<{ instruction: string }> = [];
+    let directionIndex = 0;
 
-    while (formData.has(`method[${methodIndex}][instruction]`)) {
+    while (formData.has(`directions[${directionIndex}][instruction]`)) {
       const instruction = formData.get(
-        `method[${methodIndex}][instruction]`,
+        `directions[${directionIndex}][instruction]`,
       ) as string;
 
       if (instruction?.trim()) {
-        method.push({ instruction: instruction.trim() });
+        directions.push({ instruction: instruction.trim() });
       }
-      methodIndex++;
+      directionIndex++;
     }
 
     // Parse cook's notes array
@@ -380,7 +376,7 @@ export class RecipeRoute extends BaseRoute {
       preparation_time,
       cooking_time,
       ingredients,
-      method,
+      directions,
       cooksNotes: cooksNotes.length > 0 ? cooksNotes : undefined,
       tags,
     };
@@ -391,7 +387,7 @@ export class RecipeRoute extends BaseRoute {
       formData.name ||
       formData.servings ||
       formData.ingredients?.length ||
-      formData.method?.length
+      formData.directions?.length
     );
   }
 }
