@@ -1,14 +1,14 @@
 import { BaseEntity, BaseRepository } from "./base-repository";
 
-export interface MethodStepEntity extends BaseEntity {
+export interface DirectionEntity extends BaseEntity {
   recipe_id: number;
   order_index: number;
   instruction: string;
 }
 
-export class MethodStepRepository extends BaseRepository<MethodStepEntity> {
+export class DirectionRepository extends BaseRepository<DirectionEntity> {
   constructor(dbPath?: string) {
-    super("method_steps", dbPath);
+    super("directions", dbPath);
   }
 
   protected initDb(): void {
@@ -18,7 +18,7 @@ export class MethodStepRepository extends BaseRepository<MethodStepEntity> {
 
   protected createTable(): void {
     this.dbContext.execute(`
-      CREATE TABLE IF NOT EXISTS method_steps (
+      CREATE TABLE IF NOT EXISTS directions (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         recipe_id INTEGER NOT NULL,
         order_index INTEGER NOT NULL,
@@ -30,13 +30,13 @@ export class MethodStepRepository extends BaseRepository<MethodStepEntity> {
 
   private createIndexes(): void {
     this.dbContext.execute(`
-      CREATE INDEX IF NOT EXISTS idx_method_steps_recipe_id ON method_steps(recipe_id);
+      CREATE INDEX IF NOT EXISTS idx_directions_recipe_id ON directions(recipe_id);
     `);
   }
 
-  create(entity: Omit<MethodStepEntity, "id">): MethodStepEntity | null {
+  create(entity: Omit<DirectionEntity, "id">): DirectionEntity | null {
     this.dbContext.queryOne(
-      `INSERT INTO method_steps (recipe_id, order_index, instruction) 
+      `INSERT INTO directions (recipe_id, order_index, instruction) 
          VALUES ($recipe_id, $order_index, $instruction);`,
       {
         $recipe_id: entity.recipe_id,
@@ -53,34 +53,34 @@ export class MethodStepRepository extends BaseRepository<MethodStepEntity> {
     return this.read(lastId);
   }
 
-  read(id: number): MethodStepEntity | null {
-    return this.dbContext.queryOne<MethodStepEntity>(
-      `SELECT * FROM method_steps WHERE id = $id;`,
+  read(id: number): DirectionEntity | null {
+    return this.dbContext.queryOne<DirectionEntity>(
+      `SELECT * FROM directions WHERE id = $id;`,
       { $id: id },
     );
   }
 
-  readAll(): MethodStepEntity[] {
-    return this.dbContext.query<MethodStepEntity>(
-      `SELECT * FROM method_steps;`,
+  readAll(): DirectionEntity[] {
+    return this.dbContext.query<DirectionEntity>(
+      `SELECT * FROM directions;`,
     );
   }
 
-  readByRecipeId(recipeId: number): MethodStepEntity[] {
-    return this.dbContext.query<MethodStepEntity>(
-      `SELECT * FROM method_steps WHERE recipe_id = $recipe_id ORDER BY order_index;`,
+  readByRecipeId(recipeId: number): DirectionEntity[] {
+    return this.dbContext.query<DirectionEntity>(
+      `SELECT * FROM directions WHERE recipe_id = $recipe_id ORDER BY order_index;`,
       { $recipe_id: recipeId },
     );
   }
 
-  update(entity: MethodStepEntity): MethodStepEntity | null {
+  update(entity: DirectionEntity): DirectionEntity | null {
     const existing = this.read(entity.id);
     if (!existing) {
       return null;
     }
 
     this.dbContext.queryOne(
-      `UPDATE method_steps SET
+      `UPDATE directions SET
           recipe_id = $recipe_id,
           order_index = $order_index,
           instruction = $instruction
@@ -103,7 +103,7 @@ export class MethodStepRepository extends BaseRepository<MethodStepEntity> {
         return false;
       }
 
-      this.dbContext.queryOne(`DELETE FROM method_steps WHERE id = $id;`, {
+      this.dbContext.queryOne(`DELETE FROM directions WHERE id = $id;`, {
         $id: id,
       });
 
@@ -115,7 +115,7 @@ export class MethodStepRepository extends BaseRepository<MethodStepEntity> {
     if (this.readByRecipeId(recipeId).length === 0) return false;
 
     this.dbContext.queryOne(
-      `DELETE FROM method_steps WHERE recipe_id = $recipe_id;`,
+      `DELETE FROM directions WHERE recipe_id = $recipe_id;`,
       { $recipe_id: recipeId },
     );
 

@@ -11,9 +11,15 @@
   transition: all 0.3s;
 }
 
-.btn:hover {
+.btn:hover:not(:disabled) {
   opacity: 0.8;
   transform: translateY(-2px);
+}
+
+.btn:disabled {
+  background: #ccc;
+  color: #888;
+  cursor: not-allowed;
 }
 
 .btn-primary {
@@ -126,3 +132,10 @@
   border: 2px solid var(--colour-danger);
   color: var(--colour-danger);
 }
+
+[class*="btn-outline-"]:disabled {
+  background-color: transparent;
+  border: 2px solid #ccc;
+  color: #888;
+}
+

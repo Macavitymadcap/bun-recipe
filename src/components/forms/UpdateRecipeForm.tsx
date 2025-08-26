@@ -6,7 +6,7 @@ import { PreperationTimeFormGroup } from "./input-groupings/PreperationTimeFormG
 import { CookingTimeFormGroup } from "./input-groupings/CookingTimeFormGroup";
 import { TagFormGroup } from "./input-groupings/TagFormGroup";
 import { IngredientsSection } from "./input-groupings/IngredientsSection";
-import { MethodStepsSection } from "./input-groupings/MethodStepsSection";
+import { directionsSection } from "./input-groupings/directionsSection";
 import { CooksNotesSection } from "./input-groupings/CooksNotesSection";
 import { TagEntity } from "../../database/repositories/tag-repository";
 
@@ -22,7 +22,7 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
       unit: ing.unit || "",
       name: ing.name,
     })),
-    methodSteps: recipe.methodSteps.map((step) => ({
+    directions: recipe.directions.map((step) => ({
       instruction: step.instruction,
     })),
     cooksNotes: recipe.cooksNotes.map((note) => note || note),
@@ -32,7 +32,7 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
   const resetAction = {
     "x-on:click.prevent": `
       ingredients = ${JSON.stringify(alpineData.ingredients)};
-      methodSteps = ${JSON.stringify(alpineData.methodSteps)};
+      directions = ${JSON.stringify(alpineData.directions)};
       cooksNotes = ${JSON.stringify(alpineData.cooksNotes)};
       tags = ${JSON.stringify(alpineData.tags)};
     `,
@@ -46,7 +46,7 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
       hx-swap="innerHTML"
       x-data={`{
         ingredients: ${JSON.stringify(alpineData.ingredients)},
-        methodSteps: ${JSON.stringify(alpineData.methodSteps)},
+        directions: ${JSON.stringify(alpineData.directions)},
         cooksNotes: ${JSON.stringify(alpineData.cooksNotes)},
         tags: ${JSON.stringify(alpineData.tags)},
         currentTagInput: "",
@@ -61,13 +61,13 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
           }
         },
         
-        addMethodStep() {
-          this.methodSteps.push({ instruction: '' });
+        adddirection() {
+          this.directions.push({ instruction: '' });
         },
         
-        removeMethodStep(index) {
-          if (this.methodSteps.length > 1) {
-            this.methodSteps.splice(index, 1);
+        removedirection(index) {
+          if (this.directions.length > 1) {
+            this.directions.splice(index, 1);
           }
         },
         
@@ -117,7 +117,7 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
 
       <TagFormGroup availbaleTags={availableTags} />
       <IngredientsSection isUpdateForm={true} />
-      <MethodStepsSection isUpdateForm={true} />
+      <directionsSection isUpdateForm={true} />
       <CooksNotesSection isUpdateForm={true} />
 
       <div className="wrapped-row">

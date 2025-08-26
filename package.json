@@ -3,9 +3,11 @@
   "scripts": {
     "start": "bun run src/server.ts",
     "lint": "eslint 'src/**/*.{css,html,js,ts,tsx}' --ignore-pattern '**/*.test.*'",
-    "format": "prettier --write '{src,public}/**/*.{css,html,js,ts,tsx}'"
+    "format": "prettier --write '{src,public}/**/*.{css,html,js,ts,tsx}'",
+    "build": "bun build src/conversion/index.ts --outdir public/static/scripts"
   },
   "dependencies": {
+    "decimal.js": "^10.6.0",
     "hono": "^4.6.18",
     "jose": "6.0.2"
   },

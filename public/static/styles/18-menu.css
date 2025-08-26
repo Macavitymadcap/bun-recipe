@@ -1,4 +1,4 @@
-menu {
+menu#main-menu {
   display: flex;
   width: 100%;
   list-style: none;
@@ -7,17 +7,17 @@ menu {
   flex-wrap: wrap;
   flex-direction: row;
   margin: 0;
-  padding: var(--space-md);
+  padding: 0;
 }
 
-menu li {
-  margin: 0 var(--space-sm);
+menu#main-menu li {
+  margin: 0;
 }
 
-menu li.form-group {
+menu#main-menu li.form-group {
   display: flex;
   align-items: center;
-  margin: 0 var(--space-sm);
+  margin: 0;
   width: auto;
   justify-content: center;
 }

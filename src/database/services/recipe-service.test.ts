@@ -4,21 +4,19 @@ import {
   CompleteRecipe,
   CreateRecipeData,
 } from "./recipe-service";
-import {
-  RecipeRepository,
-  IngredientRepository,
-  MethodStepRepository,
-  CooksNoteRepository,
-  TagRepository,
-  RecipeTagRepository,
-} from "../repositories";
-import { DbContext } from "../../database/context";
+import { DbContext } from "../../database/context/context";
+import { CooksNoteEntity, CooksNoteRepository } from "../repositories/cooks-note-repository";
+import { IngredientEntity, IngredientRepository } from "../repositories/ingredient-repository";
+import { DirectionEntity, DirectionRepository } from "../repositories/direction-repository";
+import { RecipeRepository } from "../repositories/recipe-repository";
+import { RecipeTagEntity, RecipeTagRepository } from "../repositories/recipe-tag-repository";
+import { TagEntity, TagRepository } from "../repositories/tag-repository";
 
 describe("RecipeService", () => {
   let recipeService: RecipeService;
   let mockRecipeRepository: Partial<RecipeRepository>;
   let mockIngredientRepository: Partial<IngredientRepository>;
-  let mockMethodStepRepository: Partial<MethodStepRepository>;
+  let mockdirectionRepository: Partial<DirectionRepository>;
   let mockCooksNoteRepository: Partial<CooksNoteRepository>;
   let mockTagRepository: Partial<TagRepository>;
   let mockRecipeTagRepository: Partial<RecipeTagRepository>;
@@ -35,11 +33,11 @@ describe("RecipeService", () => {
     updated_at: "2025-01-01T00:00:00.000Z",
   };
 
-  const sampleIngredients = [
+  const sampleIngredients: IngredientEntity[] = [
     {
       id: 1,
       recipe_id: 1,
-      quantity: 2,
+      quantity: "2",
       unit: "cups",
       name: "flour",
       order_index: 0,
@@ -47,29 +45,29 @@ describe("RecipeService", () => {
     {
       id: 2,
       recipe_id: 1,
-      quantity: 1,
+      quantity: "1",
       unit: "cup",
       name: "sugar",
       order_index: 1,
     },
   ];
 
-  const sampleMethodSteps = [
+  const sampledirections: DirectionEntity[] = [
     { id: 1, recipe_id: 1, order_index: 1, instruction: "Mix dry ingredients" },
     { id: 2, recipe_id: 1, order_index: 2, instruction: "Bake for 30 minutes" },
   ];
 
-  const sampleCooksNotes = [
+  const sampleCooksNotes: CooksNoteEntity[] = [
     { id: 1, recipe_id: 1, note: "Can substitute honey for sugar" },
     { id: 2, recipe_id: 1, note: "Best served warm" },
   ];
 
-  const sampleTags = [
+  const sampleTags: TagEntity[] = [
     { id: 1, name: "Dessert" },
     { id: 2, name: "Easy" },
   ];
 
-  const sampleRecipeTags = [
+  const sampleRecipeTags: RecipeTagEntity[] = [
     { id: 1, recipe_id: 1, tag_id: 1 },
     { id: 2, recipe_id: 1, tag_id: 2 },
   ];
@@ -90,9 +88,9 @@ describe("RecipeService", () => {
       deleteByRecipeId: mock(() => true),
     };
 
-    mockMethodStepRepository = {
-      create: mock(() => sampleMethodSteps[0]),
-      readByRecipeId: mock(() => sampleMethodSteps),
+    mockdirectionRepository = {
+      create: mock(() => sampledirections[0]),
+      readByRecipeId: mock(() => sampledirections),
       deleteByRecipeId: mock(() => true),
     };
 
@@ -131,7 +129,7 @@ describe("RecipeService", () => {
     recipeService = new RecipeService(
       mockRecipeRepository as RecipeRepository,
       mockIngredientRepository as IngredientRepository,
-      mockMethodStepRepository as MethodStepRepository,
+      mockdirectionRepository as DirectionRepository,
       mockCooksNoteRepository as CooksNoteRepository,
       mockTagRepository as TagRepository,
       mockRecipeTagRepository as RecipeTagRepository,
@@ -149,7 +147,7 @@ describe("RecipeService", () => {
       expect(result!.id).toBe(1);
       expect(result!.name).toBe("Test Recipe");
       expect(result!.ingredients).toEqual(sampleIngredients);
-      expect(result!.methodSteps).toEqual(sampleMethodSteps);
+      expect(result!.directions).toEqual(sampledirections);
       expect(result!.cooksNotes).toEqual([
         "Can substitute honey for sugar",
         "Best served warm",
@@ -159,7 +157,7 @@ describe("RecipeService", () => {
       // Verify repository calls
       expect(mockRecipeRepository.read).toHaveBeenCalledWith(1);
       expect(mockIngredientRepository.readByRecipeId).toHaveBeenCalledWith(1);
-      expect(mockMethodStepRepository.readByRecipeId).toHaveBeenCalledWith(1);
+      expect(mockdirectionRepository.readByRecipeId).toHaveBeenCalledWith(1);
       expect(mockCooksNoteRepository.readByRecipeId).toHaveBeenCalledWith(1);
       expect(mockRecipeTagRepository.readByRecipeId).toHaveBeenCalledWith(1);
     });
@@ -213,8 +211,8 @@ describe("RecipeService", () => {
       preparation_time: "20 minutes",
       cooking_time: "45 minutes",
       ingredients: [
-        { quantity: 2, unit: "cups", name: "flour" },
-        { quantity: 1, unit: "cup", name: "milk" },
+        { quantity: "2", unit: "cups", name: "flour" },
+        { quantity: "1", unit: "cup", name: "milk" },
       ],
       method: [{ instruction: "Mix ingredients" }, { instruction: "Bake" }],
       cooksNotes: ["Preheat oven", "Cool before serving"],
@@ -230,7 +228,7 @@ describe("RecipeService", () => {
       getCompleteRecipeSpy.mockReturnValue({
         ...sampleRecipe,
         ingredients: sampleIngredients,
-        methodSteps: sampleMethodSteps,
+        directions: sampledirections,
         cooksNotes: ["Preheat oven", "Cool before serving"],
         tags: ["Dessert", "Easy"],
       } as CompleteRecipe);
@@ -253,15 +251,15 @@ describe("RecipeService", () => {
       expect(mockIngredientRepository.create).toHaveBeenCalledTimes(2);
       expect(mockIngredientRepository.create).toHaveBeenCalledWith({
         recipe_id: 1,
-        quantity: 2,
+        quantity: "2",
         unit: "cups",
         name: "flour",
         order_index: 0,
       });
 
       // Verify method steps creation
-      expect(mockMethodStepRepository.create).toHaveBeenCalledTimes(2);
-      expect(mockMethodStepRepository.create).toHaveBeenCalledWith({
+      expect(mockdirectionRepository.create).toHaveBeenCalledTimes(2);
+      expect(mockdirectionRepository.create).toHaveBeenCalledWith({
         recipe_id: 1,
         order_index: 1,
         instruction: "Mix ingredients",
@@ -294,7 +292,7 @@ describe("RecipeService", () => {
       const minimalRecipeData: CreateRecipeData = {
         name: "Simple Recipe",
         servings: "2",
-        ingredients: [{ quantity: 1, name: "egg" }],
+        ingredients: [{ quantity: "1", name: "egg" }],
         method: [{ instruction: "Cook egg" }],
       };
 
@@ -305,9 +303,9 @@ describe("RecipeService", () => {
       getCompleteRecipeSpy.mockReturnValue({
         ...sampleRecipe,
         ingredients: [
-          { id: 1, recipe_id: 1, quantity: 1, name: "egg", order_index: 0 },
+          { id: 1, recipe_id: 1, quantity: "1", name: "egg", order_index: 0 },
         ],
-        methodSteps: [
+        directions: [
           { id: 1, recipe_id: 1, order_index: 1, instruction: "Cook egg" },
         ],
         cooksNotes: [],
@@ -338,7 +336,7 @@ describe("RecipeService", () => {
       getCompleteRecipeSpy.mockReturnValue({
         ...sampleRecipe,
         ingredients: sampleIngredients,
-        methodSteps: sampleMethodSteps,
+        directions: sampledirections,
         cooksNotes: ["Preheat oven", "Cool before serving"],
         tags: ["Easy"],
       } as CompleteRecipe);
@@ -362,8 +360,8 @@ describe("RecipeService", () => {
       preparation_time: "40 minutes",
       cooking_time: "1.5 hours",
       ingredients: [
-        { quantity: 3, unit: "cups", name: "flour" },
-        { quantity: 2, unit: "cups", name: "milk" },
+        { quantity: "3", unit: "cups", name: "flour" },
+        { quantity: "2", unit: "cups", name: "milk" },
       ],
       method: [
         { instruction: "Updated step 1" },
@@ -384,7 +382,7 @@ describe("RecipeService", () => {
         name: "Updated Recipe",
         servings: "6-8",
         ingredients: sampleIngredients,
-        methodSteps: sampleMethodSteps,
+        directions: sampledirections,
         cooksNotes: ["Updated note"],
         tags: ["Updated", "Tag"],
       } as CompleteRecipe);
@@ -400,13 +398,13 @@ describe("RecipeService", () => {
 
       // Verify deletion of existing related data
       expect(mockIngredientRepository.deleteByRecipeId).toHaveBeenCalledWith(1);
-      expect(mockMethodStepRepository.deleteByRecipeId).toHaveBeenCalledWith(1);
+      expect(mockdirectionRepository.deleteByRecipeId).toHaveBeenCalledWith(1);
       expect(mockCooksNoteRepository.deleteByRecipeId).toHaveBeenCalledWith(1);
       expect(mockRecipeTagRepository.deleteByRecipeId).toHaveBeenCalledWith(1);
 
       // Verify recreation of related data
       expect(mockIngredientRepository.create).toHaveBeenCalledTimes(2);
-      expect(mockMethodStepRepository.create).toHaveBeenCalledTimes(2);
+      expect(mockdirectionRepository.create).toHaveBeenCalledTimes(2);
       expect(mockCooksNoteRepository.create).toHaveBeenCalledTimes(1);
       expect(mockTagRepository.createOrRead).toHaveBeenCalledTimes(2);
 
@@ -442,7 +440,7 @@ describe("RecipeService", () => {
       const minimalUpdateData: CreateRecipeData = {
         name: "Simple Updated Recipe",
         servings: "2",
-        ingredients: [{ quantity: 1, name: "egg" }],
+        ingredients: [{ quantity: "1", name: "egg" }],
         method: [{ instruction: "Cook egg differently" }],
       };
 
@@ -454,9 +452,9 @@ describe("RecipeService", () => {
         ...sampleRecipe,
         name: "Simple Updated Recipe",
         ingredients: [
-          { id: 1, recipe_id: 1, quantity: 1, name: "egg", order_index: 0 },
+          { id: 1, recipe_id: 1, quantity: "1", name: "egg", order_index: 0 },
         ],
-        methodSteps: [
+        directions: [
           {
             id: 1,
             recipe_id: 1,
@@ -510,7 +508,13 @@ describe("RecipeService", () => {
 
       // Assert
       expect(result).toHaveLength(1);
-      expect(result[0]).toEqual(sampleRecipe);
+      expect(result[0]).toEqual({
+        ...sampleRecipe,
+        ingredients: sampleIngredients,
+        directions: sampledirections,
+        cooksNotes: ["Can substitute honey for sugar", "Best served warm"],
+        tags: ["Dessert", "Easy"],
+      });
       expect(mockTagRepository.readByName).toHaveBeenCalledWith("Dessert");
       expect(mockRecipeTagRepository.readByTagId).toHaveBeenCalledWith(1);
     });
@@ -570,7 +574,22 @@ describe("RecipeService", () => {
       const result = recipeService.searchRecipesByName("Chocolate");
 
       // Assert
-      expect(result).toEqual(searchResults);
+      expect(result).toEqual([
+        {
+          ...searchResults[0],
+          ingredients: sampleIngredients,
+          directions: sampledirections,
+          cooksNotes: ["Can substitute honey for sugar", "Best served warm"],
+          tags: ["Dessert", "Easy"],
+        },
+        {
+          ...searchResults[1],
+          ingredients: sampleIngredients,
+          directions: sampledirections,
+          cooksNotes: ["Can substitute honey for sugar", "Best served warm"],
+          tags: ["Dessert", "Easy"],
+        },
+      ]);
       expect(mockRecipeRepository.searchByName).toHaveBeenCalledWith(
         "Chocolate",
       );
