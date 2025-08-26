@@ -13,7 +13,7 @@ interface CreateRecipeFormProps {
   availableTags: TagEntity[];
 }
 
-export const CreateRecipeForm = ({availableTags}: CreateRecipeFormProps) => {
+export const CreateRecipeForm = ({ availableTags }: CreateRecipeFormProps) => {
   return (
     <form
       id="create-recipe-form"

@@ -200,9 +200,7 @@ export class RecipeRoute extends BaseRoute {
         };
       }
 
-      return context.html(
-        SearchRecipesResponse({alert, recipes})
-      );
+      return context.html(SearchRecipesResponse({ alert, recipes }));
     } catch (error) {
       console.error("Error searching recipes:", error);
       alert = {
@@ -211,9 +209,7 @@ export class RecipeRoute extends BaseRoute {
         message: `Failed to search recipes: ${(error as Error).message}`,
       };
 
-      return context.html(
-        SearchRecipesResponse({alert, recipes: []})
-      );
+      return context.html(SearchRecipesResponse({ alert, recipes: [] }));
     }
   }
 
@@ -235,7 +231,7 @@ export class RecipeRoute extends BaseRoute {
             "Name, servings, at least one ingredient, and at least one method step are required.",
         };
 
-        return context.html(CreateUpdateRecipeResponse({ alert}));
+        return context.html(CreateUpdateRecipeResponse({ alert }));
       }
 
       const recipe = this.recipeService.updateCompleteRecipe(id, formData);
@@ -254,7 +250,7 @@ export class RecipeRoute extends BaseRoute {
         };
       }
 
-      return context.html(CreateUpdateRecipeResponse({alert}), {
+      return context.html(CreateUpdateRecipeResponse({ alert }), {
         headers: recipe ? { "HX-Trigger": "recipe-created" } : {},
       });
     } catch (error) {
@@ -265,7 +261,7 @@ export class RecipeRoute extends BaseRoute {
         message: `Failed to update recipe: ${(error as Error).message}`,
       };
 
-      return context.html(CreateUpdateRecipeResponse({alert}));
+      return context.html(CreateUpdateRecipeResponse({ alert }));
     }
   }
 

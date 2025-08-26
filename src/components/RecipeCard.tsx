@@ -61,7 +61,7 @@ const RecipeCard = ({
         >
           <MaximiseIcon />
         </button>
-        
+
         <button
           title="Update Recipe"
           className="btn btn-icon btn-outline-secondary col-1 col-push-right"

@@ -6,6 +6,7 @@
     "format": "prettier --write '{src,public}/**/*.{css,html,js,ts,tsx}'"
   },
   "dependencies": {
+    "decimal.js": "^10.6.0",
     "hono": "^4.6.18",
     "jose": "6.0.2"
   },

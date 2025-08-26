@@ -7,7 +7,7 @@ interface AvailableTagsDataListProps {
 
 export const AvailableTagsDataList = ({
   availableTags,
-  datalistId
+  datalistId,
 }: AvailableTagsDataListProps) => {
   return (
     <datalist id={datalistId}>

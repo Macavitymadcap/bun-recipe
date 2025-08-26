@@ -6,7 +6,7 @@ import { RecipeService } from "../database/services/recipe-service";
 
 export class InfoRoute extends BaseRoute {
   private recipeService: RecipeService;
-  
+
   constructor(container: Container = Container.getInstance()) {
     super({ prefix: "/info" });
     this.recipeService = container.get<RecipeService>("recipeService");

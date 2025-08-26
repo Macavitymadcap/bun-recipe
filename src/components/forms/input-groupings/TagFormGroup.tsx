@@ -7,7 +7,7 @@ interface TagFormGroupProps {
   availbaleTags: TagEntity[];
 }
 
-export const TagFormGroup = ({availbaleTags}: TagFormGroupProps) => {
+export const TagFormGroup = ({ availbaleTags }: TagFormGroupProps) => {
   const tagInput = {
     "x-on:keydown.enter.prevent": "addTag()",
   };
@@ -49,7 +49,10 @@ export const TagFormGroup = ({availbaleTags}: TagFormGroupProps) => {
           className="col-11"
         />
 
-        <AvailableTagsDataList availableTags={availbaleTags} datalistId="inputTags" />
+        <AvailableTagsDataList
+          availableTags={availbaleTags}
+          datalistId="inputTags"
+        />
 
         {/* Hidden input for form submission */}
         <input
