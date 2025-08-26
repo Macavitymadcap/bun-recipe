@@ -3,7 +3,7 @@ import { CaloriesPerServingFormGroup } from "./input-groupings/CaloriesPerServin
 import { CookingTimeFormGroup } from "./input-groupings/CookingTimeFormGroup";
 import { CooksNotesSection } from "./input-groupings/CooksNotesSection";
 import { IngredientsSection } from "./input-groupings/IngredientsSection";
-import { MethodStepsSection } from "./input-groupings/MethodStepsSection";
+import { directionsSection } from "./input-groupings/directionsSection";
 import { PreperationTimeFormGroup } from "./input-groupings/PreperationTimeFormGroup";
 import { RecipeNameFormGroup } from "./input-groupings/RecipeNameFormGroup";
 import { ServingsFormGroup } from "./input-groupings/ServingsFormGroup";
@@ -20,7 +20,77 @@ export const CreateRecipeForm = ({ availableTags }: CreateRecipeFormProps) => {
       hx-post="/recipe"
       hx-target="#main-content"
       hx-swap="innerHTML"
-      x-data="recipeForm()"
+      x-data={`{ingredients: [{ id: Date.now(), quantity: "", unit: "", name: "" }],
+        directions: [{ id: Date.now() + 1, instruction: "" }],
+        cooksNotes: [],
+        tags: [],
+        currentTagInput: "",
+
+        addIngredient() {
+          this.ingredients.push({
+            id: Date.now(),
+            quantity: "",
+            unit: "",
+            name: "",
+          });
+        },
+
+        removeIngredient(index) {
+          if (this.ingredients.length > 1) {
+            this.ingredients.splice(index, 1);
+          }
+        },
+
+        adddirection() {
+          this.directions.push({
+            id: Date.now(),
+            instruction: "",
+          });
+        },
+
+        removedirection(index) {
+          if (this.directions.length > 1) {
+            this.directions.splice(index, 1);
+          }
+        },
+
+        addCooksNote() {
+          this.cooksNotes.push({
+            id: Date.now(),
+            note: "",
+          });
+        },
+
+        removeCooksNote(index) {
+          this.cooksNotes.splice(index, 1);
+        },
+
+        addTag() {
+          const tagValue = this.currentTagInput.trim();
+          if (tagValue && !this.tags.includes(tagValue)) {
+            this.tags.push(tagValue);
+            this.currentTagInput = "";
+          }
+        },
+
+        removeTag(index) {
+          this.tags.splice(index, 1);
+        },
+
+        handleTagInput(event) {
+          // Handle comma-separated input
+          const input = event.target.value;
+          if (input.includes(",")) {
+            const newTags = input
+              .split(",")
+              .map((tag) => tag.trim())
+              .filter((tag) => tag && !this.tags.includes(tag));
+
+            this.tags.push(...newTags);
+            this.currentTagInput = "";
+          }
+        }
+      }`}
     >
       <h2 className="text-center">Create Recipe</h2>
 
@@ -34,7 +104,7 @@ export const CreateRecipeForm = ({ availableTags }: CreateRecipeFormProps) => {
 
       <TagFormGroup availbaleTags={availableTags} />
       <IngredientsSection isUpdateForm={false} />
-      <MethodStepsSection isUpdateForm={false} />
+      <directionsSection isUpdateForm={false} />
       <CooksNotesSection isUpdateForm={false} />
 
       <div className="wrapped-row">

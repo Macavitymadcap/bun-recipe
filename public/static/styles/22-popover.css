@@ -1,0 +1,12 @@
+/* Style for the popover at the bottom of the screen */
+#conversion-popover[popover]:popover-open {
+  position: fixed;
+  inset: unset;
+  bottom: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  min-width: 350px;
+  max-width: 95vw;  
+  box-sizing: border-box;
+}

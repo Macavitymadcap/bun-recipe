@@ -14,7 +14,12 @@
       crossorigin="anonymous"
     ></script>
 
-    <script src="static/scripts/index.js" defer></script>
+    <script src="static/scripts/index.js" type="module"></script>
+
+    <script type="module">
+      import { convert } from './static/scripts/index.js';
+      window.convert = convert;
+    </script>
   </head>
 
   <body>
@@ -131,6 +136,32 @@
             </svg>
           </a>
         </li>
+
+        <li class="form-group">
+          <label for="convert-popover-button">Convert</label>
+          <button
+           class="btn btn-icon btn-outline-secondary"
+           title="Convert units"
+           popovertarget="conversion-popover"
+          >
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <rect x="2" y="3" width="8" height="6" rx="1"></rect>
+              <rect x="14" y="15" width="8" height="6" rx="1"></rect>
+              <path d="m10 6 4 4-4 4"></path>
+              <line x1="10" y1="10" x2="14" y2="10"></line>
+            </svg>
+          </button>
+        </li>
       </menu>
     </header>
 
@@ -153,5 +184,86 @@
     <footer class="container">
       <p>&copy; 2025 Dan Kiernan</p>
     </footer>
+
+    <article 
+      id="conversion-popover" 
+      class="card" 
+      popover="manual"
+      x-data="{
+        fromUnit: 'lb', 
+        toUnit: 'kg', 
+        result: undefined, 
+        value: undefined,
+        convertUnits() { this.result = convert(this.value, this.fromUnit, this.toUnit) }
+      }"
+    >
+      <div class="grid">
+        <h4 class="col-11">Convert Units</h4>
+        <button 
+          class="btn btn-icon btn-outline-danger col-1" 
+          popovertarget="conversion-popover"
+          title="Close conversion popover"
+        >
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M6 18L18 6"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="grid">
+        <datalist id="imperial-unit-list">
+          <option>oz</option>
+          <option>lb</option>
+          <option>gal</option>
+          <option>fl oz</option>
+          <option>pt</option>
+          <option>f</option>
+        </datalist>
+        <div class="form-group col-4">
+          <label for="from-unit" x-model="fromUnit">From</label>
+          <input id="from-unit" name="from-unit" type="text" x-model="fromUnit" list="imperial-unit-list" />
+        </div>
+        
+        <datalist id="metric-unit-list">
+          <option>g</option>
+          <option>kg</option>
+          <option>ml</option>
+          <option>l</option>
+          <option>c</option>
+          <option>c (fan)</option>
+        </datalist>
+        <div class="form-group col-4">
+          <label for="to-unit" x-model="toUnit">To</label>
+          <input id="to-unit" name="to-unit" type="text" x-model="toUnit" list="metric-unit-list" />
+        </div>
+
+        <div class="form-group col-4">
+          <label for="value">Value</label>
+          <input id="value" name="value" type="number" x-model="value" />
+        </div>
+
+        <button 
+          x-on:click="convertUnits" x-bind:disabled="!fromUnit || !toUnit || !value" 
+          class="btn btn-outline-secondary col-6"
+        >
+          Convert
+        </button>
+        <div class="col-6">
+          <b>Result:</b> <output x-text="result"></output>
+        </div>
+      </div>
+    </article>
   </body>
 </html>
+

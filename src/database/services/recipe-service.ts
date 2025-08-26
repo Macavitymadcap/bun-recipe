@@ -5,9 +5,9 @@ import {
   IngredientRepository,
 } from "../repositories/ingredient-repository";
 import {
-  MethodStepEntity,
-  MethodStepRepository,
-} from "../repositories/method-step-repository";
+  DirectionEntity,
+  DirectionRepository,
+} from "../repositories/direction-repository";
 import {
   RecipeEntity,
   RecipeRepository,
@@ -17,7 +17,7 @@ import { TagRepository, TagEntity } from "../repositories/tag-repository";
 
 interface RecipeConstiuents {
   ingredients: IngredientEntity[];
-  methodSteps: MethodStepEntity[];
+  directions: DirectionEntity[];
   cooksNotes: string[];
   tags: string[];
 }
@@ -46,7 +46,7 @@ export class RecipeService {
   constructor(
     private recipeRepository: RecipeRepository,
     private ingredientRepository: IngredientRepository,
-    private methodStepRepository: MethodStepRepository,
+    private directionRepository: DirectionRepository,
     private cooksNoteRepository: CooksNoteRepository,
     private tagRepository: TagRepository,
     private recipeTagRepository: RecipeTagRepository,
@@ -105,7 +105,7 @@ export class RecipeService {
 
       // Add method steps
       data.method.forEach((step, index) => {
-        this.methodStepRepository.create({
+        this.directionRepository.create({
           recipe_id: recipe.id,
           order_index: index + 1,
           instruction: step.instruction,
@@ -161,7 +161,7 @@ export class RecipeService {
 
       // Delete and recreate related entities
       this.ingredientRepository.deleteByRecipeId(id);
-      this.methodStepRepository.deleteByRecipeId(id);
+      this.directionRepository.deleteByRecipeId(id);
       this.cooksNoteRepository.deleteByRecipeId(id);
       this.recipeTagRepository.deleteByRecipeId(id);
 
@@ -178,7 +178,7 @@ export class RecipeService {
 
       // Recreate method steps
       data.method.forEach((step, index) => {
-        this.methodStepRepository.create({
+        this.directionRepository.create({
           recipe_id: id,
           order_index: index + 1,
           instruction: step.instruction,
@@ -275,7 +275,7 @@ export class RecipeService {
 
   private getRecipeConstiuents(id: number): RecipeConstiuents {
     const ingredients = this.ingredientRepository.readByRecipeId(id);
-    const methodSteps = this.methodStepRepository.readByRecipeId(id);
+    const directions = this.directionRepository.readByRecipeId(id);
     const cooksNotes = this.cooksNoteRepository.readByRecipeId(id);
 
     // Get tags through the junction table
@@ -287,7 +287,7 @@ export class RecipeService {
 
     return {
       ingredients,
-      methodSteps,
+      directions,
       cooksNotes: cooksNotes.map((n) => n.note),
       tags,
     };

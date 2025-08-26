@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { TemperatureConverter } from "./temperatre-converter";
+import { TemperatureConverter } from "./temperature-converter";
 
 describe("TemperatureConverter", () => {
   describe("celsiusToFahrenheit", () => {

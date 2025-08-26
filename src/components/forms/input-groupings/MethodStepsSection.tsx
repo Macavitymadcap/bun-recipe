@@ -1,13 +1,13 @@
 import { AddIcon } from "../../icons/AddIcon";
 import { DeleteIcon } from "../../icons/DeleteIcon";
 
-interface MethodStepsSectionProps {
+interface directionsSectionProps {
   isUpdateForm: boolean;
 }
 
-export const MethodStepsSection = ({
+export const directionsSection = ({
   isUpdateForm,
-}: MethodStepsSectionProps) => {
+}: directionsSectionProps) => {
   return (
     <section>
       <header className="grid">
@@ -15,14 +15,14 @@ export const MethodStepsSection = ({
         <button
           type="button"
           className="btn btn-icon btn-outline-success"
-          x-on:click="addMethodStep()"
+          x-on:click="adddirection()"
         >
           <AddIcon />
         </button>
       </header>
 
-      <ol id="method-list" className="unstyled" x-show="methodSteps.length > 0">
-        <template x-for="(step, index) in methodSteps" x-bind:key="index">
+      <ol id="method-list" className="unstyled" x-show="directions.length > 0">
+        <template x-for="(step, index) in directions" x-bind:key="index">
           <li x-data="{ step }" className="mb-3">
             <div className="grid">
               <div className="form-group col-11">
@@ -62,8 +62,8 @@ export const MethodStepsSection = ({
                   type="button"
                   className="btn btn-icon btn-outline-danger"
                   title="Remove step"
-                  x-on:click="removeMethodStep(index)"
-                  x-bind:disabled="methodSteps.length <= 1"
+                  x-on:click="removedirection(index)"
+                  x-bind:disabled="directions.length <= 1"
                 >
                   <DeleteIcon />
                 </button>
@@ -74,7 +74,7 @@ export const MethodStepsSection = ({
       </ol>
 
       <div
-        x-show="methodSteps.length === 0"
+        x-show="directions.length === 0"
         className="text-center text-surface-low mb-3"
       >
         <em>No method steps added yet. Click "Add Step" to get started.</em>

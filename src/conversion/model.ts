@@ -27,6 +27,19 @@ type VolumeUnitShort =
 
 export type UnitShort = MassUnitShort | TemperatureUnitShort | VolumeUnitShort;
 
+export function isMassUnit(unit: UnitShort): boolean {
+  return Object.values(MASS_UNITS).some(u => u.short === unit);
+}
+
+export function isTemperatureUnit(unit: UnitShort): boolean {
+  return Object.values(TEMPERATURE_UNITS).some(u => u.short === unit);
+}
+
+export function isVolumeUnit(unit: UnitShort): boolean {
+  return Object.values(VOLUME_UNITS).some(u => u.short === unit);
+}
+
+
 export const unitMap = {
   ...MASS_UNITS,
   ...TEMPERATURE_UNITS,

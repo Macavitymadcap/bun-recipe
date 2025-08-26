@@ -11,7 +11,7 @@ export const MainContentRecipe = ({
   preparation_time,
   cooking_time,
   ingredients,
-  methodSteps,
+  directions,
   cooksNotes,
   tags,
 }: MainContentRecipeProps) => {
@@ -75,11 +75,11 @@ export const MainContentRecipe = ({
       </details>
       <details class="mt-3" open>
         <summary>
-          <strong>Method ({methodSteps.length} steps)</strong>
+          <strong>Method ({directions.length} steps)</strong>
         </summary>
         <div class="content">
           <ol>
-            {methodSteps
+            {directions
               .sort((a, b) => a.order_index - b.order_index)
               .map((step) => (
                 <li class="mb-2">{step.instruction}</li>

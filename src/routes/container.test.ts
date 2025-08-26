@@ -10,7 +10,7 @@ import { TokenService } from "../auth/services/token-service";
 import { DbContext } from "../database/context/context";
 import { CooksNoteRepository } from "../database/repositories/cooks-note-repository";
 import { IngredientRepository } from "../database/repositories/ingredient-repository";
-import { MethodStepRepository } from "../database/repositories/method-step-repository";
+import { DirectionRepository } from "../database/repositories/direction-repository";
 import { RecipeRepository } from "../database/repositories/recipe-repository";
 import { RecipeTagRepository } from "../database/repositories/recipe-tag-repository";
 import { TagRepository } from "../database/repositories/tag-repository";
@@ -43,7 +43,7 @@ describe("Container", () => {
     expect(deps.cooksNoteRepository).toBeInstanceOf(CooksNoteRepository);
     expect(deps.dbContext).toBeInstanceOf(DbContext);
     expect(deps.ingredientRepository).toBeInstanceOf(IngredientRepository);
-    expect(deps.methodStepRepository).toBeInstanceOf(MethodStepRepository);
+    expect(deps.directionRepository).toBeInstanceOf(DirectionRepository);
     expect(deps.passwordService).toBeInstanceOf(PasswordService);
     expect(deps.recipeRepository).toBeInstanceOf(RecipeRepository);
     expect(deps.recipeService).toBeInstanceOf(RecipeService);

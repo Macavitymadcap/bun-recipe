@@ -1,12 +1,16 @@
-import { TemperatureConverter } from "./temperatre-converter";
+import { TemperatureConverter } from "./temperature-converter";
 import { MassConverter } from "./mass-converter";
 import { VolumeConverter } from "./volume-converter";
 import {
   MASS_UNITS,
   VOLUME_UNITS,
   TEMPERATURE_UNITS,
-  UnitShort
+  UnitShort,
+  isMassUnit,
+  isTemperatureUnit,
+  isVolumeUnit
 } from "./model";
+import Decimal from "decimal.js";
 
 class ConversionError extends Error {
   constructor(fromUnit: UnitShort, toUnit: UnitShort) {
@@ -19,7 +23,7 @@ const convertMass = (
   fromUnit: UnitShort,
   toUnit: UnitShort,
 ): number => {
-  if (!MASS_UNITS[toUnit as keyof typeof MASS_UNITS]) {
+  if (!isMassUnit(fromUnit) || !isMassUnit(toUnit)) {
     throw new ConversionError(fromUnit, toUnit);
   }
 
@@ -35,7 +39,7 @@ const convertTemperature = (
   fromUnit: UnitShort,
   toUnit: UnitShort,
 ): number => {
-  if (!TEMPERATURE_UNITS[toUnit as keyof typeof TEMPERATURE_UNITS]) {
+  if (!isTemperatureUnit(fromUnit) || !isTemperatureUnit(toUnit)) {
     throw new ConversionError(fromUnit, toUnit);
   }
 
@@ -58,7 +62,7 @@ const convertVolume = (
   fromUnit: UnitShort,
   toUnit: UnitShort,
 ): number => {
-  if (!VOLUME_UNITS[toUnit as keyof typeof VOLUME_UNITS]) {
+  if (!isVolumeUnit(fromUnit) || !isVolumeUnit(toUnit)) {
     throw new ConversionError(fromUnit, toUnit);
   }
 
@@ -80,13 +84,19 @@ export const convert = (
   fromUnit: UnitShort,
   toUnit: UnitShort,
 ): number => {
-  if (MASS_UNITS[fromUnit as keyof typeof MASS_UNITS]) {
-    return convertMass(value, fromUnit, toUnit);
-  } else if (TEMPERATURE_UNITS[fromUnit as keyof typeof TEMPERATURE_UNITS]) {
-    return convertTemperature(value, fromUnit, toUnit);
-  } else if (VOLUME_UNITS[fromUnit as keyof typeof VOLUME_UNITS]) {
-    return convertVolume(value, fromUnit, toUnit);
+  let result
+
+  if (isMassUnit(fromUnit) && isMassUnit(toUnit)) {
+    result = convertMass(value, fromUnit, toUnit);
+  } else if (isTemperatureUnit(fromUnit) && isTemperatureUnit(toUnit)) {
+    result = convertTemperature(value, fromUnit, toUnit);
+  } else if (isVolumeUnit(fromUnit) && isVolumeUnit(toUnit)) {
+    result = convertVolume(value, fromUnit, toUnit);
   } else {
     throw new ConversionError(fromUnit, toUnit);
   }
+
+  const rounded = new Decimal(result).toDecimalPlaces(2);
+  
+  return rounded.isInteger() ? rounded.toNumber() : Number(rounded);
 };

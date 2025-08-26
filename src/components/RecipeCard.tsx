@@ -16,7 +16,7 @@ interface RecipeCardProps {
     name: string;
     order_index: number;
   }>;
-  methodSteps: Array<{
+  directions: Array<{
     id: number;
     order_index: number;
     instruction: string;
@@ -38,7 +38,7 @@ const RecipeCard = ({
   preparation_time,
   cooking_time,
   ingredients,
-  methodSteps,
+  directions,
   cooksNotes,
   tags,
 }: RecipeCardProps) => {
@@ -139,11 +139,11 @@ const RecipeCard = ({
       {/* Method Section */}
       <details className="mt-3">
         <summary>
-          <strong>Method ({methodSteps.length} steps)</strong>
+          <strong>Method ({directions.length} steps)</strong>
         </summary>
         <div className="content">
           <ol>
-            {methodSteps
+            {directions
               .sort((a, b) => a.order_index - b.order_index)
               .map((step) => (
                 <li key={step.id} className="mb-2">

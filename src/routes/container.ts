@@ -7,7 +7,7 @@ import { DB_CONFIG } from "../database/config";
 import { DbContext } from "../database/context/context";
 import { CooksNoteRepository } from "../database/repositories/cooks-note-repository";
 import { IngredientRepository } from "../database/repositories/ingredient-repository";
-import { MethodStepRepository } from "../database/repositories/method-step-repository";
+import { DirectionRepository } from "../database/repositories/direction-repository";
 import { RecipeRepository } from "../database/repositories/recipe-repository";
 import { RecipeTagRepository } from "../database/repositories/recipe-tag-repository";
 import { TagRepository } from "../database/repositories/tag-repository";
@@ -17,7 +17,7 @@ const DEPENDENCY_KEYS = {
   DB_CONTEXT: "dbContext",
   COOKS_NOTE_REPOSITORY: "cooksNoteRepository",
   INGREDIENT_REPOSITORY: "ingredientRepository",
-  METHOD_STEP_REPOSITORY: "methodStepRepository",
+  direction_REPOSITORY: "directionRepository",
   RECIPE_REPOSITORY: "recipeRepository",
   RECIPE_TAG_REPOSITORY: "recipeTagRepository",
   TAG_REPOSITORY: "tagRepository",
@@ -37,7 +37,7 @@ export interface Dependencies {
   dbContext: DbContext;
   cooksNoteRepository: CooksNoteRepository;
   ingredientRepository: IngredientRepository;
-  methodStepRepository: MethodStepRepository;
+  directionRepository: DirectionRepository;
   recipeRepository: RecipeRepository;
   recipeTagRepository: RecipeTagRepository;
   tagRepository: TagRepository;
@@ -81,8 +81,8 @@ export class Container {
       new IngredientRepository(DB_CONFIG.path),
     );
     this.dependencies.set(
-      DEPENDENCY_KEYS.METHOD_STEP_REPOSITORY,
-      new MethodStepRepository(DB_CONFIG.path),
+      DEPENDENCY_KEYS.direction_REPOSITORY,
+      new DirectionRepository(DB_CONFIG.path),
     );
     this.dependencies.set(
       DEPENDENCY_KEYS.RECIPE_REPOSITORY,
@@ -101,7 +101,7 @@ export class Container {
       new RecipeService(
         this.get<RecipeRepository>("recipeRepository"),
         this.get<IngredientRepository>("ingredientRepository"),
-        this.get<MethodStepRepository>("methodStepRepository"),
+        this.get<DirectionRepository>("directionRepository"),
         this.get<CooksNoteRepository>("cooksNoteRepository"),
         this.get<TagRepository>("tagRepository"),
         this.get<RecipeTagRepository>("recipeTagRepository"),
@@ -160,8 +160,8 @@ export class Container {
       ingredientRepository: this.get<IngredientRepository>(
         "ingredientRepository",
       ),
-      methodStepRepository: this.get<MethodStepRepository>(
-        "methodStepRepository",
+      directionRepository: this.get<DirectionRepository>(
+        "directionRepository",
       ),
       recipeRepository: this.get<RecipeRepository>("recipeRepository"),
       recipeTagRepository: this.get<RecipeTagRepository>("recipeTagRepository"),
