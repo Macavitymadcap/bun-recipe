@@ -1,23 +1,36 @@
-menu#main-menu {
+#main-menu-button {
+  anchor-name: --main-menu-button;
+  width: 6rem;
+}
+
+#main-menu[popover]:popover-open {
+  position: fixed;
+  position-anchor: --main-menu-button;
+  position-area: bottom;
+  border: 2px solid var(--colour-surface-lowest);
+  border-radius: 5px;
+  width: 6rem;
   display: flex;
-  width: 100%;
   list-style: none;
+  background-color: var(--colour-background);
   justify-content: space-evenly;
   align-items: center;
   flex-wrap: wrap;
-  flex-direction: row;
+  flex-direction: column;
   margin: 0;
-  padding: 0;
+  padding: .25rem;
+
+
+  li.form-group {
+   display: flex;
+   align-items: center;
+   margin: 0;
+   width: auto;
+   justify-content: center;
+
+   label {
+    color: var(--colour-text);
+   }
+ }
 }
 
-menu#main-menu li {
-  margin: 0;
-}
-
-menu#main-menu li.form-group {
-  display: flex;
-  align-items: center;
-  margin: 0;
-  width: auto;
-  justify-content: center;
-}
