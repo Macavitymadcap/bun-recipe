@@ -3,7 +3,7 @@ import { CloseIcon } from "../icons/CloseIcon";
 export const UploadJsonForm = () => {
   const hxOnUploadSubmitted = {
     "hx-on:htmx:after-request":
-      "this.reset(); htmx.find('dialog').close(); htmx.removeClass('dialog', 'card-outline-primary')",
+      "this.reset(); htmx.find('dialog').close(); htmx.removeClass('dialog', 'card-outline-secondary')",
   };
 
   return (
@@ -24,7 +24,7 @@ export const UploadJsonForm = () => {
           title="Cancel Upload"
           type="button"
           className="btn btn-icon btn-outline-danger col-1 col-push-right"
-          x-on:click="htmx.find('dialog').close();"
+          x-on:click="htmx.removeClass('dialog', 'card-outline-secondary'); htmx.find('dialog').close();"
         >
           <CloseIcon />
         </button>
@@ -47,12 +47,13 @@ export const UploadJsonForm = () => {
 
         <div className="form-group">
           <label>
+            Overwrite existing recipes with same names
             <input
               type="checkbox"
               name="overwriteExisting"
               value="true"
+              class="switch switch-secondary"
             />
-            <span className="ml-2">Overwrite existing recipes with same names</span>
           </label>
           <small className="text-surface-low">
             If unchecked, recipes with duplicate names will be skipped.
@@ -61,7 +62,7 @@ export const UploadJsonForm = () => {
       </div>
 
       <div className="card-footer wrapped-row">
-        <button type="submit" className="btn btn-outline-primary">
+        <button type="submit" className="btn btn-outline-secondary">
           Upload Recipes
         </button>
 
