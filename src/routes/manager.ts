@@ -3,7 +3,7 @@ import { BaseRoute } from "./base-route";
 import { RecipeRoute } from "./recipe";
 import { FormRoute } from "./form";
 import { Container } from "./container";
-import { InfoRoute } from "./info";
+import { DataRoute } from "./data";
 
 export class RouteManager {
   private app: Hono;
@@ -21,7 +21,7 @@ export class RouteManager {
     this.routes = [
       new RecipeRoute(this.container),
       new FormRoute(this.container),
-      new InfoRoute(this.container),
+      new DataRoute(this.container),
     ];
 
     // Mount routes on app

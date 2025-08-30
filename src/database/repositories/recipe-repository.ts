@@ -128,4 +128,12 @@ export class RecipeRepository extends BaseRepository<RecipeEntity> {
       { $searchTerm: `%${searchTerm}%` },
     );
   }
+
+  getTotalRecipeCount(): number {
+    const result = this.dbContext.queryOne<{ count: number }>(
+      `SELECT COUNT(*) as count FROM recipes;`
+    );
+    
+    return result?.count || 0;
+  }
 }

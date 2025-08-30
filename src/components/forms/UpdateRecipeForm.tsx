@@ -44,6 +44,7 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
       hx-put={`/recipe/${recipe.id}`}
       hx-target="#main-content"
       hx-swap="innerHTML"
+      hx-indicator="#updating"
       x-data={`{
         ingredients: ${JSON.stringify(alpineData.ingredients)},
         directions: ${JSON.stringify(alpineData.directions)},
@@ -141,7 +142,7 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
           className="btn btn-outline-danger"
           type="button"
           title="Cancel Recipe Update"
-          hx-get="/info/default"
+          hx-get="/data/default"
           hx-target="#main-content"
           hx-swap="innerHTML"
         >

@@ -14,7 +14,7 @@ export const TagFormGroup = ({ availbaleTags }: TagFormGroupProps) => {
 
   return (
     <div className="form-group">
-      <label htmlFor="tagAutocomplete">Tags (Optional)</label>
+      <label htmlFor="tagAutocomplete">Tags</label>
 
       <div x-show="tags.length > 0" className="mb-2 wrapped-row">
         <template x-for="(tag, index) in tags" x-bind:key="tag">

@@ -12,6 +12,7 @@ import { ReadRecipe, ReadRecipeProps } from "../components/RecipeCard";
 import { CreateRecipeResponse } from "../components/responses/CreateRecipeResponse";
 import { StandardResponse } from "../components/responses/StandardResponse";
 import { SearchRecipesResponse } from "../components/responses/SearchRecipesResponse";
+import { UpdateRecipeResponse } from "../components/responses/UpdateRecipeResponse";
 
 export class RecipeRoute extends BaseRoute {
   private recipeService: RecipeService;
@@ -32,6 +33,7 @@ export class RecipeRoute extends BaseRoute {
 
   private async createRecipe(context: Context): Promise<Response> {
     console.log("Creating recipe...");
+    const statistics = this.recipeService.getRecipeStatistics()
     let alert: AlertProps;
 
     try {
@@ -65,7 +67,7 @@ export class RecipeRoute extends BaseRoute {
         };
       }
 
-      return context.html(StandardResponse({ alert }), {
+      return context.html(StandardResponse({ alert, statistics }), {
         headers: recipe ? { "HX-Trigger": "recipe-created" } : {},
       });
     } catch (error) {
@@ -76,7 +78,7 @@ export class RecipeRoute extends BaseRoute {
         message: `Failed to create recipe: ${(error as Error).message}`,
       };
 
-      return context.html(StandardResponse({ alert }));
+      return context.html(StandardResponse({ alert, statistics }));
     }
   }
 
@@ -215,6 +217,7 @@ export class RecipeRoute extends BaseRoute {
 
   private async updateRecipe(context: Context): Promise<Response> {
     console.log("Updating recipe ...");
+    const statistics = this.recipeService.getRecipeStatistics();
     let alert: AlertProps | undefined;
 
     const id = this.parseRecipeIdFromContext(context);
@@ -231,7 +234,7 @@ export class RecipeRoute extends BaseRoute {
             "Name, servings, at least one ingredient, and at least one direction are required.",
         };
 
-        return context.html(StandardResponse({ alert }));
+        return context.html(StandardResponse({ alert, statistics }));
       }
 
       const recipe = this.recipeService.updateCompleteRecipe(id, formData);
@@ -239,9 +242,11 @@ export class RecipeRoute extends BaseRoute {
       if (recipe) {
         alert = {
           alertType: "success",
-          title: "Recipe Created",
+          title: "Recipe Updated",
           message: `Recipe "${recipe.name}" updated successfully!`,
         };
+
+        return context.html(UpdateRecipeResponse({alert, recipe}))
       } else {
         alert = {
           alertType: "danger",
@@ -250,7 +255,7 @@ export class RecipeRoute extends BaseRoute {
         };
       }
 
-      return context.html(StandardResponse({ alert }));
+      return context.html(StandardResponse({ alert, statistics }));
     } catch (error) {
       console.error("Error updating recipe:", error);
       alert = {
@@ -259,12 +264,13 @@ export class RecipeRoute extends BaseRoute {
         message: `Failed to update recipe: ${(error as Error).message}`,
       };
 
-      return context.html(StandardResponse({ alert }));
+      return context.html(StandardResponse({ alert, statistics }));
     }
   }
 
   private async deleteRecipe(context: Context): Promise<Response> {
     console.log("Deleting recipe ...");
+    const statistics = this.recipeService.getRecipeStatistics()
     const id = this.parseRecipeIdFromContext(context);
 
     const hasBeenDeleted = this.recipeService.deleteCompleteRecipe(id);
@@ -281,7 +287,7 @@ export class RecipeRoute extends BaseRoute {
           message: `Failed to delete recipe with ID ${id}`,
         };
 
-    return context.html(StandardResponse({ alert }));
+    return context.html(StandardResponse({ alert, statistics }));
   }
 
   private parseRecipeIdFromContext(context: Context) {

@@ -23,29 +23,28 @@ export const MainContentRecipe = ({
   };
   return (
     <article>
-      <div className="grid">
-      <h2 className="col-10">{name}</h2>
-      <button
-        title="Update Recipe"
-        className="btn btn-icon btn-outline-secondary col-1"
-        hx-get={`/form/update/${id}`}
-        hx-target="#main-content"
-      >
-        <UpdateIcon />
-      </button>
+      <h2 className>{name}</h2>
+      <div className="wrapped-row mt-1">
+        <button
+          title="Update Recipe"
+          className="btn btn-icon btn-outline-secondary col-1"
+          hx-get={`/form/update/${id}`}
+          hx-target="#main-content"
+        >
+          <UpdateIcon />
+        </button>
 
-      <button
-        title="Delete Recipe"
-        className="btn btn-icon btn-outline-danger col-1 col-push-right"
-        hx-get={`/form/delete/${id}`}
-        hx-target="dialog"
-        {...hxOnAfterRequestSuccessful}
-      >
-        <DeleteIcon />
-      </button>
-
-
+        <button
+          title="Delete Recipe"
+          className="btn btn-icon btn-outline-danger col-1 col-push-right"
+          hx-get={`/form/delete/${id}`}
+          hx-target="dialog"
+          {...hxOnAfterRequestSuccessful}
+        >
+          <DeleteIcon />
+        </button>
       </div>
+
       <div class="card-body">
         <div class="grid">
           <div class="col-6">
