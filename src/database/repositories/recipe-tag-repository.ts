@@ -130,4 +130,39 @@ export class RecipeTagRepository extends BaseRepository<RecipeTagEntity> {
 
     return this.readByRecipeId(recipeId).length === 0;
   }
+
+  getRecipeCountForTag(tagId: number): number {
+    const result = this.dbContext.queryOne<{ count: number }>(
+      `SELECT COUNT(*) as count FROM recipe_tags WHERE tag_id = $tag_id;`,
+      { $tag_id: tagId }
+    );
+    
+    return result?.count || 0;
+  }
+
+  /**
+   * Get tag usage statistics - returns tags with their usage counts
+   */
+  getTagUsageStatistics(): Array<{ tag_id: number; count: number }> {
+    return this.dbContext.query<{ tag_id: number; count: number }>(
+      `SELECT tag_id, COUNT(*) as count 
+      FROM recipe_tags 
+      GROUP BY tag_id 
+      ORDER BY count DESC;`
+    );
+  }
+
+  /**
+   * Get the most used tags with their counts
+   */
+  getMostUsedTags(limit: number = 10): Array<{ tag_id: number; count: number }> {
+    return this.dbContext.query<{ tag_id: number; count: number }>(
+      `SELECT tag_id, COUNT(*) as count 
+      FROM recipe_tags 
+      GROUP BY tag_id 
+      ORDER BY count DESC 
+      LIMIT $limit;`,
+      { $limit: limit }
+    );
+  }
 }

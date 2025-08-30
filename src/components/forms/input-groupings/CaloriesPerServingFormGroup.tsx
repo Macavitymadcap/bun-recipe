@@ -12,7 +12,7 @@ export const CaloriesPerServingFormGroup = ({
         type="number"
         id="calories"
         name="calories_per_serving"
-        placeholder="Optional"
+        placeholder="Optional (kcal)"
         value={value ?? ""}
       />
       <span className="text-danger text-sm"></span>

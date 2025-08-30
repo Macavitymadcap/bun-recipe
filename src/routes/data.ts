@@ -26,7 +26,8 @@ export class DataRoute extends BaseRoute {
   }
 
   private async getDeafultContent(context: Context) {
-    return context.html(DefaultContent());
+    const statistics = this.recipeService.getRecipeStatistics();
+    return context.html(DefaultContent({ statistics }));
   }
 
   private async uploadRecipes(context: Context): Promise<Response> {

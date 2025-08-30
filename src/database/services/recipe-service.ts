@@ -50,6 +50,16 @@ export interface UploadResult {
   messages: string[];
 }
 
+export interface TagStatistic {
+  name: string;
+  count: number;
+}
+
+export interface RecipeStatistics {
+  totalRecipes: number;
+  tagStatistics: TagStatistic[];
+}
+
 export class RecipeService {
   constructor(
     private recipeRepository: RecipeRepository,
@@ -446,5 +456,47 @@ export class RecipeService {
     }
   
     return { valid: errors.length === 0, errors };
+  }
+
+  /**
+   * Get comprehensive statistics about recipes and tags
+   */
+  getRecipeStatistics(): RecipeStatistics {
+    const totalRecipes = this.recipeRepository.getTotalRecipeCount();
+    const tagStatistics = this.getTagStatistics();
+
+    return {
+      totalRecipes,
+      tagStatistics,
+    };
+  }
+
+  /**
+   * Get statistics for all tags showing usage count
+   */
+  getTagStatistics(): TagStatistic[] {
+    const allTags = this.tagRepository.readAll();
+    
+    return allTags.map(tag => {
+      const recipeCount = this.recipeTagRepository.getRecipeCountForTag(tag.id);
+      return {
+        name: tag.name,
+        count: recipeCount,
+      };
+    }).sort((a, b) => b.count - a.count); // Sort by count descending
+  }
+
+  /**
+   * Get total number of recipes
+   */
+  getTotalRecipeCount(): number {
+    return this.recipeRepository.getTotalRecipeCount();
+  }
+
+  /**
+   * Get most popular tags (with usage counts)
+   */
+  getMostPopularTags(limit: number = 10): TagStatistic[] {
+    return this.getTagStatistics().slice(0, limit);
   }
 }
