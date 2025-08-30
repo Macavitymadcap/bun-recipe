@@ -103,7 +103,7 @@
             hx-target="#main-content"
             hx-swap="innerHTML"
             popovertarget="main-menu"
-            hx-indicator="#refreshing"
+            hx-indicator="#loading"
           >
             <svg
               aria-hidden="true"
@@ -219,26 +219,11 @@
     </main>
 
     <dialog class="card"></dialog>
-
+    
     <aside id="alerts" class="container">
-      <div id="loading" class="alert alert-primary htmx-indicator">
-        <strong>Loading content...</strong>
-      </div>
-
-      <div id="updating" class="alert alert-secondary htmx-indicator">
-        <strong>Updating recipe ...</strong>
-      </div>
-
-      <div id="creating" class="alert alert-success htmx-indicator">
-        <strong>Creating recipe ...</strong>
-      </div>
-
-      <div id="deleting" class="alert alert-danger htmx-indicator">
-        <strong>Deleting recipe ...</strong>
-      </div>
-
-      <div id="refreshing" class="alert alert-warning htmx-indicator">
-        <strong>Refreshing content...</strong>
+      <div id="working" class="alert alert-primary htmx-indicator">
+        <strong>Working</strong>
+        <progress></progress>
       </div>
     </aside>
 
