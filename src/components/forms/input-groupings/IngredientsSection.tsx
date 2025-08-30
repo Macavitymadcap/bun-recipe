@@ -102,6 +102,14 @@ export const IngredientsSection = ({
                   <option>tbsps</option>
                   <option>cup</option>
                   <option>cups</option>
+                  <option>clove</option>
+                  <option>cloves</option>
+                  <option>carton</option>
+                  <option>cartons</option>
+                  <option>can</option>
+                  <option>cans</option>
+                  <option>pinch</option>
+                  <option>pinches</option>
                 </datalist>
               </div>
 
