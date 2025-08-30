@@ -1,4 +1,3 @@
-import { AddIcon } from "../../icons/AddIcon";
 import { DeleteIcon } from "../../icons/DeleteIcon";
 
 export interface IngredientSectionProps {
@@ -14,19 +13,7 @@ export const IngredientsSection = ({
 
   return (
     <section>
-      <header className="grid">
-        <h3 className="col-11">Ingredients</h3>
-
-        <button
-          type="button"
-          title="Add Ingredient"
-          className="btn btn-icon btn-outline-success col-1 col-push-right"
-          x-on:click="addIngredient()"
-        >
-          <AddIcon />
-        </button>
-      </header>
-
+      <h3>Ingredients</h3>
       <ul
         id="ingredients-list"
         className="unstyled"
@@ -176,6 +163,17 @@ export const IngredientsSection = ({
         <em>
           No ingredients added yet. Click add button above to get started.
         </em>
+      </div>
+      
+      <div className="wrapped-row">
+        <button
+          type="button"
+          title="Add Ingredient"
+          className="btn btn-outline-success"
+          x-on:click="addIngredient()"
+        >
+          Add Ingredient
+        </button>
       </div>
     </section>
   );

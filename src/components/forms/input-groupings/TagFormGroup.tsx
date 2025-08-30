@@ -46,7 +46,7 @@ export const TagFormGroup = ({ availbaleTags }: TagFormGroupProps) => {
           x-model="currentTagInput"
           {...tagInput}
           x-on:input="handleTagInput($event)"
-          className="col-11"
+          className="col-8"
         />
 
         <AvailableTagsDataList
@@ -64,10 +64,10 @@ export const TagFormGroup = ({ availbaleTags }: TagFormGroupProps) => {
 
         <button
           type="button"
-          className="btn btn-icon btn-outline-success col-1"
+          className="btn btn-outline-success col-4"
           x-on:click="addTag()"
         >
-          <AddIcon />
+          Add Tag
         </button>
       </div>
 

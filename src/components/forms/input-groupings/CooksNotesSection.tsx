@@ -8,17 +8,8 @@ interface CooksNotesSectionProps {
 export const CooksNotesSection = ({ isUpdateForm }: CooksNotesSectionProps) => {
   return (
     <section>
-      <header className="grid">
-        <h3 className="col-11">Cook's Notes</h3>
-        <button
-          type="button"
-          title="Add Cook's Note"
-          className="btn btn-icon btn-outline-success col1 col-push-right"
-          x-on:click="addCooksNote()"
-        >
-          <AddIcon />
-        </button>
-      </header>
+      <h3>Cook's Notes</h3>
+        
 
       <ul id="notes-list" className="unstyled" x-show="cooksNotes.length > 0">
         <template x-for="(note, index) in cooksNotes" x-bind:key="index">
@@ -71,6 +62,17 @@ export const CooksNotesSection = ({ isUpdateForm }: CooksNotesSectionProps) => {
         className="text-center text-surface-low mb-3"
       >
         <em>No notes added yet. Click the add button above to get started.</em>
+      </div>
+      
+      <div className="wrapped-row">
+        <button
+          type="button"
+          title="Add Cook's Note"
+          className="btn btn-outline-success"
+          x-on:click="addCooksNote()"
+        >
+          Add Cook's Note
+        </button>
       </div>
     </section>
   );
