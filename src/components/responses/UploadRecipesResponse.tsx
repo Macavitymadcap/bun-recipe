@@ -1,5 +1,4 @@
 import { Alert, AlertProps } from "../Alert";
-import { DefaultContent } from "../DefaultContent";
 
 interface UploadRecipesResponseProps {
   alert: AlertProps;
@@ -52,6 +51,5 @@ export const UploadRecipesResponse = ({
       ${Alert(alert)}
     </div>
     ${detailsHtml}
-    ${DefaultContent()}
   `;
 };

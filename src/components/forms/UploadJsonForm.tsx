@@ -9,7 +9,7 @@ export const UploadJsonForm = () => {
   return (
     <form
       id="upload-json-form"
-      hx-post="/info/upload"
+      hx-post="/data/upload"
       hx-target="#main-content"
       hx-swap="innerHTML"
       hx-encoding="multipart/form-data"

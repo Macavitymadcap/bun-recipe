@@ -6,11 +6,11 @@ import { RecipeService, UploadResult } from "../database/services/recipe-service
 import { AlertProps } from "../components/Alert";
 import { UploadRecipesResponse } from "../components/responses/UploadRecipesResponse";
 
-export class InfoRoute extends BaseRoute {
+export class DataRoute extends BaseRoute {
   private recipeService: RecipeService;
 
   constructor(container: Container = Container.getInstance()) {
-    super({ prefix: "/info" });
+    super({ prefix: "/data" });
     this.recipeService = container.get<RecipeService>("recipeService");
   }
 

@@ -50,37 +50,40 @@ const RecipeCard = ({
   return (
     <article {...props}>
       {/* Recipe Header with Actions */}
-      <div className="content grid">
-        <h2 className="card-header col-9 push-left">{name}</h2>
+      <div className="card-header">
+        <h2>{name}</h2>
 
-        <button
-          title="Full content view"
-          hx-get={`/recipe/${id}`}
-          className="btn btn-icon btn-outline-primary col-1 col-push-right"
-          hx-target="#main-content"
-        >
-          <MaximiseIcon />
-        </button>
+        <div className="wrapped-row mt-1">
+          <button
+            title="Full content view"
+            hx-get={`/recipe/${id}`}
+            className="btn btn-icon btn-outline-primary col-4"
+            hx-target="#main-content"
+          >
+            <MaximiseIcon />
+          </button>
 
-        <button
-          title="Update Recipe"
-          className="btn btn-icon btn-outline-secondary col-1 col-push-right"
-          hx-get={`/form/update/${id}`}
-          hx-target="#main-content"
-        >
-          <UpdateIcon />
-        </button>
+          <button
+            title="Update Recipe"
+            className="btn btn-icon btn-outline-secondary col-4"
+            hx-get={`/form/update/${id}`}
+            hx-target="#main-content"
+          >
+            <UpdateIcon />
+          </button>
 
-        <button
-          title="Delete Recipe"
-          className="btn btn-icon btn-outline-danger col-1 col-push-right"
-          hx-get={`/form/delete/${id}`}
-          hx-target="dialog"
-          {...hxOnAfterRequestSuccessful}
-        >
-          <DeleteIcon />
-        </button>
+          <button
+            title="Delete Recipe"
+            className="btn btn-icon btn-outline-danger col-4"
+            hx-get={`/form/delete/${id}`}
+            hx-target="dialog"
+            {...hxOnAfterRequestSuccessful}
+          >
+            <DeleteIcon />
+          </button>
+        </div>
       </div>
+
 
       {/* Recipe Basic Info */}
       <div className="card-body">

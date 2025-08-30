@@ -12,6 +12,7 @@ import { ReadRecipe, ReadRecipeProps } from "../components/RecipeCard";
 import { CreateRecipeResponse } from "../components/responses/CreateRecipeResponse";
 import { StandardResponse } from "../components/responses/StandardResponse";
 import { SearchRecipesResponse } from "../components/responses/SearchRecipesResponse";
+import { UpdateRecipeResponse } from "../components/responses/UpdateRecipeResponse";
 
 export class RecipeRoute extends BaseRoute {
   private recipeService: RecipeService;
@@ -239,9 +240,11 @@ export class RecipeRoute extends BaseRoute {
       if (recipe) {
         alert = {
           alertType: "success",
-          title: "Recipe Created",
+          title: "Recipe Updated",
           message: `Recipe "${recipe.name}" updated successfully!`,
         };
+
+        return context.html(UpdateRecipeResponse({alert, recipe}))
       } else {
         alert = {
           alertType: "danger",

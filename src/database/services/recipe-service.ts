@@ -87,9 +87,8 @@ export class RecipeService {
     });
   }
 
-  createCompleteRecipe(data: CreateRecipeData): CompleteRecipe | null {
-    return this.dbContext.transaction(() => {
-      // Create the main recipe
+  createCompleteRecipeInternal(data: CreateRecipeData) {
+    // Create the main recipe
       const recipe = this.recipeRepository.create({
         name: data.name,
         servings: data.servings,
@@ -144,8 +143,14 @@ export class RecipeService {
       }
 
       return this.getCompleteRecipe(recipe.id);
+  }
+
+  createCompleteRecipe(data: CreateRecipeData): CompleteRecipe | null {
+    return this.dbContext.transaction(() => {
+      return this.createCompleteRecipeInternal(data);
     });
   }
+
 
   updateCompleteRecipe(
     id: number,
@@ -353,7 +358,7 @@ export class RecipeService {
             tags: recipeData.tags.length > 0 ? recipeData.tags : undefined
           };
   
-          const createdRecipe = this.createCompleteRecipe(createData);
+          const createdRecipe = this.createCompleteRecipeInternal(createData);
           
           if (createdRecipe) {
             result.imported++;
