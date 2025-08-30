@@ -10,16 +10,7 @@ export const DirectionsSection = ({
 }: DirectionsSectionProps) => {
   return (
     <section>
-      <header className="grid">
-        <h3 className="col-11">Directions</h3>
-        <button
-          type="button"
-          className="btn btn-icon btn-outline-success"
-          x-on:click="addDirection()"
-        >
-          <AddIcon />
-        </button>
-      </header>
+      <h3>Directions</h3>
 
       <ol id="directions-list" className="unstyled" x-show="directions.length > 0">
         <template x-for="(step, index) in directions" x-bind:key="index">
@@ -63,7 +54,9 @@ export const DirectionsSection = ({
                   className="btn btn-icon btn-outline-danger"
                   title="Remove direction"
                   x-on:click="removeDirection(index)"
-                  x-bind:disabled="directions.length <= 1"
+                  x-bind:disabled={
+                    isUpdateForm ? "directions.length <= 1" : undefined
+                  }
                 >
                   <DeleteIcon />
                 </button>
@@ -78,6 +71,16 @@ export const DirectionsSection = ({
         className="text-center text-surface-low mb-3"
       >
         <em>No directions added yet. Click "Add " to get started.</em>
+      </div>
+      
+      <div className="wrapped-row">
+        <button
+          type="button"
+          className="btn btn-outline-success"
+          x-on:click="addDirection()"
+        >
+          Add Direction
+        </button>
       </div>
     </section>
   );

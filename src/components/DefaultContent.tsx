@@ -7,6 +7,7 @@ import { MaximiseIcon } from "./icons/MaximiseIcon";
 import { RefreshIcon } from "./icons/RefreshIcon";
 import { SearchIcon } from "./icons/SearchIcon";
 import { UpdateIcon } from "./icons/UpdateIcon";
+import { UploadIcon } from "./icons/UploadIcon";
 
 export const DefaultContent = () => {
   return (
@@ -20,6 +21,7 @@ export const DefaultContent = () => {
           &nbsp;
           <b>Create:</b> Opens a form to create a new recipe.
         </li>
+
         <li>
           <button className="btn btn-icon btn-outline-primary">
             <SearchIcon />
@@ -27,6 +29,7 @@ export const DefaultContent = () => {
           &nbsp;
           <b>Search:</b> Opens a dialog to search for existing recipes.
         </li>
+
         <li>
           <button className="btn btn-icon btn-outline-warning">
             <RefreshIcon />
@@ -34,13 +37,23 @@ export const DefaultContent = () => {
           &nbsp;
           <b>Refresh:</b> Reloads the current content.
         </li>
+
         <li>
           <button className="btn btn-icon btn-outline-primary">
             <DownloadIcon />
           </button>
           &nbsp;
-          <b>JSON:</b> Downloads recipe data as a JSON.
+          <b>Download:</b> Downloads recipe data as a JSON file backup.
         </li>
+
+        <li>
+          <button className="btn btn-icon btn-outline-secondary">
+            <UploadIcon />
+          </button>
+          &nbsp;
+          <b>Upload:</b> Opens a dialog to upload recipes from a JSON file backup.
+        </li>
+
         <li>
           <button className="btn btn-icon btn-outline-secondary">
             <ConvertIcon />
@@ -48,6 +61,7 @@ export const DefaultContent = () => {
           &nbsp;
           <b>Convert:</b> Opens a popover to convert between different units.
         </li>
+
         <li>
           <button className="btn btn-icon btn-outline-primary">
             <MaximiseIcon />
@@ -55,6 +69,7 @@ export const DefaultContent = () => {
           &nbsp;
           <b>Maximise:</b> Expands the current recipe card to full content size.
         </li>
+
         <li>
           <button className="btn btn-icon btn-outline-secondary">
             <UpdateIcon />
@@ -62,6 +77,7 @@ export const DefaultContent = () => {
           &nbsp;
           <b>Update:</b> Expand the current recipe into a full size update form.
         </li>
+
         <li>
           <button className="btn btn-icon btn-outline-danger">
             <DeleteIcon />
@@ -69,6 +85,7 @@ export const DefaultContent = () => {
           &nbsp;
           <b>Delete:</b> deletes the current recipe card or removes an item from a list (like ingredients, directions and cooks notes).
         </li>
+
         <li>
           <button className="btn btn-icon btn-outline-danger">
             <CloseIcon />
