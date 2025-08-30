@@ -28,7 +28,15 @@
       <button class="btn btn-outline col-2 col-push-right" id="main-menu-button" popovertarget="main-menu">Menu</button>
 
     </header>
-    <menu id="main-menu" popover>
+    <menu 
+      id="main-menu" 
+      popover 
+      x-data="{ 
+        closeMenu() {
+          htmx.find('#main-menu').togglePopover()
+        } 
+      }"
+    >
       <li class="form-group">
         <label for="create-button">Create</label>
 
@@ -38,6 +46,7 @@
           hx-get="/form/create"
           hx-target="#main-content"
           name="create-button"
+          popovertarget="main-menu"
         >
           <svg
             aria-hidden="true"
@@ -93,6 +102,7 @@
           hx-get="/info/default"
           hx-target="#main-content"
           hx-swap="innerHTML"
+          popovertarget="main-menu"
         >
           <svg
             aria-hidden="true"
@@ -114,12 +124,41 @@
       </li>
 
       <li class="form-group">
-        <label for="json-link">JSON</label>
+        <label for="convert-popover-button">Convert</label>
+        <button
+         class="btn btn-icon btn-outline-secondary"
+         title="Convert units"
+         popovertarget="conversion-popover"
+         x-on:click="closeMenu()"
+        >
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="2" y="3" width="8" height="6" rx="1"></rect>
+            <rect x="14" y="15" width="8" height="6" rx="1"></rect>
+            <path d="m10 6 4 4-4 4"></path>
+            <line x1="10" y1="10" x2="14" y2="10"></line>
+          </svg>
+        </button>
+      </li>
+
+      <li class="form-group">
+        <label for="download-link">Download</label>
         <a
           href="/info"
           download="recipes.json"
           class="btn btn-icon btn-outline-primary"
-          name="json-link"
+          name="download-link"
+          x-data
+          x-on:click="closeMenu()"
         >
           <svg
             aria-hidden="true"
@@ -140,11 +179,14 @@
       </li>
 
       <li class="form-group">
-        <label for="convert-popover-button">Convert</label>
+        <label for="upload-button">Upload</label>
         <button
-         class="btn btn-icon btn-outline-secondary"
-         title="Convert units"
-         popovertarget="conversion-popover"
+          class="btn btn-icon btn-outline-secondary"
+          title="Upload recipes from JSON"
+          hx-get="/form/upload"
+          hx-target="dialog"
+          hx-on:htmx:after-request="if (event.detail.successful) { htmx.addClass('dialog', 'card-outline-secondary'); htmx.find('dialog').showModal(); }"
+          name="upload-button"
         >
           <svg
             aria-hidden="true"
@@ -153,14 +195,13 @@
             height="24"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           >
-            <rect x="2" y="3" width="8" height="6" rx="1"></rect>
-            <rect x="14" y="15" width="8" height="6" rx="1"></rect>
-            <path d="m10 6 4 4-4 4"></path>
-            <line x1="10" y1="10" x2="14" y2="10"></line>
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17,8 12,3 7,8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
           </svg>
         </button>
       </li>

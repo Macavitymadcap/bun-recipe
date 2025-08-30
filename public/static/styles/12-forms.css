@@ -57,6 +57,10 @@ select:focus {
   border-color: var(--colour-primary);
   box-shadow: 0 0 0 3px rgba(74, 110, 181, 0.25);
 }
+::placeholder {
+  color: var(--background-colour);
+  opacity: 1;
+}
 
 /* Form Group */
 .form-group {

@@ -42,6 +42,14 @@ export interface CreateRecipeData {
   tags?: string[];
 }
 
+export interface UploadResult {
+  success: boolean;
+  imported: number;
+  skipped: number;
+  errors: number;
+  messages: string[];
+}
+
 export class RecipeService {
   constructor(
     private recipeRepository: RecipeRepository,
@@ -291,5 +299,147 @@ export class RecipeService {
       cooksNotes: cooksNotes.map((n) => n.note),
       tags,
     };
+  }
+
+  public importRecipesFromJson(
+    jsonData: CompleteRecipe[],
+    overwriteExisting: boolean = false
+  ): UploadResult {
+    const result: UploadResult = {
+      success: true,
+      imported: 0,
+      skipped: 0,
+      errors: 0,
+      messages: []
+    };
+  
+    return this.dbContext.transaction(() => {
+      for (const recipeData of jsonData) {
+        try {
+          // Check if recipe with same name exists
+          const existingRecipes = this.recipeRepository.searchByName(recipeData.name);
+          const exactMatch = existingRecipes.find(r => 
+            r.name.toLowerCase() === recipeData.name.toLowerCase()
+          );
+  
+          if (exactMatch && !overwriteExisting) {
+            result.skipped++;
+            result.messages.push(`Skipped "${recipeData.name}" - already exists`);
+            continue;
+          }
+  
+          // If overwriting, delete the existing recipe
+          if (exactMatch && overwriteExisting) {
+            this.deleteCompleteRecipe(exactMatch.id);
+            result.messages.push(`Replaced existing recipe "${recipeData.name}"`);
+          }
+  
+          // Convert CompleteRecipe to CreateRecipeData format
+          const createData: CreateRecipeData = {
+            name: recipeData.name,
+            servings: recipeData.servings,
+            calories_per_serving: recipeData.calories_per_serving,
+            preparation_time: recipeData.preparation_time,
+            cooking_time: recipeData.cooking_time,
+            ingredients: recipeData.ingredients.map(ing => ({
+              quantity: ing.quantity,
+              unit: ing.unit,
+              name: ing.name
+            })),
+            directions: recipeData.directions.map(dir => ({
+              instruction: dir.instruction
+            })),
+            cooksNotes: recipeData.cooksNotes.length > 0 ? recipeData.cooksNotes : undefined,
+            tags: recipeData.tags.length > 0 ? recipeData.tags : undefined
+          };
+  
+          const createdRecipe = this.createCompleteRecipe(createData);
+          
+          if (createdRecipe) {
+            result.imported++;
+            if (!exactMatch) {
+              result.messages.push(`Imported "${recipeData.name}"`);
+            }
+          } else {
+            result.errors++;
+            result.messages.push(`Failed to import "${recipeData.name}"`);
+          }
+  
+        } catch (error) {
+          result.errors++;
+          result.messages.push(`Error importing "${recipeData.name}": ${(error as Error).message}`);
+        }
+      }
+  
+      if (result.errors > 0) {
+        result.success = false;
+      }
+  
+      return result;
+    });
+  }
+  
+  /**
+   * Validate imported recipe data structure
+   */
+  public validateRecipeData(data: any[]): { valid: boolean; errors: string[] } {
+    const errors: string[] = [];
+    
+    if (!Array.isArray(data)) {
+      errors.push("Data must be an array of recipes");
+      return { valid: false, errors };
+    }
+  
+    if (data.length === 0) {
+      errors.push("No recipes found in the data");
+      return { valid: false, errors };
+    }
+  
+    // Validate each recipe has required fields
+    for (let i = 0; i < data.length; i++) {
+      const recipe = data[i];
+      const recipeErrors: string[] = [];
+  
+      if (!recipe.name || typeof recipe.name !== 'string') {
+        recipeErrors.push(`Recipe ${i + 1}: Missing or invalid name`);
+      }
+  
+      if (!recipe.servings || typeof recipe.servings !== 'string') {
+        recipeErrors.push(`Recipe ${i + 1}: Missing or invalid servings`);
+      }
+  
+      if (!Array.isArray(recipe.ingredients) || recipe.ingredients.length === 0) {
+        recipeErrors.push(`Recipe ${i + 1}: Missing or empty ingredients array`);
+      } else {
+        recipe.ingredients.forEach((ing: any, idx: number) => {
+          if (!ing.name || typeof ing.name !== 'string') {
+            recipeErrors.push(`Recipe ${i + 1}, Ingredient ${idx + 1}: Missing or invalid name`);
+          }
+        });
+      }
+  
+      if (!Array.isArray(recipe.directions) || recipe.directions.length === 0) {
+        recipeErrors.push(`Recipe ${i + 1}: Missing or empty directions array`);
+      } else {
+        recipe.directions.forEach((dir: any, idx: number) => {
+          if (!dir.instruction || typeof dir.instruction !== 'string') {
+            recipeErrors.push(`Recipe ${i + 1}, Direction ${idx + 1}: Missing or invalid instruction`);
+          }
+        });
+      }
+  
+      // Ensure arrays exist even if empty
+      if (!Array.isArray(recipe.cooksNotes)) {
+        recipe.cooksNotes = [];
+      }
+  
+      if (!Array.isArray(recipe.tags)) {
+        recipe.tags = [];
+      }
+  
+      errors.push(...recipeErrors);
+    }
+  
+    return { valid: errors.length === 0, errors };
   }
 }
