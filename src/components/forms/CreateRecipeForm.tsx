@@ -20,7 +20,7 @@ export const CreateRecipeForm = ({ availableTags }: CreateRecipeFormProps) => {
       hx-post="/recipe"
       hx-target="#main-content"
       hx-swap="innerHTML"
-      hx-indicator="#loading"
+      hx-indicator="#working"
       x-data={`{ingredients: [{ id: Date.now(), quantity: "", unit: "", name: "" }],
         directions: [{ id: Date.now() + 1, instruction: "" }],
         cooksNotes: [],
@@ -131,7 +131,7 @@ export const CreateRecipeForm = ({ availableTags }: CreateRecipeFormProps) => {
           hx-get="/data/default"
           hx-target="#main-content"
           hx-swap="innerHTML"
-          hx-indicator="#loading"
+          hx-indicator="#working"
         >
           Cancel
         </button>

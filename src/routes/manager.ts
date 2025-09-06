@@ -4,6 +4,7 @@ import { RecipeRoute } from "./recipe";
 import { FormRoute } from "./form";
 import { Container } from "./container";
 import { DataRoute } from "./data";
+import { ShoppingListRoute } from "./shopping-list";
 
 export class RouteManager {
   private app: Hono;
@@ -22,6 +23,7 @@ export class RouteManager {
       new RecipeRoute(this.container),
       new FormRoute(this.container),
       new DataRoute(this.container),
+      new ShoppingListRoute(this.container),
     ];
 
     // Mount routes on app

@@ -1,6 +1,6 @@
 #main-menu-button {
   anchor-name: --main-menu-button;
-  width: 6rem;
+  width: 8rem;
 }
 
 #header {
@@ -9,12 +9,12 @@
 
 #main-menu[popover]:popover-open {
   position: absolute !important;
-  top: -35vh !important; 
+  top: -23rem !important; 
   right: 2rem !important; 
   left: auto !important;
   border: 2px solid var(--colour-surface-lowest);
   border-radius: 5px;
-  width: 6rem;
+  width: 8rem;
   display: flex;
   list-style: none;
   background-color: var(--colour-background);

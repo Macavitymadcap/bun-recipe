@@ -10,6 +10,7 @@ import { DownloadIcon } from "./icons/DownloadIcon";
 import { MaximiseIcon } from "./icons/MaximiseIcon";
 import { RefreshIcon } from "./icons/RefreshIcon";
 import { SearchIcon } from "./icons/SearchIcon";
+import { ShoppingListIcon } from "./icons/ShoppingListIcon";
 import { UpdateIcon } from "./icons/UpdateIcon";
 import { UploadIcon } from "./icons/UploadIcon";
 
@@ -121,6 +122,14 @@ export const DefaultContent = ({ statistics }: DefaultContentProps) => {
             </button>
             &nbsp;
             <b>Convert:</b> Opens a popover to convert between different units.
+          </li>
+
+          <li>
+            <button className="btn btn-icon btn-outline-warning">
+              <ShoppingListIcon />
+            </button>
+            &nbsp;
+            <b>Shopping List:</b> View and manage your shopping list, or add recipe ingredients to it.
           </li>
 
           <li>

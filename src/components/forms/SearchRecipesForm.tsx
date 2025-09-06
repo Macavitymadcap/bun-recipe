@@ -19,7 +19,7 @@ export const SearchRecipesForm = ({
       hx-post="/recipe/search"
       hx-target="#main-content"
       hx-swap="innerHTML"
-      // hx-indicator="#loading"
+      // hx-indicator="#working"
       method="dialog"
       x-data="{ searchType: 'name' }"
       {...hxOnSearchSubmitted}

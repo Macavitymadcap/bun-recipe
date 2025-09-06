@@ -17,7 +17,7 @@ const DeleteRecipeForm = ({ recipeId, recipeName }: DeleteRecipeFormProps) => {
       hx-delete={`/recipe/${recipeId}`}
       hx-target="#main-content"
       hx-swap="innerHTML"
-      hx-indicator="#loading"
+      hx-indicator="#working"
       {...hxOnDeleteRecipe}
     >
       <section class="card-header grid">

@@ -1,6 +1,7 @@
 // Create src/components/FullPageRecipe.tsx
 import { CompleteRecipe } from "../database/services/recipe-service";
 import { DeleteIcon } from "./icons/DeleteIcon";
+import { ShoppingListIcon } from "./icons/ShoppingListIcon";
 import { UpdateIcon } from "./icons/UpdateIcon";
 
 interface MainContentRecipeProps extends CompleteRecipe {}
@@ -33,6 +34,15 @@ export const MainContentRecipe = ({
         >
           <UpdateIcon />
         </button>
+
+          <button
+            title="Add ingredients to shopping list"
+            className="btn btn-icon btn-outline-warning col-1"
+            hx-post={`/shopping-list/recipe/${id}`}
+            hx-indicator="#working"
+          >
+            <ShoppingListIcon />
+          </button>
 
         <button
           title="Delete Recipe"
