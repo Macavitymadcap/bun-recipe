@@ -1,8 +1,3 @@
-import { RefreshTokenRepository } from "../auth/repositories/refresh-token-repository";
-import { UserRepository } from "../auth/repositories/user-repository";
-import { AuthService } from "../auth/services/auth-service";
-import { PasswordService } from "../auth/services/password-service";
-import { TokenService } from "../auth/services/token-service";
 import { DB_CONFIG } from "../database/config";
 import { DbContext } from "../database/context/context";
 import { CooksNoteRepository } from "../database/repositories/cooks-note-repository";
@@ -22,11 +17,6 @@ const DEPENDENCY_KEYS = {
   RECIPE_TAG_REPOSITORY: "recipeTagRepository",
   TAG_REPOSITORY: "tagRepository",
   RECIPE_SERVICE: "recipeService",
-  REFRESH_TOKEN_REPOSITORY: "refreshTokenRepository",
-  USER_REPOSITORY: "userRepository",
-  PASSWORD_SERVICE: "passwordService",
-  TOKEN_SERVICE: "tokenService",
-  AUTH_SERVICE: "authService",
 } as const;
 
 type ObjectValues<T> = T[keyof T];
@@ -42,11 +32,6 @@ export interface Dependencies {
   recipeTagRepository: RecipeTagRepository;
   tagRepository: TagRepository;
   recipeService: RecipeService;
-  refreshTokenRepository: RefreshTokenRepository;
-  userRepository: UserRepository;
-  passwordService: PasswordService;
-  tokenService: TokenService;
-  authService: AuthService;
 }
 
 export class Container {
@@ -71,30 +56,30 @@ export class Container {
    * Register all dependencies
    */
   private registerDependencies(): void {
-    this.dependencies.set(DEPENDENCY_KEYS.DB_CONTEXT, DbContext.getInstance());
+    this.dependencies.set(DEPENDENCY_KEYS.DB_CONTEXT, DbContext.getInstance(DB_CONFIG));
     this.dependencies.set(
       DEPENDENCY_KEYS.COOKS_NOTE_REPOSITORY,
-      new CooksNoteRepository(DB_CONFIG.path),
+      new CooksNoteRepository(DB_CONFIG),
     );
     this.dependencies.set(
       DEPENDENCY_KEYS.INGREDIENT_REPOSITORY,
-      new IngredientRepository(DB_CONFIG.path),
+      new IngredientRepository(DB_CONFIG),
     );
     this.dependencies.set(
       DEPENDENCY_KEYS.direction_REPOSITORY,
-      new DirectionRepository(DB_CONFIG.path),
+      new DirectionRepository(DB_CONFIG),
     );
     this.dependencies.set(
       DEPENDENCY_KEYS.RECIPE_REPOSITORY,
-      new RecipeRepository(DB_CONFIG.path),
+      new RecipeRepository(DB_CONFIG),
     );
     this.dependencies.set(
       DEPENDENCY_KEYS.RECIPE_TAG_REPOSITORY,
-      new RecipeTagRepository(DB_CONFIG.path),
+      new RecipeTagRepository(DB_CONFIG),
     );
     this.dependencies.set(
       DEPENDENCY_KEYS.TAG_REPOSITORY,
-      new TagRepository(DB_CONFIG.path),
+      new TagRepository(DB_CONFIG),
     );
     this.dependencies.set(
       DEPENDENCY_KEYS.RECIPE_SERVICE,
@@ -106,29 +91,6 @@ export class Container {
         this.get<TagRepository>("tagRepository"),
         this.get<RecipeTagRepository>("recipeTagRepository"),
         this.get<DbContext>("dbContext"),
-      ),
-    );
-    this.dependencies.set(
-      DEPENDENCY_KEYS.REFRESH_TOKEN_REPOSITORY,
-      new RefreshTokenRepository(DB_CONFIG.path),
-    );
-    this.dependencies.set(
-      DEPENDENCY_KEYS.USER_REPOSITORY,
-      new UserRepository(DB_CONFIG.path),
-    );
-    this.dependencies.set(
-      DEPENDENCY_KEYS.PASSWORD_SERVICE,
-      new PasswordService(),
-    );
-    this.dependencies.set(DEPENDENCY_KEYS.TOKEN_SERVICE, new TokenService());
-    this.dependencies.set(
-      DEPENDENCY_KEYS.AUTH_SERVICE,
-      new AuthService(
-        this.get(DEPENDENCY_KEYS.USER_REPOSITORY),
-        this.get(DEPENDENCY_KEYS.REFRESH_TOKEN_REPOSITORY),
-        this.get(DEPENDENCY_KEYS.PASSWORD_SERVICE),
-        this.get(DEPENDENCY_KEYS.TOKEN_SERVICE),
-        this.get(DEPENDENCY_KEYS.DB_CONTEXT),
       ),
     );
   }
@@ -167,13 +129,6 @@ export class Container {
       recipeTagRepository: this.get<RecipeTagRepository>("recipeTagRepository"),
       tagRepository: this.get<TagRepository>("tagRepository"),
       recipeService: this.get<RecipeService>("recipeService"),
-      refreshTokenRepository: this.get<RefreshTokenRepository>(
-        "refreshTokenRepository",
-      ),
-      userRepository: this.get<UserRepository>("userRepository"),
-      passwordService: this.get<PasswordService>("passwordService"),
-      tokenService: this.get<TokenService>("tokenService"),
-      authService: this.get<AuthService>("authService"),
     };
   }
 

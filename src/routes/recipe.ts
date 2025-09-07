@@ -33,7 +33,7 @@ export class RecipeRoute extends BaseRoute {
 
   private async createRecipe(context: Context): Promise<Response> {
     console.log("Creating recipe...");
-    const statistics = this.recipeService.getRecipeStatistics()
+    const statistics = await this.recipeService.getRecipeStatistics()
     let alert: AlertProps;
 
     try {
@@ -51,7 +51,7 @@ export class RecipeRoute extends BaseRoute {
         return context.html(CreateRecipeResponse({ alert, recipe: undefined }));
       }
 
-      const recipe = this.recipeService.createCompleteRecipe(formData);
+      const recipe = await this.recipeService.createCompleteRecipe(formData);
 
       if (recipe) {
         alert = {
@@ -87,7 +87,7 @@ export class RecipeRoute extends BaseRoute {
     const id = this.parseRecipeIdFromContext(context);
 
     try {
-      const recipe = this.recipeService.getCompleteRecipe(id);
+      const recipe = await this.recipeService.getCompleteRecipe(id);
 
       if (!recipe) {
         const alert: AlertProps = {
@@ -115,7 +115,7 @@ export class RecipeRoute extends BaseRoute {
     console.log("Fetching all recipes...");
 
     try {
-      const recipes = this.recipeService.getAllCompleteRecipes();
+      const recipes = await this.recipeService.getAllCompleteRecipes();
 
       return context.html(
         `${recipes.map((recipe: ReadRecipeProps) => ReadRecipe(recipe)).join("")}`,
@@ -145,7 +145,7 @@ export class RecipeRoute extends BaseRoute {
       let recipes: CompleteRecipe[] = [];
 
       if (searchType === "name" && recipeName?.trim()) {
-        recipes = this.recipeService.searchRecipesByName(recipeName.trim());
+        recipes = await this.recipeService.searchRecipesByName(recipeName.trim());
 
         if (recipes.length === 0) {
           alert = {
@@ -161,7 +161,7 @@ export class RecipeRoute extends BaseRoute {
           };
         }
       } else if (searchType === "tag" && recipeTag?.trim()) {
-        recipes = this.recipeService.searchRecipesByTag(recipeTag.trim());
+        recipes = await this.recipeService.searchRecipesByTag(recipeTag.trim());
 
         if (recipes.length === 0) {
           alert = {
@@ -177,7 +177,7 @@ export class RecipeRoute extends BaseRoute {
           };
         }
       } else if (searchType === "ingredient" && recipeIngredient?.trim()) {
-        recipes = this.recipeService.searchRecipesByIngredient(
+        recipes = await this.recipeService.searchRecipesByIngredient(
           recipeIngredient.trim(),
         );
 
@@ -217,7 +217,7 @@ export class RecipeRoute extends BaseRoute {
 
   private async updateRecipe(context: Context): Promise<Response> {
     console.log("Updating recipe ...");
-    const statistics = this.recipeService.getRecipeStatistics();
+    const statistics = await this.recipeService.getRecipeStatistics();
     let alert: AlertProps | undefined;
 
     const id = this.parseRecipeIdFromContext(context);
@@ -237,7 +237,7 @@ export class RecipeRoute extends BaseRoute {
         return context.html(StandardResponse({ alert, statistics }));
       }
 
-      const recipe = this.recipeService.updateCompleteRecipe(id, formData);
+      const recipe = await this.recipeService.updateCompleteRecipe(id, formData);
 
       if (recipe) {
         alert = {
@@ -270,10 +270,10 @@ export class RecipeRoute extends BaseRoute {
 
   private async deleteRecipe(context: Context): Promise<Response> {
     console.log("Deleting recipe ...");
-    const statistics = this.recipeService.getRecipeStatistics()
+    const statistics = await this.recipeService.getRecipeStatistics()
     const id = this.parseRecipeIdFromContext(context);
 
-    const hasBeenDeleted = this.recipeService.deleteCompleteRecipe(id);
+    const hasBeenDeleted = await this.recipeService.deleteCompleteRecipe(id);
 
     const alert: AlertProps = hasBeenDeleted
       ? {

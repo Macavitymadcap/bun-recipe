@@ -7,7 +7,6 @@ import { AlertProps } from "../components/Alert";
 import { GetUpdateRecipeFormResponse } from "../components/responses/GetUpdateRecipeFormResponse";
 import { GetDeleteRecipeFormResponse } from "../components/responses/GetDeleteRecipeFormResponse";
 import { SearchRecipesForm } from "../components/forms/SearchRecipesForm";
-import { UploadJsonForm } from "../components/forms/UploadJsonForm";
 
 export class FormRoute extends BaseRoute {
   private recipeService: RecipeService;
@@ -20,31 +19,26 @@ export class FormRoute extends BaseRoute {
   protected initializeRoutes(): void {
     this.app.get("/search", this.getSearchRecipesForm.bind(this));
     this.app.get("/create", this.getCreateRecipeForm.bind(this));
-    this.app.get("/upload", this.getUploadJsonForm.bind(this));
     this.app.get("/update/:id", this.getUpdateRecipeForm.bind(this));
     this.app.get("/delete/:id", this.getDeleteRecipeForm.bind(this));
   }
 
-  private getSearchRecipesForm(context: Context) {
-    const availableTags = this.recipeService.getAllTags();
+  private async getSearchRecipesForm(context: Context) {
+    const availableTags = await this.recipeService.getAllTags();
 
     return context.html(SearchRecipesForm({ availableTags }));
   }
-  private getCreateRecipeForm(context: Context) {
-    const availableTags = this.recipeService.getAllTags();
+  private async getCreateRecipeForm(context: Context) {
+    const availableTags = await this.recipeService.getAllTags();
 
     return context.html(CreateRecipeForm({ availableTags }));
   }
 
-  private getUploadJsonForm(context: Context) {
-    return context.html(UploadJsonForm())
-  }
-
-  private getUpdateRecipeForm(context: Context) {
+  private async getUpdateRecipeForm(context: Context) {
     const id = this.parseIdFromRequest(context);
-    const recipe = this.recipeService.getCompleteRecipe(id);
+    const recipe = await this.recipeService.getCompleteRecipe(id);
     const alert = this.getDangerAlertPropsForId(id);
-    const availableTags = this.recipeService.getAllTags();
+    const availableTags = await this.recipeService.getAllTags();
 
     return context.html(
       GetUpdateRecipeFormResponse({
@@ -55,9 +49,9 @@ export class FormRoute extends BaseRoute {
     );
   }
 
-  private getDeleteRecipeForm(context: Context) {
+  private async getDeleteRecipeForm(context: Context) {
     const id = this.parseIdFromRequest(context);
-    const recipe = this.recipeService.getCompleteRecipe(id);
+    const recipe = await this.recipeService.getCompleteRecipe(id);
     const alert = this.getDangerAlertPropsForId(id);
 
     return context.html(

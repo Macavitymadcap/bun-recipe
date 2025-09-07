@@ -1,3 +1,4 @@
+import { DbConfig } from "../config";
 import { DbContext } from "../context/context";
 
 export interface BaseEntity {
@@ -12,51 +13,51 @@ export abstract class BaseRepository<T extends BaseEntity> {
   protected dbContext: DbContext;
   protected tableName: string;
 
-  constructor(tableName: string, dbPath?: string) {
+  constructor(tableName: string, config: DbConfig) {
     this.tableName = tableName;
-    this.dbContext = DbContext.getInstance(dbPath);
+    this.dbContext = DbContext.getInstance(config);
     this.initDb();
   }
 
   /**
    * Initialize the database - create tables and seed initial data
    */
-  protected abstract initDb(): void;
+  protected abstract initDb(): Promise<void>;
 
   /**
    * Create database tables
    */
-  protected abstract createTable(): void;
+  protected abstract createTable(): Promise<void>;
 
   /**
    * Create a new entity in the database
    */
-  abstract create(entity: Omit<T, "id">): T | null;
+  abstract create(entity: Omit<T, "id">): Promise<T | null>;
 
   /**
    * Read an entity by its ID
    */
-  abstract read(id: number): T | null;
+  abstract read(id: number): Promise<T | null>;
 
   /**
    * Read all entities from the table
    */
-  abstract readAll(): T[];
+  abstract readAll(): Promise<T[]>;
 
   /**
    * Update an existing entity
    */
-  abstract update(entity: T): T | null;
+  abstract update(entity: T): Promise<T | null>;
 
   /**
    * Delete an entity by its ID
    */
-  abstract delete(id: number): boolean;
+  abstract delete(id: number): Promise<boolean>;
 
   /**
    * Close the database connection
    */
-  public close(): void {
-    this.dbContext.close();
+  public async close() {
+    await this.dbContext.close();
   }
 }

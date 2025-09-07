@@ -1,3 +1,4 @@
+import { DbConfig } from "../config";
 import { BaseEntity, BaseRepository } from "./base-repository";
 
 export interface TagEntity extends BaseEntity {
@@ -5,87 +6,86 @@ export interface TagEntity extends BaseEntity {
 }
 
 export class TagRepository extends BaseRepository<TagEntity> {
-  constructor(dbPath?: string) {
-    super("tags", dbPath);
+  constructor(config: DbConfig) {
+    super("tags", config);
   }
 
-  protected initDb(): void {
-    this.createTable();
+  protected async initDb(): Promise<void> {
+    await this.createTable();
   }
 
-  protected createTable(): void {
-    this.dbContext.execute(`
+  protected async createTable(): Promise<void> {
+    await this.dbContext.queryOne`
       CREATE TABLE IF NOT EXISTS tags (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         name TEXT NOT NULL UNIQUE
       );
-    `);
+    `;
   }
 
-  create(entity: Omit<TagEntity, "id">): TagEntity | null {
-    this.dbContext.queryOne(`INSERT INTO tags (name) VALUES ($name);`, {
-      $name: entity.name,
-    });
+  async create(entity: Omit<TagEntity, "id">): Promise<TagEntity | null> {
+    const result = await this.dbContext.queryOne<TagEntity>`
+      INSERT INTO tags (name)
+      VALUES (${entity.name})
+      RETURNING *;
+    `;
 
-    const lastId = this.dbContext.getLastInsertedId();
-    if (lastId === null) {
-      return null;
-    }
-
-    return this.read(lastId);
+    return result || null;
   }
 
-  read(id: number): TagEntity | null {
-    return this.dbContext.queryOne<TagEntity>(
-      `SELECT * FROM tags WHERE id = $id;`,
-      { $id: id },
-    );
+  async read(id: number): Promise<TagEntity | null> {
+    return await this.dbContext.queryOne<TagEntity>`
+      SELECT * FROM tags WHERE id = ${id};
+    `;
   }
 
-  readAll(): TagEntity[] {
-    return this.dbContext.query<TagEntity>(`SELECT * FROM tags ORDER BY name;`);
+  async readAll(): Promise<TagEntity[]> {
+    return await this.dbContext.query<TagEntity>`
+      SELECT * FROM tags ORDER BY name;
+    `;
   }
 
-  readByName(name: string): TagEntity | null {
-    return this.dbContext.queryOne<TagEntity>(
-      `SELECT * FROM tags WHERE name = $name;`,
-      { $name: name },
-    );
+  async readByName(name: string): Promise<TagEntity | null> {
+    return await this.dbContext.queryOne<TagEntity>`
+      SELECT * FROM tags WHERE name = ${name};
+    `;
   }
 
-  createOrRead(name: string): TagEntity | null {
-    const existing = this.readByName(name);
+  async createOrRead(name: string): Promise<TagEntity | null> {
+    const existing = await this.readByName(name);
     if (existing) {
       return existing;
     }
 
-    return this.create({ name });
+    return await this.create({ name });
   }
 
-  update(entity: TagEntity): TagEntity | null {
-    const existing = this.read(entity.id);
+  async update(entity: TagEntity): Promise<TagEntity | null> {
+    const existing = await this.read(entity.id);
     if (!existing) {
       return null;
     }
 
-    this.dbContext.queryOne(`UPDATE tags SET name = $name WHERE id = $id;`, {
-      $id: entity.id,
-      $name: entity.name,
-    });
+    const result = await this.dbContext.queryOne<TagEntity>`
+      UPDATE tags SET 
+        name = ${entity.name} 
+      WHERE id = ${entity.id}
+      RETURNING *;
+    `;
 
-    return this.read(entity.id);
+    return result || null;
   }
 
-  delete(id: number): boolean {
-    return this.dbContext.transaction(() => {
-      const existing = this.read(id);
+  async delete(id: number): Promise<boolean> {
+    return await this.dbContext.transaction(async (sql) => {
+      const existing = await this.read(id);
       if (!existing) {
         return false;
       }
 
-      this.dbContext.queryOne(`DELETE FROM tags WHERE id = $id;`, { $id: id });
+      await sql`DELETE FROM tags WHERE id = ${id};`;
 
-      return this.read(id) === null;
+      return await this.read(id) === null;
     });
   }
 }

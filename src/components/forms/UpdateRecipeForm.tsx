@@ -44,7 +44,7 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
       hx-put={`/recipe/${recipe.id}`}
       hx-target="#main-content"
       hx-swap="innerHTML"
-      hx-indicator="#loading"
+      hx-indicator="#working"
       x-data={`{
         ingredients: ${JSON.stringify(alpineData.ingredients)},
         directions: ${JSON.stringify(alpineData.directions)},
@@ -126,6 +126,7 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
           className="btn btn-outline-secondary"
           type="submit"
           title="Update Recipe"
+          hx-indicator="#working"
         >
           Update
         </button>
@@ -145,7 +146,7 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
           hx-get="/data/default"
           hx-target="#main-content"
           hx-swap="innerHTML"
-          hx-indicator="#loading"
+          hx-indicator="#working"
         >
           Cancel
         </button>

@@ -3,4 +3,4 @@ node_modules
 .vscode
 .idea
 
-src/database/data.db
+.env

@@ -1,4 +1,6 @@
+import { DbConfig } from "../config";
 import { BaseEntity, BaseRepository } from "./base-repository";
+import { sql } from "bun";
 
 export interface CooksNoteEntity extends BaseEntity {
   recipe_id: number;
@@ -6,111 +8,102 @@ export interface CooksNoteEntity extends BaseEntity {
 }
 
 export class CooksNoteRepository extends BaseRepository<CooksNoteEntity> {
-  constructor(dbPath?: string) {
-    super("cooks_notes", dbPath);
+  constructor(config: DbConfig) {
+    super("cooks_notes", config);
   }
 
-  protected initDb(): void {
-    this.createTable();
-    this.createIndexes();
+  protected async initDb(): Promise<void> {
+    await this.createTable();
+    await this.createIndexes();
   }
 
-  protected createTable(): void {
-    this.dbContext.execute(`
+  protected async createTable(): Promise<void> {
+    await this.dbContext.queryOne`
       CREATE TABLE IF NOT EXISTS cooks_notes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         recipe_id INTEGER NOT NULL,
         note TEXT NOT NULL,
         FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE
       );
-    `);
+    `;
   }
 
-  private createIndexes(): void {
-    this.dbContext.execute(`
+  private async createIndexes(): Promise<void> {
+    await this.dbContext.queryOne`
       CREATE INDEX IF NOT EXISTS idx_cooks_notes_recipe_id ON cooks_notes(recipe_id);
-    `);
+    `;
   }
 
-  create(entity: Omit<CooksNoteEntity, "id">): CooksNoteEntity | null {
-    this.dbContext.queryOne(
-      `INSERT INTO cooks_notes (recipe_id, note) VALUES ($recipe_id, $note);`,
-      {
-        $recipe_id: entity.recipe_id,
-        $note: entity.note,
-      },
-    );
+  async create(entity: Omit<CooksNoteEntity, "id">): Promise<CooksNoteEntity | null> {
+    const result = await this.dbContext.queryOne<CooksNoteEntity>`
+      INSERT INTO cooks_notes (recipe_id, note) 
+      VALUES (${entity.recipe_id}, ${entity.note})
+      RETURNING *;
+    `;
 
-    const lastId = this.dbContext.getLastInsertedId();
-    if (lastId === null) {
-      return null;
-    }
-
-    return this.read(lastId);
+    return result || null;
   }
 
-  read(id: number): CooksNoteEntity | null {
-    return this.dbContext.queryOne<CooksNoteEntity>(
-      `SELECT * FROM cooks_notes WHERE id = $id;`,
-      { $id: id },
-    );
+  async read(id: number): Promise<CooksNoteEntity | null> {
+    return await this.dbContext.queryOne<CooksNoteEntity>`
+      SELECT * FROM cooks_notes WHERE id = ${id};
+    `;
   }
 
-  readAll(): CooksNoteEntity[] {
-    return this.dbContext.query<CooksNoteEntity>(`SELECT * FROM cooks_notes;`);
+  async readAll(): Promise<CooksNoteEntity[]> {
+    return await this.dbContext.query<CooksNoteEntity>`
+      SELECT * FROM cooks_notes;
+    `;
   }
 
-  update(entity: CooksNoteEntity): CooksNoteEntity | null {
-    const existing = this.read(entity.id);
+  async update(entity: CooksNoteEntity): Promise<CooksNoteEntity | null> {
+    const existing = await this.read(entity.id);
     if (!existing) {
       return null;
     }
 
-    this.dbContext.queryOne(
-      `UPDATE cooks_notes SET
-          recipe_id = $recipe_id,
-          note = $note
-        WHERE id = $id;`,
-      {
-        $id: entity.id,
-        $recipe_id: entity.recipe_id,
-        $note: entity.note,
-      },
-    );
+    const result = await this.dbContext.queryOne<CooksNoteEntity>`
+      UPDATE cooks_notes SET
+        recipe_id = ${entity.recipe_id},
+        note = ${entity.note}
+      WHERE id = ${entity.id}
+      RETURNING *;
+    `;
 
-    return this.read(entity.id);
+    return result || null;
   }
 
-  readByRecipeId(recipeId: number): CooksNoteEntity[] {
-    return this.dbContext.query<CooksNoteEntity>(
-      `SELECT * FROM cooks_notes WHERE recipe_id = $recipe_id;`,
-      { $recipe_id: recipeId },
-    );
+  async readByRecipeId(recipeId: number): Promise<CooksNoteEntity[]> {
+    return await this.dbContext.query<CooksNoteEntity>`
+      SELECT * FROM cooks_notes WHERE recipe_id = ${recipeId};
+    `;
   }
 
-  delete(id: number): boolean {
-    return this.dbContext.transaction(() => {
-      const existing = this.read(id);
+  async delete(id: number): Promise<boolean> {
+    return await this.dbContext.transaction(async (sql) => {
+      const existing = await this.read(id);
       if (!existing) {
         return false;
       }
 
-      this.dbContext.queryOne(`DELETE FROM cooks_notes WHERE id = $id;`, {
-        $id: id,
-      });
+      await sql`DELETE FROM cooks_notes WHERE id = ${id};`
 
-      return this.read(id) === null;
+      return await this.read(id) === null;
     });
   }
 
-  deleteByRecipeId(recipeId: number): boolean {
-    if (this.readByRecipeId(recipeId).length === 0) return false;
+  private async isDeleted(recipeId: number) {
+    return (await this.readByRecipeId(recipeId)).length === 0;
+  }
 
-    this.dbContext.queryOne(
-      `DELETE FROM cooks_notes WHERE recipe_id = $recipe_id;`,
-      { $recipe_id: recipeId },
-    );
+  async deleteByRecipeId(recipeId: number): Promise<boolean> {
+    const isDeleted = await this.isDeleted(recipeId);
+    if (isDeleted) return false;
 
-    return this.readByRecipeId(recipeId).length === 0;
+    await this.dbContext.queryOne`
+      DELETE FROM cooks_notes WHERE recipe_id = ${recipeId};
+    `;
+
+    return await this.isDeleted(recipeId)
   }
 }
