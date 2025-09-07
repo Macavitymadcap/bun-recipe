@@ -28,8 +28,8 @@ describe("RecipeRepository", () => {
 
   beforeAll(() => {
     const testConfig: DbConfig = {
-      ...DB_CONFIG, 
-      database: "recipe_test"
+      ...DB_CONFIG,
+      database: "recipe_test",
     };
 
     (DbContext as any).instance = undefined; // Reset singleton instance before tests
@@ -62,7 +62,9 @@ describe("RecipeRepository", () => {
       const recipeData = sampleRecipe();
 
       // Act
-      const result = await recipeRepository.create(recipeData) as RecipeEntity;
+      const result = (await recipeRepository.create(
+        recipeData,
+      )) as RecipeEntity;
 
       // Assert
       expect(result).toBeDefined();
@@ -89,7 +91,9 @@ describe("RecipeRepository", () => {
       });
 
       // Act
-      const result = await recipeRepository.create(recipeData) as RecipeEntity;
+      const result = (await recipeRepository.create(
+        recipeData,
+      )) as RecipeEntity;
 
       // Assert
       expect(result).toBeDefined();
@@ -108,8 +112,12 @@ describe("RecipeRepository", () => {
       const recipe2Data = sampleRecipe({ name: "Recipe 2" });
 
       // Act
-      const recipe1 = await recipeRepository.create(recipe1Data) as RecipeEntity;
-      const recipe2 = await recipeRepository.create(recipe2Data) as RecipeEntity;
+      const recipe1 = (await recipeRepository.create(
+        recipe1Data,
+      )) as RecipeEntity;
+      const recipe2 = (await recipeRepository.create(
+        recipe2Data,
+      )) as RecipeEntity;
 
       // Assert
       expect(recipe1).not.toBeNull();
@@ -125,10 +133,14 @@ describe("RecipeRepository", () => {
     test("should read an existing recipe by id", async () => {
       // Arrange
       const recipeData = sampleRecipe();
-      const createdRecipe = await recipeRepository.create(recipeData) as RecipeEntity;
+      const createdRecipe = (await recipeRepository.create(
+        recipeData,
+      )) as RecipeEntity;
 
       // Act
-      const result = await recipeRepository.read(createdRecipe.id) as RecipeEntity;
+      const result = (await recipeRepository.read(
+        createdRecipe.id,
+      )) as RecipeEntity;
 
       // Assert
       expect(result).toBeDefined();
@@ -155,17 +167,17 @@ describe("RecipeRepository", () => {
   describe("readAll", () => {
     test("should return all recipes ordered by created_at DESC", async () => {
       // Arrange - Add small delays to ensure different timestamps
-      const recipe1 = await recipeRepository.create(
+      const recipe1 = (await recipeRepository.create(
         sampleRecipe({ name: "Recipe 1" }),
-      ) as RecipeEntity;
+      )) as RecipeEntity;
       await Bun.sleep(10); // 10ms delay
-      const recipe2 = await recipeRepository.create(
+      const recipe2 = (await recipeRepository.create(
         sampleRecipe({ name: "Recipe 2" }),
-      ) as RecipeEntity;
+      )) as RecipeEntity;
       await Bun.sleep(10); // 10ms delay
-      const recipe3 = await  recipeRepository.create(
+      const recipe3 = (await recipeRepository.create(
         sampleRecipe({ name: "Recipe 3" }),
-      ) as RecipeEntity;
+      )) as RecipeEntity;
 
       // Act
       const result = await recipeRepository.readAll();
@@ -190,9 +202,9 @@ describe("RecipeRepository", () => {
   describe("update", () => {
     test("should update an existing recipe and return the updated entity", async () => {
       // Arrange
-      const originalRecipe = await  recipeRepository.create(
+      const originalRecipe = (await recipeRepository.create(
         sampleRecipe(),
-      ) as RecipeEntity;
+      )) as RecipeEntity;
       const originalUpdatedAt = originalRecipe!.updated_at;
 
       // Add a small delay to ensure updated_at will be different
@@ -208,7 +220,9 @@ describe("RecipeRepository", () => {
       };
 
       // Act
-      const result = await recipeRepository.update(updatedData) as RecipeEntity;
+      const result = (await recipeRepository.update(
+        updatedData,
+      )) as RecipeEntity;
 
       // Assert
       expect(result).toBeDefined();
@@ -228,9 +242,9 @@ describe("RecipeRepository", () => {
 
     test("should handle updating optional fields to null", async () => {
       // Arrange
-      const originalRecipe = await recipeRepository.create(
+      const originalRecipe = (await recipeRepository.create(
         sampleRecipe(),
-      ) as RecipeEntity;
+      )) as RecipeEntity;
 
       const updatedData: RecipeEntity = {
         ...originalRecipe,
@@ -240,7 +254,9 @@ describe("RecipeRepository", () => {
       };
 
       // Act
-      const result = await recipeRepository.update(updatedData) as RecipeEntity;
+      const result = (await recipeRepository.update(
+        updatedData,
+      )) as RecipeEntity;
 
       // Assert
       expect(result).not.toBeNull();
@@ -270,7 +286,9 @@ describe("RecipeRepository", () => {
   describe("delete", () => {
     test("should delete an existing recipe and return true", async () => {
       // Arrange
-      const recipe = await recipeRepository.create(sampleRecipe()) as RecipeEntity;
+      const recipe = (await recipeRepository.create(
+        sampleRecipe(),
+      )) as RecipeEntity;
 
       // Act
       const result = await recipeRepository.delete(recipe.id);
@@ -317,8 +335,12 @@ describe("RecipeRepository", () => {
   describe("searchByName", () => {
     beforeEach(async () => {
       // Setup test data
-      await recipeRepository.create(sampleRecipe({ name: "Spaghetti Bolognese" }));
-      await recipeRepository.create(sampleRecipe({ name: "Spaghetti Carbonara" }));
+      await recipeRepository.create(
+        sampleRecipe({ name: "Spaghetti Bolognese" }),
+      );
+      await recipeRepository.create(
+        sampleRecipe({ name: "Spaghetti Carbonara" }),
+      );
       await recipeRepository.create(sampleRecipe({ name: "Chicken Alfredo" }));
       await recipeRepository.create(sampleRecipe({ name: "Beef Stroganoff" }));
     });
@@ -374,9 +396,13 @@ describe("RecipeRepository", () => {
       existing.forEach((r) => recipeRepository.delete(r.id));
 
       // Create with delays
-      await recipeRepository.create(sampleRecipe({ name: "Spaghetti Bolognese" }));
+      await recipeRepository.create(
+        sampleRecipe({ name: "Spaghetti Bolognese" }),
+      );
       await Bun.sleep(10);
-      await recipeRepository.create(sampleRecipe({ name: "Spaghetti Carbonara" }));
+      await recipeRepository.create(
+        sampleRecipe({ name: "Spaghetti Carbonara" }),
+      );
 
       // Act
       const result = await recipeRepository.searchByName("Spaghetti");
@@ -390,7 +416,9 @@ describe("RecipeRepository", () => {
 
     test("should handle special SQL characters in search term", async () => {
       // Arrange
-      await recipeRepository.create(sampleRecipe({ name: "Recipe with % symbol" }));
+      await recipeRepository.create(
+        sampleRecipe({ name: "Recipe with % symbol" }),
+      );
       await recipeRepository.create(
         sampleRecipe({ name: "Recipe with _ underscore" }),
       );

@@ -1,5 +1,8 @@
 import { Alert, type AlertProps } from "../Alert";
-import { DeleteShoppingListItemForm, type DeleteShoppingListItemFormProps } from "../forms/DeleteShoppingListItemForm";
+import {
+  DeleteShoppingListItemForm,
+  type DeleteShoppingListItemFormProps,
+} from "../forms/DeleteShoppingListItemForm";
 
 export interface GetDeleteShoppingListItemFormResponseProps {
   alert?: AlertProps;
@@ -19,4 +22,3 @@ export const GetDeleteShoppingListItemFormResponse = ({
     ${formHtml}
   `;
 };
-

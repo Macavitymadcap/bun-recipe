@@ -43,7 +43,9 @@ export class RecipeTagRepository extends BaseRepository<RecipeTagEntity> {
     `;
   }
 
-  async create(entity: Omit<RecipeTagEntity, "id">): Promise<RecipeTagEntity | null> {
+  async create(
+    entity: Omit<RecipeTagEntity, "id">,
+  ): Promise<RecipeTagEntity | null> {
     const result = await this.dbContext.queryOne<RecipeTagEntity>`
       INSERT INTO recipe_tags (
         recipe_id, 
@@ -83,7 +85,10 @@ export class RecipeTagRepository extends BaseRepository<RecipeTagEntity> {
     `;
   }
 
-  async readByRecipeAndTag(recipeId: number, tagId: number): Promise<RecipeTagEntity | null> {
+  async readByRecipeAndTag(
+    recipeId: number,
+    tagId: number,
+  ): Promise<RecipeTagEntity | null> {
     return await this.dbContext.queryOne<RecipeTagEntity>`
       SELECT * FROM recipe_tags WHERE recipe_id = ${recipeId} AND tag_id = ${tagId};
     `;
@@ -117,7 +122,7 @@ export class RecipeTagRepository extends BaseRepository<RecipeTagEntity> {
         DELETE FROM recipe_tags WHERE id = ${id};
       `;
 
-      return await this.read(id) === null;
+      return (await this.read(id)) === null;
     });
   }
 
@@ -141,7 +146,7 @@ export class RecipeTagRepository extends BaseRepository<RecipeTagEntity> {
     const [result] = await this.dbContext.query<{ count: string }>`
       SELECT COUNT(*) as count FROM recipe_tags WHERE tag_id = ${tagId};
     `;
-    
+
     return parseInt(result?.count || "0");
   }
 

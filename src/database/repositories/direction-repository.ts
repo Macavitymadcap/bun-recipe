@@ -35,7 +35,9 @@ export class DirectionRepository extends BaseRepository<DirectionEntity> {
     `;
   }
 
-  async create(entity: Omit<DirectionEntity, "id">): Promise<DirectionEntity | null> {
+  async create(
+    entity: Omit<DirectionEntity, "id">,
+  ): Promise<DirectionEntity | null> {
     const result = await this.dbContext.queryOne<DirectionEntity>`
       INSERT INTO directions (recipe_id, order_index, instruction) 
       VALUES (${entity.recipe_id}, ${entity.order_index}, ${entity.instruction})
@@ -88,9 +90,9 @@ export class DirectionRepository extends BaseRepository<DirectionEntity> {
         return false;
       }
 
-      await sql`DELETE FROM directions WHERE id = ${id};`; 
+      await sql`DELETE FROM directions WHERE id = ${id};`;
 
-      return await this.read(id) === null;
+      return (await this.read(id)) === null;
     });
   }
 

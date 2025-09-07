@@ -12,7 +12,9 @@ export class ShoppingListRoute extends BaseRoute {
 
   constructor(container: Container = Container.getInstance()) {
     super({ prefix: "/shopping-list" });
-    this.shoppingListService = container.get<ShoppingListService>("shoppingListService");
+    this.shoppingListService = container.get<ShoppingListService>(
+      "shoppingListService",
+    );
   }
 
   protected initializeRoutes(): void {
@@ -28,13 +30,13 @@ export class ShoppingListRoute extends BaseRoute {
 
   private async getShoppingList(context: Context): Promise<Response> {
     console.log("Getting shopping list...");
-    
+
     try {
       const items = await this.shoppingListService.getAllItems();
       const stats = await this.shoppingListService.getStats();
 
       return context.html(
-        `<div id="shopping-list-content">${ShoppingList({ items, stats })}</div>`
+        `<div id="shopping-list-content">${ShoppingList({ items, stats })}</div>`,
       );
     } catch (error) {
       console.error("Error getting shopping list:", error);
@@ -49,7 +51,7 @@ export class ShoppingListRoute extends BaseRoute {
 
   private async addItem(context: Context): Promise<Response> {
     console.log("Adding item to shopping list...");
-    
+
     try {
       const formData = await context.req.formData();
       const itemText = formData.get("item") as string;
@@ -90,35 +92,36 @@ export class ShoppingListRoute extends BaseRoute {
   private async addRecipeIngredients(context: Context): Promise<Response> {
     console.log("Adding recipe ingredients to shopping list...");
     let alert: AlertProps;
-    
+
     try {
       const recipeId = parseInt(context.req.param("recipeId"), 10);
-      
+
       if (isNaN(recipeId)) {
         alert = {
           alertType: "danger",
           title: "Error",
           message: "Invalid recipe ID.",
-        }
-        return context.html(AlertResponse({alert}));
+        };
+        return context.html(AlertResponse({ alert }));
       }
 
-      const addedCount = await this.shoppingListService.addRecipeIngredientsToList(recipeId);
+      const addedCount =
+        await this.shoppingListService.addRecipeIngredientsToList(recipeId);
 
       if (addedCount > 0) {
         alert = {
           alertType: "success",
           title: "Ingredients Added",
-          message: `Added ${addedCount} ingredient${addedCount === 1 ? '' : 's'} to your shopping list.`,
+          message: `Added ${addedCount} ingredient${addedCount === 1 ? "" : "s"} to your shopping list.`,
         };
-        return context.html(AlertResponse({alert}));
+        return context.html(AlertResponse({ alert }));
       } else {
         alert = {
           alertType: "warning",
           title: "No Items Added",
           message: "No new ingredients were added to your shopping list.",
-        }
-        return context.html(AlertResponse({alert}));
+        };
+        return context.html(AlertResponse({ alert }));
       }
     } catch (error) {
       console.error("Error adding recipe ingredients:", error);
@@ -126,21 +129,20 @@ export class ShoppingListRoute extends BaseRoute {
         alertType: "danger",
         title: "Error",
         message: `Failed to add ingredients: ${(error as Error).message}`,
-      }
-      return context.html(AlertResponse({alert}));
+      };
+      return context.html(AlertResponse({ alert }));
     }
   }
 
   private async updateItem(context: Context): Promise<Response> {
     console.log("Updating shopping list item...");
-    
+
     try {
       const id = parseInt(context.req.param("id"), 10);
       console.log("item id: ", id);
       const formData = await context.req.formData();
       console.log("form data: ", formData);
       const itemText = formData.get("itemText") as string;
-
 
       if (isNaN(id)) {
         return this.getShoppingListWithAlert(context, {
@@ -158,7 +160,10 @@ export class ShoppingListRoute extends BaseRoute {
         });
       }
 
-      const updatedItem = await this.shoppingListService.updateItem(id, itemText.trim());
+      const updatedItem = await this.shoppingListService.updateItem(
+        id,
+        itemText.trim(),
+      );
 
       if (updatedItem) {
         return this.getShoppingListWithAlert(context, {
@@ -185,7 +190,7 @@ export class ShoppingListRoute extends BaseRoute {
 
   private async toggleItem(context: Context): Promise<Response> {
     console.log("Toggling shopping list item...");
-    
+
     try {
       const id = parseInt(context.req.param("id"), 10);
 
@@ -220,7 +225,7 @@ export class ShoppingListRoute extends BaseRoute {
 
   private async deleteItem(context: Context): Promise<Response> {
     console.log("Deleting shopping list item...");
-    
+
     try {
       const id = parseInt(context.req.param("id"), 10);
 
@@ -259,7 +264,7 @@ export class ShoppingListRoute extends BaseRoute {
 
   private async clearCheckedItems(context: Context): Promise<Response> {
     console.log("Clearing checked items...");
-    
+
     try {
       const success = await this.shoppingListService.clearCheckedItems();
 
@@ -288,7 +293,7 @@ export class ShoppingListRoute extends BaseRoute {
 
   private async clearAllItems(context: Context): Promise<Response> {
     console.log("Clearing all items...");
-    
+
     try {
       const success = await this.shoppingListService.clearAllItems();
 
@@ -315,10 +320,13 @@ export class ShoppingListRoute extends BaseRoute {
     }
   }
 
-  private async getShoppingListWithAlert(context: Context, alert: AlertProps): Promise<Response> {
+  private async getShoppingListWithAlert(
+    context: Context,
+    alert: AlertProps,
+  ): Promise<Response> {
     const items = await this.shoppingListService.getAllItems();
     const stats = await this.shoppingListService.getStats();
 
-    return context.html(ShoppingListResponse({alert, items, stats}));
+    return context.html(ShoppingListResponse({ alert, items, stats }));
   }
 }

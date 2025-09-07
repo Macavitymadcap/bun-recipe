@@ -1,6 +1,12 @@
 import { DbContext } from "../context/context";
-import { IngredientEntity, IngredientRepository } from "../repositories/ingredient-repository";
-import { ShoppingListItemEntity, ShoppingListRepository } from "../repositories/shopping-list-repository";
+import {
+  IngredientEntity,
+  IngredientRepository,
+} from "../repositories/ingredient-repository";
+import {
+  ShoppingListItemEntity,
+  ShoppingListRepository,
+} from "../repositories/shopping-list-repository";
 
 export interface ShoppingListStats {
   totalItems: number;
@@ -30,7 +36,10 @@ export class ShoppingListService {
     return await this.shoppingListRepository.addOrUpdateItem(trimmedItem);
   }
 
-  async updateItem(id: number, newText: string): Promise<ShoppingListItemEntity | null> {
+  async updateItem(
+    id: number,
+    newText: string,
+  ): Promise<ShoppingListItemEntity | null> {
     const item = await this.shoppingListRepository.read(id);
     if (!item) return null;
 
@@ -61,13 +70,15 @@ export class ShoppingListService {
 
   async addRecipeIngredientsToList(recipeId: number): Promise<number> {
     return await this.dbContext.transaction(async () => {
-      const ingredients = await this.ingredientRepository.readByRecipeId(recipeId);
+      const ingredients =
+        await this.ingredientRepository.readByRecipeId(recipeId);
       let addedCount = 0;
 
       for (const ingredient of ingredients) {
         const itemText = this.formatIngredientAsItem(ingredient);
-        const addedItem = await this.shoppingListRepository.addOrUpdateItem(itemText);
-        
+        const addedItem =
+          await this.shoppingListRepository.addOrUpdateItem(itemText);
+
         if (addedItem) {
           addedCount++;
         }
@@ -80,7 +91,7 @@ export class ShoppingListService {
   async getStats(): Promise<ShoppingListStats> {
     const items = await this.shoppingListRepository.readAll();
     const totalItems = items.length;
-    const checkedItems = items.filter(item => item.is_checked).length;
+    const checkedItems = items.filter((item) => item.is_checked).length;
     const uncheckedItems = totalItems - checkedItems;
 
     return {
@@ -92,17 +103,17 @@ export class ShoppingListService {
 
   private formatIngredientAsItem(ingredient: IngredientEntity): string {
     const parts: string[] = [];
-    
+
     if (ingredient.quantity) {
       parts.push(ingredient.quantity);
     }
-    
+
     if (ingredient.unit) {
       parts.push(ingredient.unit);
     }
-    
+
     parts.push(ingredient.name);
-    
+
     return parts.join(" ");
   }
 }

@@ -9,8 +9,8 @@
 
 #main-menu[popover]:popover-open {
   position: absolute !important;
-  top: -25rem !important; 
-  right: 2rem !important; 
+  top: -25rem !important;
+  right: 2rem !important;
   left: auto !important;
   border: 2px solid var(--colour-surface-lowest);
   border-radius: 5px;
@@ -23,23 +23,22 @@
   flex-wrap: wrap;
   flex-direction: column;
   margin: 0;
-  padding: .25rem;
-
+  padding: 0.25rem;
 
   li.form-group {
-   display: flex;
-   align-items: center;
-   margin: 0;
-   width: auto;
-   justify-content: center;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    width: auto;
+    justify-content: center;
 
-   label {
-    color: var(--colour-text);
-   }
- }
+    label {
+      color: var(--colour-text);
+    }
+  }
 }
 
-@supports(anchor-name: --test) {
+@supports (anchor-name: --test) {
   #main-menu[popover]:popover-open {
     position: fixed;
     top: unset;
@@ -49,4 +48,3 @@
     position-area: bottom;
   }
 }
-

@@ -1,15 +1,12 @@
 import { Context } from "hono";
-import {
-  CompleteRecipe,
-  CreateRecipeData,
-  RecipeService,
-} from "../database/services/recipe-service";
+import { RecipeService } from "../database/services/recipe-service";
+import { RecipeFormService } from "../forms/recipe-form-service";
+import { SearchFormService } from "../forms/search-form-service";
 import { Container } from "./container";
 import { BaseRoute } from "./base-route";
 import { Alert, type AlertProps } from "../components/Alert";
 import { GetRecipeByIDResponse } from "../components/responses/GetRecipeByIdResponse";
 import { ReadRecipe, ReadRecipeProps } from "../components/RecipeCard";
-import { CreateRecipeResponse } from "../components/responses/CreateRecipeResponse";
 import { StandardResponse } from "../components/responses/StandardResponse";
 import { SearchRecipesResponse } from "../components/responses/SearchRecipesResponse";
 import { UpdateRecipeResponse } from "../components/responses/UpdateRecipeResponse";
@@ -23,7 +20,9 @@ export class RecipeRoute extends BaseRoute {
   constructor(container: Container = Container.getInstance()) {
     super({ prefix: "/recipe" });
     this.recipeService = container.get<RecipeService>("recipeService");
-    this.shoppingListService = container.get<ShoppingListService>("shoppingListService");
+    this.shoppingListService = container.get<ShoppingListService>(
+      "shoppingListService",
+    );
   }
 
   protected initializeRoutes(): void {
@@ -37,25 +36,18 @@ export class RecipeRoute extends BaseRoute {
 
   private async createRecipe(context: Context): Promise<Response> {
     console.log("Creating recipe...");
-    const shoppingList = await this.getShoppingList()
+    const shoppingList = await this.getShoppingList();
     let alert: AlertProps;
 
     try {
-      const formData = await this.parseRecipeFormData(context);
+      const formData = await context.req.formData();
+      const recipeFormService = new RecipeFormService(formData)
 
-      // Validate basic required fields
-      if (!this.formDataIsValid(formData)) {
-        alert = {
-          alertType: "danger",
-          title: "Validation Error",
-          message:
-            "Name, servings, at least one ingredient, and at least one direction are required.",
-        };
-
-        return context.html(CreateRecipeResponse({ alert, recipe: undefined }));
+      if (!recipeFormService.isValid) {
+        return this.invalidFormResponse(context, shoppingList)
       }
 
-      const recipe = await this.recipeService.createCompleteRecipe(formData);
+      const recipe = await this.recipeService.createCompleteRecipe(recipeFormService.recipeData);
 
       if (recipe) {
         alert = {
@@ -71,9 +63,7 @@ export class RecipeRoute extends BaseRoute {
         };
       }
 
-      return context.html(StandardResponse({ alert, shoppingList }), {
-        headers: recipe ? { "HX-Trigger": "recipe-created" } : {},
-      });
+      return context.html(StandardResponse({ alert, shoppingList }));
     } catch (error) {
       console.error("Error creating recipe:", error);
       alert = {
@@ -137,77 +127,31 @@ export class RecipeRoute extends BaseRoute {
 
   private async searchRecipes(context: Context): Promise<Response> {
     console.log("Searching recipes...");
-    const shoppingList = await this.getShoppingList()
+    const shoppingList = await this.getShoppingList();
     let alert: AlertProps | undefined;
 
     try {
       const formData = await context.req.formData();
-      const searchType = formData.get("searchType") as string;
-      const recipeName = formData.get("recipeName") as string;
-      const recipeTag = formData.get("recipeTag") as string;
-      const recipeIngredient = formData.get("recipeIngredient") as string;
+      const searchFormService = new SearchFormService(formData);
 
-      let recipes: CompleteRecipe[] = [];
-
-      if (searchType === "name" && recipeName?.trim()) {
-        recipes = await this.recipeService.searchRecipesByName(recipeName.trim());
-
-        if (recipes.length === 0) {
-          alert = {
-            alertType: "warning",
-            title: "No Results",
-            message: `No recipes found containing "${recipeName}".`,
-          };
-        } else {
-          alert = {
-            alertType: "success",
-            title: "Search Results",
-            message: `Found ${recipes.length} recipe${recipes.length === 1 ? "" : "s"} containing "${recipeName}".`,
-          };
-        }
-      } else if (searchType === "tag" && recipeTag?.trim()) {
-        recipes = await this.recipeService.searchRecipesByTag(recipeTag.trim());
-
-        if (recipes.length === 0) {
-          alert = {
-            alertType: "warning",
-            title: "No Results",
-            message: `No recipes found with tag "${recipeTag}".`,
-          };
-        } else {
-          alert = {
-            alertType: "success",
-            title: "Search Results",
-            message: `Found ${recipes.length} recipe${recipes.length === 1 ? "" : "s"} with tag "${recipeTag}".`,
-          };
-        }
-      } else if (searchType === "ingredient" && recipeIngredient?.trim()) {
-        recipes = await this.recipeService.searchRecipesByIngredient(
-          recipeIngredient.trim(),
-        );
-
-        if (recipes.length === 0) {
-          alert = {
-            alertType: "warning",
-            title: "No Results",
-            message: `No recipes found containing ingredient "${recipeIngredient}".`,
-          };
-        } else {
-          alert = {
-            alertType: "success",
-            title: "Search Results",
-            message: `Found ${recipes.length} recipe${recipes.length === 1 ? "" : "s"} containing ingredient "${recipeIngredient}".`,
-          };
-        }
-      } else {
-        alert = {
-          alertType: "danger",
-          title: "Validation Error",
-          message: "Please enter a search term.",
-        };
+      if (searchFormService.isNameSearch) {
+        return this.searchByName(context, searchFormService.recipeName, shoppingList);
+      } else if (searchFormService.isTagSearch) {
+        return this.searchByTag(context, searchFormService.recipeTag, shoppingList);
+      } else if (searchFormService.isIngredientSearch) {
+        return this.searchByIngredient(context, searchFormService.recipeIngredient, shoppingList);
       }
 
-      return context.html(SearchRecipesResponse({ alert, recipes, shoppingList }));
+      alert = {
+        alertType: "danger",
+        title: "Validation Error",
+        message: "Please enter a search term.",
+      };
+
+      return context.html(
+        SearchRecipesResponse({ alert, recipes: [], shoppingList }),
+      );
+      
     } catch (error) {
       console.error("Error searching recipes:", error);
       alert = {
@@ -216,33 +160,104 @@ export class RecipeRoute extends BaseRoute {
         message: `Failed to search recipes: ${(error as Error).message}`,
       };
 
-      return context.html(SearchRecipesResponse({ alert, recipes: [], shoppingList }));
+      return context.html(
+        SearchRecipesResponse({ alert, recipes: [], shoppingList }),
+      );
     }
+  }
+
+  private async searchByName(context: Context, recipeName: string, shoppingList: ShoppingListProps) {
+    let alert: AlertProps;
+    const recipes = await this.recipeService.searchRecipesByName(
+      recipeName.trim(),
+    );
+
+    if (recipes.length === 0) {
+      alert = {
+        alertType: "warning",
+        title: "No Results",
+        message: `No recipes found containing "${recipeName}".`,
+      };
+    } else {
+      alert = {
+        alertType: "success",
+        title: "Search Results",
+        message: `Found ${recipes.length} recipe${recipes.length === 1 ? "" : "s"} containing "${recipeName}".`,
+      };
+    }
+
+    return context.html(
+      SearchRecipesResponse({ alert, recipes, shoppingList }),
+    );
+  }
+
+  private async searchByTag(context: Context, recipeTag: string, shoppingList: ShoppingListProps) {
+    let alert: AlertProps;
+    const recipes = await this.recipeService.searchRecipesByTag(recipeTag.trim());
+
+    if (recipes.length === 0) {
+      alert = {
+        alertType: "warning",
+        title: "No Results",
+        message: `No recipes found with tag "${recipeTag}".`,
+      };
+    } else {
+      alert = {
+        alertType: "success",
+        title: "Search Results",
+        message: `Found ${recipes.length} recipe${recipes.length === 1 ? "" : "s"} with tag "${recipeTag}".`,
+      };
+    }
+
+    return context.html(
+      SearchRecipesResponse({ alert, recipes, shoppingList }),
+    );
+  }
+
+  private async searchByIngredient(context: Context, recipeIngredient: string, shoppingList: ShoppingListProps) {
+    let alert: AlertProps;
+    const recipes = await this.recipeService.searchRecipesByIngredient(
+      recipeIngredient.trim(),
+    );
+
+    if (recipes.length === 0) {
+      alert = {
+        alertType: "warning",
+        title: "No Results",
+        message: `No recipes found containing ingredient "${recipeIngredient}".`,
+      };
+    } else {
+      alert = {
+        alertType: "success",
+        title: "Search Results",
+        message: `Found ${recipes.length} recipe${recipes.length === 1 ? "" : "s"} containing ingredient "${recipeIngredient}".`,
+      };
+    }
+
+    return context.html(
+      SearchRecipesResponse({ alert, recipes, shoppingList }),
+    ); 
   }
 
   private async updateRecipe(context: Context): Promise<Response> {
     console.log("Updating recipe ...");
-    const shoppingList = await this.getShoppingList()
+    const shoppingList = await this.getShoppingList();
     let alert: AlertProps | undefined;
 
     const id = this.parseRecipeIdFromContext(context);
 
     try {
-      const formData = await this.parseRecipeFormData(context);
-
-      // Validate basic required fields
-      if (!this.formDataIsValid(formData)) {
-        alert = {
-          alertType: "danger",
-          title: "Validation Error",
-          message:
-            "Name, servings, at least one ingredient, and at least one direction are required.",
-        };
-
-        return context.html(StandardResponse({ alert, shoppingList }));
+      const formData = await context.req.formData();
+      const recipeFormService = new RecipeFormService(formData)
+      
+      if (!recipeFormService.isValid) {
+        return this.invalidFormResponse(context, shoppingList)
       }
 
-      const recipe = await this.recipeService.updateCompleteRecipe(id, formData);
+      const recipe = await this.recipeService.updateCompleteRecipe(
+        id,
+        recipeFormService.recipeData,
+      );
 
       if (recipe) {
         alert = {
@@ -251,7 +266,7 @@ export class RecipeRoute extends BaseRoute {
           message: `Recipe "${recipe.name}" updated successfully!`,
         };
 
-        return context.html(UpdateRecipeResponse({alert, recipe}))
+        return context.html(UpdateRecipeResponse({ alert, recipe }));
       } else {
         alert = {
           alertType: "danger",
@@ -299,114 +314,22 @@ export class RecipeRoute extends BaseRoute {
     return parseInt(context.req.param("id"), 10);
   }
 
-  private async parseRecipeFormData(
-    context: Context,
-  ): Promise<CreateRecipeData> {
-    const formData = await context.req.formData();
-
-    // Parse basic fields
-    const name = formData.get("name") as string;
-    const servings = formData.get("servings") as string;
-    const calories_per_serving = formData.get("calories_per_serving")
-      ? parseInt(formData.get("calories_per_serving") as string)
-      : undefined;
-    const preparation_time =
-      (formData.get("preparation_time") as string) || undefined;
-    const cooking_time = (formData.get("cooking_time") as string) || undefined;
-
-    // Parse ingredients array
-    const ingredients: Array<{
-      quantity?: string;
-      unit?: string;
-      name: string;
-    }> = [];
-    let ingredientIndex = 0;
-
-    while (formData.has(`ingredients[${ingredientIndex}][name]`)) {
-      const quantity =
-        (formData.get(`ingredients[${ingredientIndex}][quantity]`) as string) ||
-        undefined;
-      const unit =
-        (formData.get(`ingredients[${ingredientIndex}][unit]`) as string) ||
-        undefined;
-      const ingredientName = formData.get(
-        `ingredients[${ingredientIndex}][name]`,
-      ) as string;
-
-      if (ingredientName) {
-        ingredients.push({
-          quantity: quantity || undefined,
-          unit: unit || undefined,
-          name: ingredientName,
-        });
-      }
-      ingredientIndex++;
-    }
-
-    // Parse directions array
-    const directions: Array<{ instruction: string }> = [];
-    let directionIndex = 0;
-
-    while (formData.has(`directions[${directionIndex}][instruction]`)) {
-      const instruction = formData.get(
-        `directions[${directionIndex}][instruction]`,
-      ) as string;
-
-      if (instruction?.trim()) {
-        directions.push({ instruction: instruction.trim() });
-      }
-      directionIndex++;
-    }
-
-    // Parse cook's notes array
-    const cooksNotes: string[] = [];
-    let noteIndex = 0;
-
-    while (formData.has(`cooksNotes[${noteIndex}][note]`)) {
-      const note = formData.get(`cooksNotes[${noteIndex}][note]`) as string;
-
-      if (note?.trim()) {
-        cooksNotes.push(note.trim());
-      }
-      noteIndex++;
-    }
-
-    // Parse tags
-    const tagsString = formData.get("tags") as string;
-    const tags = tagsString
-      ? tagsString
-          .split(",")
-          .map((tag) => tag.trim())
-          .filter((tag) => tag.length > 0)
-      : undefined;
-
-    return {
-      name,
-      servings,
-      calories_per_serving,
-      preparation_time,
-      cooking_time,
-      ingredients,
-      directions,
-      cooksNotes: cooksNotes.length > 0 ? cooksNotes : undefined,
-      tags,
-    };
-  }
-
-  private formDataIsValid(formData: CreateRecipeData) {
-    return (
-      formData.name ||
-      formData.servings ||
-      formData.ingredients?.length ||
-      formData.directions?.length
-    );
-  }
-
   private async getShoppingList() {
-    const items = await this.shoppingListService.getAllItems()
-    const stats = await this.shoppingListService.getStats()
-    const shoppingList: ShoppingListProps = {items, stats};
+    const items = await this.shoppingListService.getAllItems();
+    const stats = await this.shoppingListService.getStats();
+    const shoppingList: ShoppingListProps = { items, stats };
 
     return shoppingList;
+  }
+
+  private invalidFormResponse(context: Context, shoppingList: ShoppingListProps) {
+    const alert: AlertProps = {
+      alertType: "danger",
+      title: "Validation Error",
+      message:
+        "Name, servings, at least one ingredient, and at least one direction are required.",
+    };
+
+    return context.html(StandardResponse({ alert, shoppingList }));
   }
 }

@@ -11,21 +11,21 @@ export interface ShoppingListProps {
 
 export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
   const showConfirmDilaog = {
-    "hx-on:htmx:after-request": "if (event.detail.successful) { htmx.addClass('dialog', 'card-outline-danger'); htmx.find('dialog').showModal(); }"
-
-  }
-  const uncheckedItems = items.filter(item => !item.is_checked);
-  const checkedItems = items.filter(item => item.is_checked);
-  const onKeyDownEnter = { 
-    "x-on:keydown.enter": "$refs.saveBtn.click()"
-  }
-  const onKeyDownEscape = { 
-    "x-on:keydown.escape": `editing = false; setNewText(newText);`
-  }
+    "hx-on:htmx:after-request":
+      "if (event.detail.successful) { htmx.addClass('dialog', 'card-outline-danger'); htmx.find('dialog').showModal(); }",
+  };
+  const uncheckedItems = items.filter((item) => !item.is_checked);
+  const checkedItems = items.filter((item) => item.is_checked);
+  const onKeyDownEnter = {
+    "x-on:keydown.enter": "$refs.saveBtn.click()",
+  };
+  const onKeyDownEscape = {
+    "x-on:keydown.escape": `editing = false; setNewText(newText);`,
+  };
 
   const hxOnAfterRequest = {
-    "hx-on:htmx:after-request": "editing = false; setNewText(newText);"
-  }
+    "hx-on:htmx:after-request": "editing = false; setNewText(newText);",
+  };
 
   return (
     <section>
@@ -46,7 +46,7 @@ export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
 
       <div className="card-body">
         {/* Add new item form */}
-        <form 
+        <form
           className="grid mb-3"
           hx-post="/shopping-list"
           hx-target="#shopping-list-content"
@@ -60,9 +60,9 @@ export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
             placeholder="Add new item..."
             required
           />
-          <button 
-            type="submit" 
-            className="btn btn-icon btn-outline-success col-1" 
+          <button
+            type="submit"
+            className="btn btn-icon btn-outline-success col-1"
             title="Add Item"
           >
             <AddIcon />
@@ -83,11 +83,11 @@ export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
                 Clear Checked ({checkedItems.length})
               </button>
             )}
-            
+
             <button
               className="btn btn-outline-danger"
               hx-get="/form/clear-all"
-              hx-target="dialog" 
+              hx-target="dialog"
               hx-indicator="#working"
               {...showConfirmDilaog}
             >
@@ -98,7 +98,9 @@ export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
 
         {items.length === 0 ? (
           <div className="text-center text-surface-low">
-            <p><em>Your shopping list is empty</em></p>
+            <p>
+              <em>Your shopping list is empty</em>
+            </p>
             <p>Add items manually or add ingredients from a recipe</p>
           </div>
         ) : (
@@ -110,14 +112,17 @@ export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
                 <ul className="unstyled">
                   {uncheckedItems.map((item) => (
                     <li key={item.id} className="mb-2">
-                      <div className="grid" x-data={`{
+                      <div
+                        className="grid"
+                        x-data={`{
                         editing: false, 
                         newText: '${item.item.replace(/\'/g, "\\'")}',
                         
                         setNewText() {
                           this.newText = this.newText.replace(/'/g, "'");
                         },
-                      }`}>
+                      }`}
+                      >
                         <div className="col-1">
                           <input
                             type="checkbox"
@@ -128,7 +133,9 @@ export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
                           />
                         </div>
                         <div className="col-9">
-                          <span x-show="!editing" className="text-lg">{item.item}</span>
+                          <span x-show="!editing" className="text-lg">
+                            {item.item}
+                          </span>
                           <input
                             x-show="editing"
                             x-model="newText"
@@ -138,7 +145,11 @@ export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
                             {...onKeyDownEscape}
                           />
                         </div>
-                        <input type="hidden" name="itemText" x-bind:value="newText"></input>
+                        <input
+                          type="hidden"
+                          name="itemText"
+                          x-bind:value="newText"
+                        ></input>
                         <div className="col-2">
                           <button
                             x-show="!editing"
@@ -203,7 +214,10 @@ export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
                           />
                         </div>
                         <div className="col-9">
-                          <span className="text-surface-low" style="text-decoration: line-through;">
+                          <span
+                            className="text-surface-low"
+                            style="text-decoration: line-through;"
+                          >
                             {item.item}
                           </span>
                         </div>

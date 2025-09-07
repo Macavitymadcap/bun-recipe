@@ -22,8 +22,8 @@ describe("TagRepository", () => {
 
   beforeAll(() => {
     const testConfig: DbConfig = {
-      ...DB_CONFIG, 
-      database: "recipe_test"
+      ...DB_CONFIG,
+      database: "recipe_test",
     };
     (DbContext as any).instance = undefined; // Reset singleton instance before tests
     tagRepository = new TagRepository(testConfig);
@@ -55,7 +55,7 @@ describe("TagRepository", () => {
       const tagData = sampleTag();
 
       // Act
-      const result = await tagRepository.create(tagData) as TagEntity;
+      const result = (await tagRepository.create(tagData)) as TagEntity;
 
       // Assert
       expect(result).toBeDefined();
@@ -71,8 +71,8 @@ describe("TagRepository", () => {
       const tag2Data = sampleTag({ name: "Tag 2" });
 
       // Act
-      const tag1 = await tagRepository.create(tag1Data) as TagEntity;
-      const tag2 = await tagRepository.create(tag2Data) as TagEntity;
+      const tag1 = (await tagRepository.create(tag1Data)) as TagEntity;
+      const tag2 = (await tagRepository.create(tag2Data)) as TagEntity;
 
       // Assert
       expect(tag1).not.toBeNull();
@@ -88,10 +88,10 @@ describe("TagRepository", () => {
     test("should read an existing tag by id", async () => {
       // Arrange
       const tagData = sampleTag();
-      const createdTag = await tagRepository.create(tagData) as TagEntity;
+      const createdTag = (await tagRepository.create(tagData)) as TagEntity;
 
       // Act
-      const result = await tagRepository.read(createdTag.id) as TagEntity;
+      const result = (await tagRepository.read(createdTag.id)) as TagEntity;
 
       // Assert
       expect(result).toBeDefined();
@@ -138,14 +138,16 @@ describe("TagRepository", () => {
   describe("update", () => {
     test("should update an existing tag and return the updated entity", async () => {
       // Arrange
-      const originalTag = await tagRepository.create(sampleTag()) as TagEntity;
+      const originalTag = (await tagRepository.create(
+        sampleTag(),
+      )) as TagEntity;
       const updatedData: TagEntity = {
         ...originalTag,
         name: "South Indian",
       };
 
       // Act
-      const result = await tagRepository.update(updatedData) as TagEntity;
+      const result = (await tagRepository.update(updatedData)) as TagEntity;
 
       // Assert
       expect(result).toBeDefined();
@@ -172,7 +174,7 @@ describe("TagRepository", () => {
   describe("delete", () => {
     test("should delete an existing tag and return true", async () => {
       // Arrange
-      const tag = await tagRepository.create(sampleTag()) as TagEntity;
+      const tag = (await tagRepository.create(sampleTag())) as TagEntity;
 
       // Act
       const result = await tagRepository.delete(tag.id);
@@ -219,12 +221,12 @@ describe("TagRepository", () => {
   describe("readByName", () => {
     test("Should return an entity with a name that exactly matches the query", async () => {
       // Arrange
-      const tag = await tagRepository.create(
+      const tag = (await tagRepository.create(
         sampleTag({ name: "Vegetarian" }),
-      ) as TagEntity;
+      )) as TagEntity;
 
       // Act
-      const result = await tagRepository.readByName(tag.name) as TagEntity;
+      const result = (await tagRepository.readByName(tag.name)) as TagEntity;
 
       // Assert
       expect(result).toBeDefined();
@@ -260,12 +262,14 @@ describe("TagRepository", () => {
     test("should return an existing entity when given a name that belongs to an existing tag", async () => {
       // Arrange
       const existingName = "Barbecue";
-      const existingTag = await tagRepository.create(
+      const existingTag = (await tagRepository.create(
         sampleTag({ name: existingName }),
-      ) as TagEntity;
+      )) as TagEntity;
 
       // Act
-      const result = await tagRepository.createOrRead(existingName) as TagEntity;
+      const result = (await tagRepository.createOrRead(
+        existingName,
+      )) as TagEntity;
 
       // Assert
       expect(result).toBeDefined();

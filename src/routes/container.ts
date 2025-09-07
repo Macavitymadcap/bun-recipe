@@ -20,7 +20,7 @@ const DEPENDENCY_KEYS = {
   TAG_REPOSITORY: "tagRepository",
   RECIPE_SERVICE: "recipeService",
   SHOPPING_LIST_REPOSITORY: "shoppingListRepository",
-  SHOPPING_LIST_SERVICE: "shoppingListService"
+  SHOPPING_LIST_SERVICE: "shoppingListService",
 } as const;
 
 type ObjectValues<T> = T[keyof T];
@@ -62,7 +62,10 @@ export class Container {
    * Register all dependencies
    */
   private registerDependencies(): void {
-    this.dependencies.set(DEPENDENCY_KEYS.DB_CONTEXT, DbContext.getInstance(DB_CONFIG));
+    this.dependencies.set(
+      DEPENDENCY_KEYS.DB_CONTEXT,
+      DbContext.getInstance(DB_CONFIG),
+    );
     this.dependencies.set(
       DEPENDENCY_KEYS.COOKS_NOTE_REPOSITORY,
       new CooksNoteRepository(DB_CONFIG),
@@ -99,18 +102,18 @@ export class Container {
         this.get<DbContext>("dbContext"),
       ),
     );
-    this.dependencies.set(
+    (this.dependencies.set(
       DEPENDENCY_KEYS.SHOPPING_LIST_REPOSITORY,
-      new ShoppingListRepository(DB_CONFIG)
+      new ShoppingListRepository(DB_CONFIG),
     ),
-    this.dependencies.set(
-      DEPENDENCY_KEYS.SHOPPING_LIST_SERVICE,
-      new ShoppingListService(
-        this.get<ShoppingListRepository>("shoppingListRepository"),
-        this.get<IngredientRepository>("ingredientRepository"),
-        this.get<DbContext>("dbContext")
-      )
-    )
+      this.dependencies.set(
+        DEPENDENCY_KEYS.SHOPPING_LIST_SERVICE,
+        new ShoppingListService(
+          this.get<ShoppingListRepository>("shoppingListRepository"),
+          this.get<IngredientRepository>("ingredientRepository"),
+          this.get<DbContext>("dbContext"),
+        ),
+      ));
   }
 
   /**
@@ -133,15 +136,15 @@ export class Container {
       ingredientRepository: this.get<IngredientRepository>(
         "ingredientRepository",
       ),
-      directionRepository: this.get<DirectionRepository>(
-        "directionRepository",
-      ),
+      directionRepository: this.get<DirectionRepository>("directionRepository"),
       recipeRepository: this.get<RecipeRepository>("recipeRepository"),
       recipeTagRepository: this.get<RecipeTagRepository>("recipeTagRepository"),
       tagRepository: this.get<TagRepository>("tagRepository"),
       recipeService: this.get<RecipeService>("recipeService"),
-      shoppingListRepository: this.get<ShoppingListRepository>("shoppingListRepository"),
-      shoppingListService: this.get<ShoppingListService>("shoppingListService")
+      shoppingListRepository: this.get<ShoppingListRepository>(
+        "shoppingListRepository",
+      ),
+      shoppingListService: this.get<ShoppingListService>("shoppingListService"),
     };
   }
 

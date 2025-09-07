@@ -95,13 +95,13 @@ export const SearchRecipesForm = ({
         </div>
       </search>
 
-      <div className="card-footer wrapped-row">
-        <button type="submit" className="btn btn-outline-primary" hx-indicator="#search-indicator">
+      <div className="card-footer grid">
+        <button type="submit" className="btn btn-outline-primary col-6">
           Search
         </button>
 
         <button
-          className="btn btn-outline-warning"
+          className="btn btn-outline-warning col-6"
           type="reset"
           title="Reset Form"
         >
@@ -109,10 +109,9 @@ export const SearchRecipesForm = ({
         </button>
 
         <progress
-          id="search-indicator" 
-          class="htmx-indicator"
-        >
-        </progress>
+          id="search-indicator"
+          class="htmx-indicator col-12"
+        ></progress>
       </div>
     </form>
   );

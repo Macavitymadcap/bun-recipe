@@ -1,4 +1,3 @@
-
 interface ConvertIconProps {
   width?: number;
   height?: number;
@@ -21,5 +20,5 @@ export const ConvertIcon = ({ width, height }: ConvertIconProps) => {
       <path d="m10 6 4 4-4 4"></path>
       <line x1="10" y1="10" x2="14" y2="10"></line>
     </svg>
-  )
-}
+  );
+};

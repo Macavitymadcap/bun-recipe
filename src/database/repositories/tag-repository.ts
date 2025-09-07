@@ -85,7 +85,7 @@ export class TagRepository extends BaseRepository<TagEntity> {
 
       await sql`DELETE FROM tags WHERE id = ${id};`;
 
-      return await this.read(id) === null;
+      return (await this.read(id)) === null;
     });
   }
 }

@@ -5,14 +5,13 @@ import { ReadRecipe, ReadRecipeProps } from "../RecipeCard";
 interface SearchRecipesResponseProps {
   alert: AlertProps;
   recipes: ReadRecipeProps[];
-  shoppingList: ShoppingListProps
-
+  shoppingList: ShoppingListProps;
 }
 
 export const SearchRecipesResponse = ({
   alert,
   recipes,
-  shoppingList
+  shoppingList,
 }: SearchRecipesResponseProps) => {
   return `<div hx-swap-oob="beforeend:#alerts">
           ${Alert(alert)}

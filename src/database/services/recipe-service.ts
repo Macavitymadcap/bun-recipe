@@ -94,11 +94,13 @@ export class RecipeService {
           ...recipe,
           ...constituents,
         };
-      })
+      }),
     );
   }
 
-  async createCompleteRecipeInternal(data: CreateRecipeData): Promise<CompleteRecipe | null> {
+  async createCompleteRecipeInternal(
+    data: CreateRecipeData,
+  ): Promise<CompleteRecipe | null> {
     // Create the main recipe
     const recipe = await this.recipeRepository.create({
       name: data.name,
@@ -120,7 +122,7 @@ export class RecipeService {
           name: ingredient.name,
           order_index: index,
         });
-      })
+      }),
     );
 
     await Promise.all(
@@ -130,7 +132,7 @@ export class RecipeService {
           order_index: index + 1,
           instruction: step.instruction,
         });
-      })
+      }),
     );
 
     // Add cook's notes
@@ -141,7 +143,7 @@ export class RecipeService {
             recipe_id: recipe.id,
             note: note,
           });
-        })
+        }),
       );
     }
 
@@ -156,14 +158,16 @@ export class RecipeService {
               tag_id: tag.id,
             });
           }
-        })
+        }),
       );
     }
 
     return await this.getCompleteRecipe(recipe.id);
   }
 
-  async createCompleteRecipe(data: CreateRecipeData): Promise<CompleteRecipe | null> {
+  async createCompleteRecipe(
+    data: CreateRecipeData,
+  ): Promise<CompleteRecipe | null> {
     return await this.dbContext.transaction(async () => {
       return await this.createCompleteRecipeInternal(data);
     });
@@ -202,15 +206,16 @@ export class RecipeService {
   // Smart update methods that modify existing records instead of delete/recreate
   private async updateIngredients(
     recipeId: number,
-    newIngredients: CreateRecipeData['ingredients']
+    newIngredients: CreateRecipeData["ingredients"],
   ): Promise<void> {
-    const existingIngredients = await this.ingredientRepository.readByRecipeId(recipeId);
-    
+    const existingIngredients =
+      await this.ingredientRepository.readByRecipeId(recipeId);
+
     // Update or create ingredients
     await Promise.all(
       newIngredients.map(async (ingredient, index) => {
         const existing = existingIngredients[index];
-        
+
         if (existing) {
           // Update existing ingredient
           return await this.ingredientRepository.update({
@@ -230,7 +235,7 @@ export class RecipeService {
             order_index: index,
           });
         }
-      })
+      }),
     );
 
     // Delete any extra existing ingredients
@@ -239,22 +244,23 @@ export class RecipeService {
       await Promise.all(
         toDelete.map(async (ingredient) => {
           return await this.ingredientRepository.delete(ingredient.id);
-        })
+        }),
       );
     }
   }
 
   private async updateDirections(
     recipeId: number,
-    newDirections: CreateRecipeData['directions']
+    newDirections: CreateRecipeData["directions"],
   ): Promise<void> {
-    const existingDirections = await this.directionRepository.readByRecipeId(recipeId);
-    
+    const existingDirections =
+      await this.directionRepository.readByRecipeId(recipeId);
+
     // Update or create directions
     await Promise.all(
       newDirections.map(async (direction, index) => {
         const existing = existingDirections[index];
-        
+
         if (existing) {
           // Update existing direction
           return await this.directionRepository.update({
@@ -270,7 +276,7 @@ export class RecipeService {
             instruction: direction.instruction,
           });
         }
-      })
+      }),
     );
 
     // Delete any extra existing directions
@@ -279,22 +285,23 @@ export class RecipeService {
       await Promise.all(
         toDelete.map(async (direction) => {
           return await this.directionRepository.delete(direction.id);
-        })
+        }),
       );
     }
   }
 
   private async updateCooksNotes(
     recipeId: number,
-    newNotes: string[]
+    newNotes: string[],
   ): Promise<void> {
-    const existingNotes = await this.cooksNoteRepository.readByRecipeId(recipeId);
-    
+    const existingNotes =
+      await this.cooksNoteRepository.readByRecipeId(recipeId);
+
     // Update or create notes
     await Promise.all(
       newNotes.map(async (note, index) => {
         const existing = existingNotes[index];
-        
+
         if (existing) {
           // Update existing note
           return await this.cooksNoteRepository.update({
@@ -308,7 +315,7 @@ export class RecipeService {
             note: note,
           });
         }
-      })
+      }),
     );
 
     // Delete any extra existing notes
@@ -317,36 +324,46 @@ export class RecipeService {
       await Promise.all(
         toDelete.map(async (note) => {
           return await this.cooksNoteRepository.delete(note.id);
-        })
+        }),
       );
     }
   }
 
   private async updateTags(
     recipeId: number,
-    newTagNames: string[]
+    newTagNames: string[],
   ): Promise<void> {
     // Get current recipe tags
-    const currentRecipeTags = await this.recipeTagRepository.readByRecipeId(recipeId);
+    const currentRecipeTags =
+      await this.recipeTagRepository.readByRecipeId(recipeId);
     const currentTagIds = await Promise.all(
       currentRecipeTags.map(async (rt) => {
         const tag = await this.tagRepository.read(rt.tag_id);
         return tag?.name;
-      })
+      }),
     );
 
     // Filter out null values
-    const currentTagNames = currentTagIds.filter((name): name is string => name !== null);
+    const currentTagNames = currentTagIds.filter(
+      (name): name is string => name !== null,
+    );
 
     // Find tags to add and remove
-    const tagsToAdd = newTagNames.filter(name => !currentTagNames.includes(name));
-    const tagsToRemove = currentTagNames.filter(name => !newTagNames.includes(name));
+    const tagsToAdd = newTagNames.filter(
+      (name) => !currentTagNames.includes(name),
+    );
+    const tagsToRemove = currentTagNames.filter(
+      (name) => !newTagNames.includes(name),
+    );
 
     // Remove tags that are no longer needed
     for (const tagName of tagsToRemove) {
       const tag = await this.tagRepository.readByName(tagName);
       if (tag) {
-        const recipeTag = await this.recipeTagRepository.readByRecipeAndTag(recipeId, tag.id);
+        const recipeTag = await this.recipeTagRepository.readByRecipeAndTag(
+          recipeId,
+          tag.id,
+        );
         if (recipeTag) {
           await this.recipeTagRepository.delete(recipeTag.id);
         }
@@ -363,7 +380,7 @@ export class RecipeService {
             tag_id: tag.id,
           });
         }
-      })
+      }),
     );
   }
 
@@ -377,14 +394,16 @@ export class RecipeService {
     if (!tag) return [];
 
     const recipeTags = await this.recipeTagRepository.readByTagId(tag.id);
-    
+
     // Get all recipes, filtering out nulls
     const recipePromises = recipeTags.map(async (rt) => {
       return await this.recipeRepository.read(rt.recipe_id);
     });
-    
+
     const recipes = await Promise.all(recipePromises);
-    const validRecipes = recipes.filter((recipe): recipe is RecipeEntity => recipe !== null);
+    const validRecipes = recipes.filter(
+      (recipe): recipe is RecipeEntity => recipe !== null,
+    );
 
     // Get constituents for each valid recipe
     return await Promise.all(
@@ -394,14 +413,14 @@ export class RecipeService {
           ...recipe,
           ...constituents,
         };
-      })
+      }),
     );
   }
 
   async searchRecipesByName(searchTerm: string): Promise<CompleteRecipe[]> {
     const recipes = await this.recipeRepository.searchByName(searchTerm);
     if (recipes.length === 0) return [];
-    
+
     // Use Promise.all to properly await all async operations
     return await Promise.all(
       recipes.map(async (recipe) => {
@@ -410,23 +429,30 @@ export class RecipeService {
           ...recipe,
           ...constituents,
         };
-      })
+      }),
     );
   }
 
-  async searchRecipesByIngredient(ingredientName: string): Promise<CompleteRecipe[]> {
-    const matchingIngredients = await this.ingredientRepository.searchByName(ingredientName);
+  async searchRecipesByIngredient(
+    ingredientName: string,
+  ): Promise<CompleteRecipe[]> {
+    const matchingIngredients =
+      await this.ingredientRepository.searchByName(ingredientName);
     if (matchingIngredients.length === 0) return [];
 
-    const recipeIds = [...new Set(matchingIngredients.map((ingredient) => ingredient.recipe_id))];
+    const recipeIds = [
+      ...new Set(matchingIngredients.map((ingredient) => ingredient.recipe_id)),
+    ];
 
     // Get all recipes, filtering out nulls
     const recipePromises = recipeIds.map(async (id) => {
       return await this.recipeRepository.read(id);
     });
-    
+
     const recipes = await Promise.all(recipePromises);
-    const validRecipes = recipes.filter((recipe): recipe is RecipeEntity => recipe !== null);
+    const validRecipes = recipes.filter(
+      (recipe): recipe is RecipeEntity => recipe !== null,
+    );
 
     // Get constituents for each valid recipe
     return await Promise.all(
@@ -436,7 +462,7 @@ export class RecipeService {
           ...recipe,
           ...constituents,
         };
-      })
+      }),
     );
   }
 
@@ -446,18 +472,20 @@ export class RecipeService {
 
   private async getRecipeConstituents(id: number): Promise<RecipeConstituents> {
     // Use Promise.all to fetch all constituents in parallel
-    const [ingredients, directions, cooksNotes, recipeTags] = await Promise.all([
-      this.ingredientRepository.readByRecipeId(id),
-      this.directionRepository.readByRecipeId(id),
-      this.cooksNoteRepository.readByRecipeId(id),
-      this.recipeTagRepository.readByRecipeId(id),
-    ]);
+    const [ingredients, directions, cooksNotes, recipeTags] = await Promise.all(
+      [
+        this.ingredientRepository.readByRecipeId(id),
+        this.directionRepository.readByRecipeId(id),
+        this.cooksNoteRepository.readByRecipeId(id),
+        this.recipeTagRepository.readByRecipeId(id),
+      ],
+    );
 
     // Get tag names
     const tagPromises = recipeTags.map(async (rt) => {
       return await this.tagRepository.read(rt.tag_id);
     });
-    
+
     const tags = await Promise.all(tagPromises);
     const tagNames = tags
       .filter((tag): tag is TagEntity => tag !== null)
@@ -473,37 +501,43 @@ export class RecipeService {
 
   public async importRecipesFromJson(
     jsonData: CompleteRecipe[],
-    overwriteExisting: boolean = false
+    overwriteExisting: boolean = false,
   ): Promise<UploadResult> {
     const result: UploadResult = {
       success: true,
       imported: 0,
       skipped: 0,
       errors: 0,
-      messages: []
+      messages: [],
     };
-  
+
     return await this.dbContext.transaction(async () => {
       for (const recipeData of jsonData) {
         try {
           // Check if recipe with same name exists
-          const existingRecipes = await this.recipeRepository.searchByName(recipeData.name);
-          const exactMatch = existingRecipes.find(r => 
-            r.name.toLowerCase() === recipeData.name.toLowerCase()
+          const existingRecipes = await this.recipeRepository.searchByName(
+            recipeData.name,
           );
-  
+          const exactMatch = existingRecipes.find(
+            (r) => r.name.toLowerCase() === recipeData.name.toLowerCase(),
+          );
+
           if (exactMatch && !overwriteExisting) {
             result.skipped++;
-            result.messages.push(`Skipped "${recipeData.name}" - already exists`);
+            result.messages.push(
+              `Skipped "${recipeData.name}" - already exists`,
+            );
             continue;
           }
-  
+
           // If overwriting, delete the existing recipe
           if (exactMatch && overwriteExisting) {
             await this.deleteCompleteRecipe(exactMatch.id);
-            result.messages.push(`Replaced existing recipe "${recipeData.name}"`);
+            result.messages.push(
+              `Replaced existing recipe "${recipeData.name}"`,
+            );
           }
-  
+
           // Convert CompleteRecipe to CreateRecipeData format
           const createData: CreateRecipeData = {
             name: recipeData.name,
@@ -511,20 +545,24 @@ export class RecipeService {
             calories_per_serving: recipeData.calories_per_serving,
             preparation_time: recipeData.preparation_time,
             cooking_time: recipeData.cooking_time,
-            ingredients: recipeData.ingredients.map(ing => ({
+            ingredients: recipeData.ingredients.map((ing) => ({
               quantity: ing.quantity,
               unit: ing.unit,
-              name: ing.name
+              name: ing.name,
             })),
-            directions: recipeData.directions.map(dir => ({
-              instruction: dir.instruction
+            directions: recipeData.directions.map((dir) => ({
+              instruction: dir.instruction,
             })),
-            cooksNotes: recipeData.cooksNotes.length > 0 ? recipeData.cooksNotes : undefined,
-            tags: recipeData.tags.length > 0 ? recipeData.tags : undefined
+            cooksNotes:
+              recipeData.cooksNotes.length > 0
+                ? recipeData.cooksNotes
+                : undefined,
+            tags: recipeData.tags.length > 0 ? recipeData.tags : undefined,
           };
-  
-          const createdRecipe = await this.createCompleteRecipeInternal(createData);
-          
+
+          const createdRecipe =
+            await this.createCompleteRecipeInternal(createData);
+
           if (createdRecipe) {
             result.imported++;
             if (!exactMatch) {
@@ -534,79 +572,89 @@ export class RecipeService {
             result.errors++;
             result.messages.push(`Failed to import "${recipeData.name}"`);
           }
-  
         } catch (error) {
           result.errors++;
-          result.messages.push(`Error importing "${recipeData.name}": ${(error as Error).message}`);
+          result.messages.push(
+            `Error importing "${recipeData.name}": ${(error as Error).message}`,
+          );
         }
       }
-  
+
       if (result.errors > 0) {
         result.success = false;
       }
-  
+
       return result;
     });
   }
-  
+
   public validateRecipeData(data: any[]): { valid: boolean; errors: string[] } {
     const errors: string[] = [];
-    
+
     if (!Array.isArray(data)) {
       errors.push("Data must be an array of recipes");
       return { valid: false, errors };
     }
-  
+
     if (data.length === 0) {
       errors.push("No recipes found in the data");
       return { valid: false, errors };
     }
-  
+
     // Validate each recipe has required fields
     for (let i = 0; i < data.length; i++) {
       const recipe = data[i];
       const recipeErrors: string[] = [];
-  
-      if (!recipe.name || typeof recipe.name !== 'string') {
+
+      if (!recipe.name || typeof recipe.name !== "string") {
         recipeErrors.push(`Recipe ${i + 1}: Missing or invalid name`);
       }
-  
-      if (!recipe.servings || typeof recipe.servings !== 'string') {
+
+      if (!recipe.servings || typeof recipe.servings !== "string") {
         recipeErrors.push(`Recipe ${i + 1}: Missing or invalid servings`);
       }
-  
-      if (!Array.isArray(recipe.ingredients) || recipe.ingredients.length === 0) {
-        recipeErrors.push(`Recipe ${i + 1}: Missing or empty ingredients array`);
+
+      if (
+        !Array.isArray(recipe.ingredients) ||
+        recipe.ingredients.length === 0
+      ) {
+        recipeErrors.push(
+          `Recipe ${i + 1}: Missing or empty ingredients array`,
+        );
       } else {
         recipe.ingredients.forEach((ing: any, idx: number) => {
-          if (!ing.name || typeof ing.name !== 'string') {
-            recipeErrors.push(`Recipe ${i + 1}, Ingredient ${idx + 1}: Missing or invalid name`);
+          if (!ing.name || typeof ing.name !== "string") {
+            recipeErrors.push(
+              `Recipe ${i + 1}, Ingredient ${idx + 1}: Missing or invalid name`,
+            );
           }
         });
       }
-  
+
       if (!Array.isArray(recipe.directions) || recipe.directions.length === 0) {
         recipeErrors.push(`Recipe ${i + 1}: Missing or empty directions array`);
       } else {
         recipe.directions.forEach((dir: any, idx: number) => {
-          if (!dir.instruction || typeof dir.instruction !== 'string') {
-            recipeErrors.push(`Recipe ${i + 1}, Direction ${idx + 1}: Missing or invalid instruction`);
+          if (!dir.instruction || typeof dir.instruction !== "string") {
+            recipeErrors.push(
+              `Recipe ${i + 1}, Direction ${idx + 1}: Missing or invalid instruction`,
+            );
           }
         });
       }
-  
+
       // Ensure arrays exist even if empty
       if (!Array.isArray(recipe.cooksNotes)) {
         recipe.cooksNotes = [];
       }
-  
+
       if (!Array.isArray(recipe.tags)) {
         recipe.tags = [];
       }
-  
+
       errors.push(...recipeErrors);
     }
-  
+
     return { valid: errors.length === 0, errors };
   }
 
@@ -622,16 +670,18 @@ export class RecipeService {
 
   async getTagStatistics(): Promise<TagStatistic[]> {
     const allTags = await this.tagRepository.readAll();
-    
+
     // Use Promise.all to properly await all async operations
     const tagStatistics = await Promise.all(
       allTags.map(async (tag) => {
-        const recipeCount = await this.recipeTagRepository.getRecipeCountForTag(tag.id);
+        const recipeCount = await this.recipeTagRepository.getRecipeCountForTag(
+          tag.id,
+        );
         return {
           name: tag.name,
           count: recipeCount,
         };
-      })
+      }),
     );
 
     return tagStatistics.sort((a, b) => b.count - a.count); // Sort by count descending

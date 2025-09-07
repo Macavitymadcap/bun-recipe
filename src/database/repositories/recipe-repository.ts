@@ -101,7 +101,7 @@ export class RecipeRepository extends BaseRepository<RecipeEntity> {
 
       await sql`DELETE FROM recipes WHERE id = ${id};`;
 
-      return await this.read(id) === null;
+      return (await this.read(id)) === null;
     });
   }
 
@@ -116,8 +116,8 @@ export class RecipeRepository extends BaseRepository<RecipeEntity> {
   async getTotalRecipeCount(): Promise<number> {
     const [result] = await this.dbContext.query<{ count: string }>`
       SELECT COUNT(*) as count FROM recipes;
-    `
+    `;
 
-    return parseInt(result?.count || '0');
+    return parseInt(result?.count || "0");
   }
 }

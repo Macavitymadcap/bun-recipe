@@ -7,10 +7,9 @@ import { DB_CONFIG, type DbConfig } from "../config";
  */
 export class DbContext {
   private static instance: DbContext;
-  private db: SQL
+  private db: SQL;
 
   private constructor(config: DbConfig = DB_CONFIG) {
-
     if (config.connectionString) {
       this.db = new SQL(config.connectionString);
     } else {
@@ -18,12 +17,12 @@ export class DbContext {
         host: config.host,
         port: config.port,
         database: config.database,
-        username: config.user, 
+        username: config.user,
         password: config.password,
         max: config.pool.max || 10,
         idleTimeout: config.pool.idleTimeoutMillis || 3000,
         ssl: config.ssl ? true : false,
-      })
+      });
     }
   }
 
@@ -40,23 +39,29 @@ export class DbContext {
   /**
    * Execute SQL query with parameters and return all matching rows
    */
-  public async query<T>(sql: TemplateStringsArray, ...params: unknown[]): Promise<T[]> {
-    return await this.db(sql, ...params) as T[];
+  public async query<T>(
+    sql: TemplateStringsArray,
+    ...params: unknown[]
+  ): Promise<T[]> {
+    return (await this.db(sql, ...params)) as T[];
   }
 
   /**
    * Execute SQL query with parameters and return the first matching row
    */
-  public async queryOne<T>(sql: TemplateStringsArray, ...params: unknown[]): Promise<T | null> {
-    const results = await this.query<T>(sql, ...params)
-    return results.length > 0 ? results[0] : null
+  public async queryOne<T>(
+    sql: TemplateStringsArray,
+    ...params: unknown[]
+  ): Promise<T | null> {
+    const results = await this.query<T>(sql, ...params);
+    return results.length > 0 ? results[0] : null;
   }
 
   /**
    * Execute function within a transaction
    */
   public async transaction<T>(callback: (sql: SQL) => Promise<T>): Promise<T> {
-    return await this.db.begin(callback)
+    return await this.db.begin(callback);
   }
 
   /**

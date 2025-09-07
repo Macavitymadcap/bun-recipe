@@ -19,7 +19,9 @@ export class FormRoute extends BaseRoute {
   constructor(container: Container = Container.getInstance()) {
     super({ prefix: "/form" });
     this.recipeService = container.get<RecipeService>("recipeService");
-    this.shoppingListService = container.get<ShoppingListService>("shoppingListService");
+    this.shoppingListService = container.get<ShoppingListService>(
+      "shoppingListService",
+    );
   }
 
   protected initializeRoutes(): void {
@@ -27,9 +29,18 @@ export class FormRoute extends BaseRoute {
     this.app.get("/create", this.getCreateRecipeForm.bind(this));
     this.app.get("/update/:id", this.getUpdateRecipeForm.bind(this));
     this.app.get("/delete/:id", this.getDeleteRecipeForm.bind(this));
-    this.app.get("/clear-all", this.getClearAllShoppingListItemsForm.bind(this));
-    this.app.get("/clear-checked", this.getClearCheckedShoppingListItemsForm.bind(this));
-    this.app.get("/delete-item/:id", this.getDeleteShoppingListItemForm.bind(this));
+    this.app.get(
+      "/clear-all",
+      this.getClearAllShoppingListItemsForm.bind(this),
+    );
+    this.app.get(
+      "/clear-checked",
+      this.getClearCheckedShoppingListItemsForm.bind(this),
+    );
+    this.app.get(
+      "/delete-item/:id",
+      this.getDeleteShoppingListItemForm.bind(this),
+    );
   }
 
   private async getSearchRecipesForm(context: Context) {
@@ -72,12 +83,11 @@ export class FormRoute extends BaseRoute {
   }
 
   private async getClearAllShoppingListItemsForm(context: Context) {
-
-    return context.html(ClearShoppingListItemsForm({ action: "all" }))
+    return context.html(ClearShoppingListItemsForm({ action: "all" }));
   }
 
   private async getClearCheckedShoppingListItemsForm(context: Context) {
-    return context.html(ClearShoppingListItemsForm({ action: "checked" }))
+    return context.html(ClearShoppingListItemsForm({ action: "checked" }));
   }
 
   private async getDeleteShoppingListItemForm(context: Context) {
@@ -86,17 +96,16 @@ export class FormRoute extends BaseRoute {
     const alert: AlertProps = {
       alertType: "danger",
       title: "Error",
-      message: `Failed to retireve item with ID ${id}`
-    }
+      message: `Failed to retireve item with ID ${id}`,
+    };
 
     return context.html(
       GetDeleteShoppingListItemFormResponse({
-        alert: item? undefined : alert,
-        form: item ? {id: item.id, item: item.item} : undefined
-      })
-    )
+        alert: item ? undefined : alert,
+        form: item ? { id: item.id, item: item.item } : undefined,
+      }),
+    );
   }
-
 
   private parseIdFromRequest(context: Context) {
     return parseInt(context.req.param("id"), 10);

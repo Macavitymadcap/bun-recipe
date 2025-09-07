@@ -26,9 +26,9 @@ describe("RecipeTagRepository", () => {
   let tagRepository: TagRepository;
 
   beforeAll(() => {
-      const testConfig: DbConfig = {
-      ...DB_CONFIG, 
-      database: "recipe_test"
+    const testConfig: DbConfig = {
+      ...DB_CONFIG,
+      database: "recipe_test",
     };
     (DbContext as any).instance = undefined; // Reset singleton instance before tests
 
@@ -41,7 +41,7 @@ describe("RecipeTagRepository", () => {
   afterAll(async () => {
     try {
       await recipeTagRepository.close();
-      await recipeRepository.close()
+      await recipeRepository.close();
       await tagRepository.close();
     } catch (error) {
       // Ignore errors during cleanup
@@ -52,12 +52,14 @@ describe("RecipeTagRepository", () => {
   beforeEach(async () => {
     // Clean up in reverse order due to foreign key constraints
     const allRecipeTags = await recipeTagRepository.readAll();
-    allRecipeTags.forEach(async (recipeTag) =>
-      await recipeTagRepository.delete(recipeTag.id),
+    allRecipeTags.forEach(
+      async (recipeTag) => await recipeTagRepository.delete(recipeTag.id),
     );
 
     const allRecipes = await recipeRepository.readAll();
-    allRecipes.forEach(async (recipe) => await recipeRepository.delete(recipe.id));
+    allRecipes.forEach(
+      async (recipe) => await recipeRepository.delete(recipe.id),
+    );
 
     const allTags = await tagRepository.readAll();
     allTags.forEach(async (tag) => await tagRepository.delete(tag.id));
@@ -74,14 +76,14 @@ describe("RecipeTagRepository", () => {
 
     beforeEach(async () => {
       // Create test recipe and tag for foreign key constraints
-      testRecipe = await recipeRepository.create({
+      testRecipe = (await recipeRepository.create({
         name: "Test Recipe",
         servings: "4",
-      }) as RecipeEntity;
+      })) as RecipeEntity;
 
-      testTag = await tagRepository.create({
+      testTag = (await tagRepository.create({
         name: "Test Tag",
-      }) as TagEntity;
+      })) as TagEntity;
     });
 
     test("should create a new recipe-tag relationship and return the created entity with id", async () => {
@@ -92,9 +94,9 @@ describe("RecipeTagRepository", () => {
       });
 
       // Act
-      const result = await recipeTagRepository.create(
+      const result = (await recipeTagRepository.create(
         recipeTagData,
-      ) as RecipeTagEntity;
+      )) as RecipeTagEntity;
 
       // Assert
       expect(result).toBeDefined();
@@ -107,9 +109,9 @@ describe("RecipeTagRepository", () => {
 
     test("should create multiple recipe-tag relationships with unique ids", async () => {
       // Arrange
-      const testTag2 = await tagRepository.create({
+      const testTag2 = (await tagRepository.create({
         name: "Another Tag",
-      }) as TagEntity;
+      })) as TagEntity;
 
       const recipeTag1Data = sampleRecipeTag({
         recipe_id: testRecipe.id,
@@ -121,12 +123,12 @@ describe("RecipeTagRepository", () => {
       });
 
       // Act
-      const recipeTag1 = await recipeTagRepository.create(
+      const recipeTag1 = (await recipeTagRepository.create(
         recipeTag1Data,
-      ) as RecipeTagEntity;
-      const recipeTag2 = await recipeTagRepository.create(
+      )) as RecipeTagEntity;
+      const recipeTag2 = (await recipeTagRepository.create(
         recipeTag2Data,
-      ) as RecipeTagEntity;
+      )) as RecipeTagEntity;
 
       // Assert
       expect(recipeTag1).not.toBeNull();
@@ -157,14 +159,14 @@ describe("RecipeTagRepository", () => {
     let testTag: TagEntity;
 
     beforeEach(async () => {
-      testRecipe = await recipeRepository.create({
+      testRecipe = (await recipeRepository.create({
         name: "Test Recipe",
         servings: "4",
-      }) as RecipeEntity;
+      })) as RecipeEntity;
 
-      testTag = await tagRepository.create({
+      testTag = (await tagRepository.create({
         name: "Test Tag",
-      }) as TagEntity;
+      })) as TagEntity;
     });
 
     test("should read an existing recipe-tag relationship by id", async () => {
@@ -173,14 +175,14 @@ describe("RecipeTagRepository", () => {
         recipe_id: testRecipe.id,
         tag_id: testTag.id,
       });
-      const createdRecipeTag = await recipeTagRepository.create(
+      const createdRecipeTag = (await recipeTagRepository.create(
         recipeTagData,
-      ) as RecipeTagEntity;
+      )) as RecipeTagEntity;
 
       // Act
-      const result = await recipeTagRepository.read(
+      const result = (await recipeTagRepository.read(
         createdRecipeTag.id,
-      ) as RecipeTagEntity;
+      )) as RecipeTagEntity;
 
       // Assert
       expect(result).toBeDefined();
@@ -202,16 +204,16 @@ describe("RecipeTagRepository", () => {
   describe("readAll", () => {
     test("should return all recipe-tag relationships", async () => {
       // Arrange
-      const recipe1 = await recipeRepository.create({
+      const recipe1 = (await recipeRepository.create({
         name: "Recipe 1",
         servings: "2",
-      }) as RecipeEntity;
-      const recipe2 = await recipeRepository.create({
+      })) as RecipeEntity;
+      const recipe2 = (await recipeRepository.create({
         name: "Recipe 2",
         servings: "4",
-      }) as RecipeEntity;
-      const tag1 = await tagRepository.create({ name: "Tag 1" }) as TagEntity;
-      const tag2 = await tagRepository.create({ name: "Tag 2" }) as TagEntity;
+      })) as RecipeEntity;
+      const tag1 = (await tagRepository.create({ name: "Tag 1" })) as TagEntity;
+      const tag2 = (await tagRepository.create({ name: "Tag 2" })) as TagEntity;
 
       const recipeTag1 = await recipeTagRepository.create({
         recipe_id: recipe1.id,
@@ -250,24 +252,24 @@ describe("RecipeTagRepository", () => {
     let testTag2: TagEntity;
 
     beforeEach(async () => {
-      testRecipe1 = await recipeRepository.create({
+      testRecipe1 = (await recipeRepository.create({
         name: "Recipe 1",
         servings: "2",
-      }) as RecipeEntity;
-      testRecipe2 = await recipeRepository.create({
+      })) as RecipeEntity;
+      testRecipe2 = (await recipeRepository.create({
         name: "Recipe 2",
         servings: "4",
-      }) as RecipeEntity;
-      testTag1 = await tagRepository.create({ name: "Tag 1" }) as TagEntity;
-      testTag2 = await tagRepository.create({ name: "Tag 2" }) as TagEntity;
+      })) as RecipeEntity;
+      testTag1 = (await tagRepository.create({ name: "Tag 1" })) as TagEntity;
+      testTag2 = (await tagRepository.create({ name: "Tag 2" })) as TagEntity;
     });
 
     test("should update an existing recipe-tag relationship and return the updated entity", async () => {
       // Arrange
-      const originalRecipeTag = await recipeTagRepository.create({
+      const originalRecipeTag = (await recipeTagRepository.create({
         recipe_id: testRecipe1.id,
         tag_id: testTag1.id,
-      }) as RecipeTagEntity;
+      })) as RecipeTagEntity;
 
       const updatedData: RecipeTagEntity = {
         ...originalRecipeTag,
@@ -276,7 +278,9 @@ describe("RecipeTagRepository", () => {
       };
 
       // Act
-      const result = await recipeTagRepository.update(updatedData) as RecipeTagEntity;
+      const result = (await recipeTagRepository.update(
+        updatedData,
+      )) as RecipeTagEntity;
 
       // Assert
       expect(result).toBeDefined();
@@ -307,19 +311,19 @@ describe("RecipeTagRepository", () => {
     let testTag: TagEntity;
 
     beforeEach(async () => {
-      testRecipe = await recipeRepository.create({
+      testRecipe = (await recipeRepository.create({
         name: "Test Recipe",
         servings: "4",
-      }) as RecipeEntity;
-      testTag = await tagRepository.create({ name: "Test Tag" }) as TagEntity;
+      })) as RecipeEntity;
+      testTag = (await tagRepository.create({ name: "Test Tag" })) as TagEntity;
     });
 
     test("should delete an existing recipe-tag relationship and return true", async () => {
       // Arrange
-      const recipeTag = await recipeTagRepository.create({
+      const recipeTag = (await recipeTagRepository.create({
         recipe_id: testRecipe.id,
         tag_id: testTag.id,
-      }) as RecipeTagEntity;
+      })) as RecipeTagEntity;
 
       // Act
       const result = await recipeTagRepository.delete(recipeTag.id);
@@ -344,13 +348,17 @@ describe("RecipeTagRepository", () => {
   describe("readByRecipeId", () => {
     test("should return all recipe-tag relationships for a given recipe", async () => {
       // Arrange
-      const recipe = await recipeRepository.create({
+      const recipe = (await recipeRepository.create({
         name: "Tagged Recipe",
         servings: "6",
-      }) as RecipeEntity;
-      const tag1 = await tagRepository.create({ name: "Italian" }) as TagEntity;
-      const tag2 = await tagRepository.create({ name: "Vegetarian" }) as TagEntity;
-      const tag3 = await tagRepository.create({ name: "Quick" }) as TagEntity;
+      })) as RecipeEntity;
+      const tag1 = (await tagRepository.create({
+        name: "Italian",
+      })) as TagEntity;
+      const tag2 = (await tagRepository.create({
+        name: "Vegetarian",
+      })) as TagEntity;
+      const tag3 = (await tagRepository.create({ name: "Quick" })) as TagEntity;
 
       const recipeTag1 = await recipeTagRepository.create({
         recipe_id: recipe.id,
@@ -375,10 +383,10 @@ describe("RecipeTagRepository", () => {
 
     test("should return empty array when recipe has no tags", async () => {
       // Arrange
-      const recipe = await recipeRepository.create({
+      const recipe = (await recipeRepository.create({
         name: "Untagged Recipe",
         servings: "4",
-      }) as RecipeEntity;
+      })) as RecipeEntity;
 
       // Act
       const result = await recipeTagRepository.readByRecipeId(recipe.id);
@@ -391,25 +399,27 @@ describe("RecipeTagRepository", () => {
   describe("readByTagId", () => {
     test("should return all recipe-tag relationships for a given tag", async () => {
       // Arrange
-      const tag = await tagRepository.create({ name: "Healthy" }) as TagEntity;
-      const recipe1 = await recipeRepository.create({
+      const tag = (await tagRepository.create({
+        name: "Healthy",
+      })) as TagEntity;
+      const recipe1 = (await recipeRepository.create({
         name: "Salad",
         servings: "2",
-      }) as RecipeEntity;
-      const recipe2 = await recipeRepository.create({
+      })) as RecipeEntity;
+      const recipe2 = (await recipeRepository.create({
         name: "Smoothie",
         servings: "1",
-      }) as RecipeEntity;
-      const recipe3 = await recipeRepository.create({
+      })) as RecipeEntity;
+      const recipe3 = (await recipeRepository.create({
         name: "Soup",
         servings: "4",
-      }) as RecipeEntity;
+      })) as RecipeEntity;
 
       const recipeTag1 = await recipeTagRepository.create({
         recipe_id: recipe1.id,
         tag_id: tag.id,
       });
-      const recipeTag2 = await  recipeTagRepository.create({
+      const recipeTag2 = await recipeTagRepository.create({
         recipe_id: recipe2.id,
         tag_id: tag.id,
       });
@@ -428,7 +438,9 @@ describe("RecipeTagRepository", () => {
 
     test("should return empty array when tag is not used by any recipes", async () => {
       // Arrange
-      const unusedTag = await tagRepository.create({ name: "Unused" }) as TagEntity;
+      const unusedTag = (await tagRepository.create({
+        name: "Unused",
+      })) as TagEntity;
 
       // Act
       const result = await recipeTagRepository.readByTagId(unusedTag.id);
@@ -441,10 +453,10 @@ describe("RecipeTagRepository", () => {
   describe("deleteByRecipeId", () => {
     test("should return false when recipe has no associated tags", async () => {
       // Arrange
-      const recipe = await recipeRepository.create({
+      const recipe = (await recipeRepository.create({
         name: "Untagged Recipe",
         servings: "4",
-      }) as RecipeEntity;
+      })) as RecipeEntity;
 
       // Act
       const result = await recipeTagRepository.deleteByRecipeId(recipe.id);
@@ -455,51 +467,80 @@ describe("RecipeTagRepository", () => {
 
     test("should return true and remove all tags for a recipe", async () => {
       // Arrange
-      const recipe = await recipeRepository.create({
+      const recipe = (await recipeRepository.create({
         name: "Multi-Tagged Recipe",
         servings: "8",
-      }) as RecipeEntity;
-      const tag1 = await tagRepository.create({ name: "Dessert" }) as TagEntity;
-      const tag2 = await tagRepository.create({ name: "Chocolate" }) as TagEntity;
-      const tag3 = await tagRepository.create({ name: "Party" }) as TagEntity;
+      })) as RecipeEntity;
+      const tag1 = (await tagRepository.create({
+        name: "Dessert",
+      })) as TagEntity;
+      const tag2 = (await tagRepository.create({
+        name: "Chocolate",
+      })) as TagEntity;
+      const tag3 = (await tagRepository.create({ name: "Party" })) as TagEntity;
 
-      await recipeTagRepository.create({ recipe_id: recipe.id, tag_id: tag1.id });
-      await recipeTagRepository.create({ recipe_id: recipe.id, tag_id: tag2.id });
-      await recipeTagRepository.create({ recipe_id: recipe.id, tag_id: tag3.id });
+      await recipeTagRepository.create({
+        recipe_id: recipe.id,
+        tag_id: tag1.id,
+      });
+      await recipeTagRepository.create({
+        recipe_id: recipe.id,
+        tag_id: tag2.id,
+      });
+      await recipeTagRepository.create({
+        recipe_id: recipe.id,
+        tag_id: tag3.id,
+      });
 
       // Verify tags exist before deletion
-      expect(await recipeTagRepository.readByRecipeId(recipe.id)).toBeArrayOfSize(3);
+      expect(
+        await recipeTagRepository.readByRecipeId(recipe.id),
+      ).toBeArrayOfSize(3);
 
       // Act
       const result = await recipeTagRepository.deleteByRecipeId(recipe.id);
 
       // Assert
       expect(result).toBe(true);
-      expect(await recipeTagRepository.readByRecipeId(recipe.id)).toBeArrayOfSize(0);
+      expect(
+        await recipeTagRepository.readByRecipeId(recipe.id),
+      ).toBeArrayOfSize(0);
     });
 
     test("should only delete tags for specified recipe", async () => {
       // Arrange
-      const recipe1 = await recipeRepository.create({
+      const recipe1 = (await recipeRepository.create({
         name: "Recipe 1",
         servings: "4",
-      }) as RecipeEntity;
-      const recipe2 = await recipeRepository.create({
+      })) as RecipeEntity;
+      const recipe2 = (await recipeRepository.create({
         name: "Recipe 2",
         servings: "6",
-      }) as RecipeEntity;
-      const tag = await tagRepository.create({ name: "Shared Tag" }) as TagEntity;
+      })) as RecipeEntity;
+      const tag = (await tagRepository.create({
+        name: "Shared Tag",
+      })) as TagEntity;
 
-      await recipeTagRepository.create({ recipe_id: recipe1.id, tag_id: tag.id });
-      await recipeTagRepository.create({ recipe_id: recipe2.id, tag_id: tag.id });
+      await recipeTagRepository.create({
+        recipe_id: recipe1.id,
+        tag_id: tag.id,
+      });
+      await recipeTagRepository.create({
+        recipe_id: recipe2.id,
+        tag_id: tag.id,
+      });
 
       // Act
       const result = await recipeTagRepository.deleteByRecipeId(recipe1.id);
 
       // Assert
       expect(result).toBe(true);
-      expect(await recipeTagRepository.readByRecipeId(recipe1.id)).toBeArrayOfSize(0);
-      expect(await recipeTagRepository.readByRecipeId(recipe2.id)).toBeArrayOfSize(1);
+      expect(
+        await recipeTagRepository.readByRecipeId(recipe1.id),
+      ).toBeArrayOfSize(0);
+      expect(
+        await recipeTagRepository.readByRecipeId(recipe2.id),
+      ).toBeArrayOfSize(1);
     });
   });
 
@@ -508,19 +549,19 @@ describe("RecipeTagRepository", () => {
     let testTag: TagEntity;
 
     beforeEach(async () => {
-      testRecipe = await recipeRepository.create({
+      testRecipe = (await recipeRepository.create({
         name: "Test Recipe",
         servings: "4",
-      }) as RecipeEntity;
-      testTag = await tagRepository.create({ name: "Test Tag" }) as TagEntity;
+      })) as RecipeEntity;
+      testTag = (await tagRepository.create({ name: "Test Tag" })) as TagEntity;
     });
 
     test("should find existing recipe-tag relationship", async () => {
       // Arrange
-      const recipeTag = await recipeTagRepository.create({
+      const recipeTag = (await recipeTagRepository.create({
         recipe_id: testRecipe.id,
         tag_id: testTag.id,
-      }) as RecipeTagEntity;
+      })) as RecipeTagEntity;
 
       // Act
       const result = await recipeTagRepository.readByRecipeAndTag(
@@ -548,7 +589,10 @@ describe("RecipeTagRepository", () => {
 
     test("should return null for non-existent recipe or tag ids", async () => {
       // Act
-      const result1 = await recipeTagRepository.readByRecipeAndTag(999, testTag.id);
+      const result1 = await recipeTagRepository.readByRecipeAndTag(
+        999,
+        testTag.id,
+      );
       const result2 = await recipeTagRepository.readByRecipeAndTag(
         testRecipe.id,
         999,
