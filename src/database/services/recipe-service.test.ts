@@ -5,11 +5,23 @@ import {
   CreateRecipeData,
 } from "./recipe-service";
 import { DbContext } from "../../database/context/context";
-import { CooksNoteEntity, CooksNoteRepository } from "../repositories/cooks-note-repository";
-import { IngredientEntity, IngredientRepository } from "../repositories/ingredient-repository";
-import { DirectionEntity, DirectionRepository } from "../repositories/direction-repository";
+import {
+  CooksNoteEntity,
+  CooksNoteRepository,
+} from "../repositories/cooks-note-repository";
+import {
+  IngredientEntity,
+  IngredientRepository,
+} from "../repositories/ingredient-repository";
+import {
+  DirectionEntity,
+  DirectionRepository,
+} from "../repositories/direction-repository";
 import { RecipeRepository } from "../repositories/recipe-repository";
-import { RecipeTagEntity, RecipeTagRepository } from "../repositories/recipe-tag-repository";
+import {
+  RecipeTagEntity,
+  RecipeTagRepository,
+} from "../repositories/recipe-tag-repository";
 import { TagEntity, TagRepository } from "../repositories/tag-repository";
 
 describe("RecipeService", () => {
@@ -112,14 +124,17 @@ describe("RecipeService", () => {
 
     mockTagRepository = {
       create: mock(async () => sampleTags[0]),
-      read: mock(async (id: number) => sampleTags.find((t) => t.id === id) || null),
+      read: mock(
+        async (id: number) => sampleTags.find((t) => t.id === id) || null,
+      ),
       update: mock(async () => sampleTags[0]),
       delete: mock(async () => true),
-      createOrRead: mock(async (name: string) =>
-        sampleTags.find((t) => t.name === name) || { id: 3, name },
+      createOrRead: mock(
+        async (name: string) =>
+          sampleTags.find((t) => t.name === name) || { id: 3, name },
       ),
-      readByName: mock(async (name: string) => 
-        sampleTags.find((t) => t.name === name) || null,
+      readByName: mock(
+        async (name: string) => sampleTags.find((t) => t.name === name) || null,
       ),
       readAll: mock(async () => sampleTags),
     };
@@ -315,7 +330,8 @@ describe("RecipeService", () => {
       } as CompleteRecipe);
 
       // Act
-      const result = await recipeService.createCompleteRecipe(minimalRecipeData);
+      const result =
+        await recipeService.createCompleteRecipe(minimalRecipeData);
 
       // Assert
       expect(result).not.toBeNull();
@@ -392,7 +408,10 @@ describe("RecipeService", () => {
       } as CompleteRecipe);
 
       // Act
-      const result = await recipeService.updateCompleteRecipe(1, updateRecipeData);
+      const result = await recipeService.updateCompleteRecipe(
+        1,
+        updateRecipeData,
+      );
 
       // Assert
       expect(result).not.toBeNull();
@@ -414,7 +433,10 @@ describe("RecipeService", () => {
       mockRecipeRepository.read = mock(async () => null);
 
       // Act
-      const result = await recipeService.updateCompleteRecipe(999, updateRecipeData);
+      const result = await recipeService.updateCompleteRecipe(
+        999,
+        updateRecipeData,
+      );
 
       // Assert
       expect(result).toBeNull();
@@ -426,7 +448,10 @@ describe("RecipeService", () => {
       mockRecipeRepository.update = mock(async () => null);
 
       // Act
-      const result = await recipeService.updateCompleteRecipe(1, updateRecipeData);
+      const result = await recipeService.updateCompleteRecipe(
+        1,
+        updateRecipeData,
+      );
 
       // Assert
       expect(result).toBeNull();
@@ -468,7 +493,10 @@ describe("RecipeService", () => {
       mockRecipeTagRepository.readByRecipeId = mock(async () => []);
 
       // Act
-      const result = await recipeService.updateCompleteRecipe(1, minimalUpdateData);
+      const result = await recipeService.updateCompleteRecipe(
+        1,
+        minimalUpdateData,
+      );
 
       // Assert
       expect(result).not.toBeNull();

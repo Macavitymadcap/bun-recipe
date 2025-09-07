@@ -9,15 +9,23 @@ interface ShoppingListResponseProps {
   stats: ShoppingListStats;
 }
 
-export const ShoppingListResponse = ({ alert, items, stats }: ShoppingListResponseProps) => {
+export const ShoppingListResponse = ({
+  alert,
+  items,
+  stats,
+}: ShoppingListResponseProps) => {
   return (
     <>
       <div hx-swap-oob="beforeend:#alerts">
-        <Alert alertType={alert.alertType} message={alert.message} title={alert.title} />
+        <Alert
+          alertType={alert.alertType}
+          message={alert.message}
+          title={alert.title}
+        />
       </div>
       <div id="shopping-list-content">
         <ShoppingList items={items} stats={stats} />
       </div>
     </>
-  )
-}
+  );
+};

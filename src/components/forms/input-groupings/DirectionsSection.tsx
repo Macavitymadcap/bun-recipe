@@ -5,14 +5,16 @@ interface DirectionsSectionProps {
   isUpdateForm: boolean;
 }
 
-export const DirectionsSection = ({
-  isUpdateForm,
-}: DirectionsSectionProps) => {
+export const DirectionsSection = ({ isUpdateForm }: DirectionsSectionProps) => {
   return (
     <section>
       <h3>Directions</h3>
 
-      <ol id="directions-list" className="unstyled" x-show="directions.length > 0">
+      <ol
+        id="directions-list"
+        className="unstyled"
+        x-show="directions.length > 0"
+      >
         <template x-for="(step, index) in directions" x-bind:key="index">
           <li x-data="{ step }" className="mb-3">
             <div className="grid">
@@ -72,7 +74,7 @@ export const DirectionsSection = ({
       >
         <em>No directions added yet. Click "Add " to get started.</em>
       </div>
-      
+
       <div className="wrapped-row">
         <button
           type="button"

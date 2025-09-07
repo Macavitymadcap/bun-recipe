@@ -94,7 +94,6 @@ const RecipeCard = ({
         </div>
       </div>
 
-
       {/* Recipe Basic Info */}
       <div className="card-body">
         <div className="grid">

@@ -23,8 +23,8 @@ describe("CooksNoteRepository", () => {
 
   beforeAll(() => {
     const testConfig: DbConfig = {
-      ...DB_CONFIG, 
-      database: "recipe_test"
+      ...DB_CONFIG,
+      database: "recipe_test",
     };
 
     (DbContext as any).instance = undefined; // Reset singleton instance before tests
@@ -42,9 +42,9 @@ describe("CooksNoteRepository", () => {
 
   beforeEach(async () => {
     // Clean up any existing cooksNotes before each test
-    const allcooksNotes = await  cooksNoteRepository.readAll();
-    allcooksNotes.forEach(async (cooksNote) =>
-      await cooksNoteRepository.delete(cooksNote.id),
+    const allcooksNotes = await cooksNoteRepository.readAll();
+    allcooksNotes.forEach(
+      async (cooksNote) => await cooksNoteRepository.delete(cooksNote.id),
     );
   });
 
@@ -59,9 +59,9 @@ describe("CooksNoteRepository", () => {
       const cooksNoteData = samplecooksNote();
 
       // Act
-      const result = await cooksNoteRepository.create(
+      const result = (await cooksNoteRepository.create(
         cooksNoteData,
-      ) as CooksNoteEntity;
+      )) as CooksNoteEntity;
 
       // Assert
       expect(result).toBeDefined();
@@ -82,12 +82,12 @@ describe("CooksNoteRepository", () => {
       }) as CooksNoteEntity;
 
       // Act
-      const cooksNote1 = await cooksNoteRepository.create(
+      const cooksNote1 = (await cooksNoteRepository.create(
         cooksNote1Data,
-      ) as CooksNoteEntity;
-      const cooksNote2 = await cooksNoteRepository.create(
+      )) as CooksNoteEntity;
+      const cooksNote2 = (await cooksNoteRepository.create(
         cooksNote2Data,
-      ) as CooksNoteEntity;
+      )) as CooksNoteEntity;
 
       // Assert
       expect(cooksNote1).not.toBeNull();
@@ -105,14 +105,14 @@ describe("CooksNoteRepository", () => {
     test("should read an existing CooksNote by id", async () => {
       // Arrange
       const cooksNoteData = samplecooksNote();
-      const createdcooksNote = await cooksNoteRepository.create(
+      const createdcooksNote = (await cooksNoteRepository.create(
         cooksNoteData,
-      ) as CooksNoteEntity;
+      )) as CooksNoteEntity;
 
       // Act
-      const result = await cooksNoteRepository.read(
+      const result = (await cooksNoteRepository.read(
         createdcooksNote.id,
-      ) as CooksNoteEntity;
+      )) as CooksNoteEntity;
 
       // Assert
       expect(result).toBeDefined();
@@ -149,7 +149,7 @@ describe("CooksNoteRepository", () => {
 
       // Assert
       expect(result).toBeArrayOfSize(3);
-      expect(result).toContainValues([cooksNote1, cooksNote2, cooksNote3])
+      expect(result).toContainValues([cooksNote1, cooksNote2, cooksNote3]);
     });
 
     test("should return an empty array when no CooksNotes exist", async () => {
@@ -164,16 +164,18 @@ describe("CooksNoteRepository", () => {
   describe("update", () => {
     test("should update an existing CooksNote and return the updated entity", async () => {
       // Arrange
-      const originalcooksNote = await cooksNoteRepository.create(
+      const originalcooksNote = (await cooksNoteRepository.create(
         samplecooksNote(),
-      ) as CooksNoteEntity;
+      )) as CooksNoteEntity;
       const updatedData: CooksNoteEntity = {
         ...originalcooksNote!,
         note: "Lorem ispum dolor sit amet.",
       };
 
       // Act
-      const result = await cooksNoteRepository.update(updatedData) as CooksNoteEntity;
+      const result = (await cooksNoteRepository.update(
+        updatedData,
+      )) as CooksNoteEntity;
 
       // Assert
       expect(result).toBeDefined();
@@ -202,9 +204,9 @@ describe("CooksNoteRepository", () => {
   describe("delete", () => {
     test("should delete an existing cooksNote and return true", async () => {
       // Arrange
-      const cooksNote = await cooksNoteRepository.create(
+      const cooksNote = (await cooksNoteRepository.create(
         samplecooksNote(),
-      ) as CooksNoteEntity;
+      )) as CooksNoteEntity;
 
       // Act
       const result = await cooksNoteRepository.delete(cooksNote.id);
@@ -281,7 +283,8 @@ describe("CooksNoteRepository", () => {
       const nonExistantRecipeId = 50;
 
       // Act
-      const result = await cooksNoteRepository.readByRecipeId(nonExistantRecipeId);
+      const result =
+        await cooksNoteRepository.readByRecipeId(nonExistantRecipeId);
 
       // Assert
       expect(result).toBeArrayOfSize(0);
@@ -294,7 +297,8 @@ describe("CooksNoteRepository", () => {
       const nonExistantRecipeId = 55;
 
       // Act
-      const result = await cooksNoteRepository.deleteByRecipeId(nonExistantRecipeId);
+      const result =
+        await cooksNoteRepository.deleteByRecipeId(nonExistantRecipeId);
 
       // Assert
       expect(result).toBe(false);
@@ -317,7 +321,9 @@ describe("CooksNoteRepository", () => {
           note: "Cook's note 3 of Recipe 76",
         }),
       ];
-      cooksNotes.forEach(async (cooksNote) => await cooksNoteRepository.create(cooksNote));
+      cooksNotes.forEach(
+        async (cooksNote) => await cooksNoteRepository.create(cooksNote),
+      );
 
       // Act
       const result = await cooksNoteRepository.deleteByRecipeId(recipeId);

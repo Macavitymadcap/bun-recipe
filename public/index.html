@@ -19,7 +19,7 @@
     <script src="static/scripts/index.js" type="module"></script>
 
     <script type="module">
-      import { convert } from './static/scripts/index.js';
+      import { convert } from "./static/scripts/index.js";
       window.convert = convert;
     </script>
   </head>
@@ -27,10 +27,16 @@
   <body>
     <header id="header" class="container grid">
       <h1 class="col-10">Recipes</h1>
-      <button class="btn btn-outline col-2 col-push-right" id="main-menu-button" popovertarget="main-menu">Menu</button>
-      <menu 
-        id="main-menu" 
-        popover 
+      <button
+        class="btn btn-outline col-2 col-push-right"
+        id="main-menu-button"
+        popovertarget="main-menu"
+      >
+        Menu
+      </button>
+      <menu
+        id="main-menu"
+        popover
         x-data="{ 
           closeMenu() {
             htmx.find('#main-menu').togglePopover()
@@ -39,7 +45,7 @@
       >
         <li class="form-group">
           <label for="create-button">Create</label>
-  
+
           <button
             class="btn btn-icon btn-outline-success"
             title="Create recipe"
@@ -65,10 +71,10 @@
             </svg>
           </button>
         </li>
-  
+
         <li class="form-group">
           <label for="search-button">Search</label>
-  
+
           <button
             class="btn btn-icon btn-outline-primary"
             title="Search recipes"
@@ -93,10 +99,10 @@
             </svg>
           </button>
         </li>
-  
+
         <li class="form-group">
           <label for="refresh-button">List</label>
-  
+
           <button
             class="btn btn-icon btn-outline-warning"
             title="Refresh content"
@@ -105,6 +111,7 @@
             hx-target="#main-content"
             hx-swap="innerHTML"
             hx-indicator="#working"
+            x-on:click="closeMenu()"
           >
             <svg
               aria-hidden="true"
@@ -124,14 +131,14 @@
             </svg>
           </button>
         </li>
-  
+
         <li class="form-group">
           <label for="convert-popover-button">Convert</label>
           <button
-           class="btn btn-icon btn-outline-secondary"
-           title="Convert units"
-           popovertarget="conversion-popover"
-           x-on:click="closeMenu()"
+            class="btn btn-icon btn-outline-secondary"
+            title="Convert units"
+            popovertarget="conversion-popover"
+            x-on:click="closeMenu()"
           >
             <svg
               aria-hidden="true"
@@ -154,7 +161,6 @@
       </menu>
     </header>
 
-
     <main class="container">
       <div
         id="main-content"
@@ -165,7 +171,7 @@
     </main>
 
     <dialog class="card"></dialog>
-    
+
     <aside id="alerts" class="container">
       <div id="working" class="alert alert-primary htmx-indicator">
         <strong>Working</strong>
@@ -177,9 +183,9 @@
       <p>&copy; 2025 Dan Kiernan</p>
     </footer>
 
-    <article 
-      id="conversion-popover" 
-      class="card" 
+    <article
+      id="conversion-popover"
+      class="card"
       popover="manual"
       x-data="{
         fromUnit: 'lb', 
@@ -191,8 +197,8 @@
     >
       <div class="grid">
         <h4 class="col-11">Convert Units</h4>
-        <button 
-          class="btn btn-icon btn-outline-danger col-1" 
+        <button
+          class="btn btn-icon btn-outline-danger col-1"
           popovertarget="conversion-popover"
           title="Close conversion popover"
         >
@@ -224,9 +230,15 @@
         </datalist>
         <div class="form-group col-4">
           <label for="from-unit" x-model="fromUnit">From</label>
-          <input id="from-unit" name="from-unit" type="text" x-model="fromUnit" list="imperial-unit-list" />
+          <input
+            id="from-unit"
+            name="from-unit"
+            type="text"
+            x-model="fromUnit"
+            list="imperial-unit-list"
+          />
         </div>
-        
+
         <datalist id="metric-unit-list">
           <option>g</option>
           <option>kg</option>
@@ -237,7 +249,13 @@
         </datalist>
         <div class="form-group col-4">
           <label for="to-unit" x-model="toUnit">To</label>
-          <input id="to-unit" name="to-unit" type="text" x-model="toUnit" list="metric-unit-list" />
+          <input
+            id="to-unit"
+            name="to-unit"
+            type="text"
+            x-model="toUnit"
+            list="metric-unit-list"
+          />
         </div>
 
         <div class="form-group col-4">
@@ -245,8 +263,9 @@
           <input id="value" name="value" type="number" x-model="value" />
         </div>
 
-        <button 
-          x-on:click="convertUnits" x-bind:disabled="!fromUnit || !toUnit || !value" 
+        <button
+          x-on:click="convertUnits"
+          x-bind:disabled="!fromUnit || !toUnit || !value"
           class="btn btn-outline-secondary col-6"
         >
           Convert
@@ -258,4 +277,3 @@
     </article>
   </body>
 </html>
-

@@ -34,7 +34,9 @@ export class CooksNoteRepository extends BaseRepository<CooksNoteEntity> {
     `;
   }
 
-  async create(entity: Omit<CooksNoteEntity, "id">): Promise<CooksNoteEntity | null> {
+  async create(
+    entity: Omit<CooksNoteEntity, "id">,
+  ): Promise<CooksNoteEntity | null> {
     const result = await this.dbContext.queryOne<CooksNoteEntity>`
       INSERT INTO cooks_notes (recipe_id, note) 
       VALUES (${entity.recipe_id}, ${entity.note})
@@ -86,9 +88,9 @@ export class CooksNoteRepository extends BaseRepository<CooksNoteEntity> {
         return false;
       }
 
-      await sql`DELETE FROM cooks_notes WHERE id = ${id};`
+      await sql`DELETE FROM cooks_notes WHERE id = ${id};`;
 
-      return await this.read(id) === null;
+      return (await this.read(id)) === null;
     });
   }
 
@@ -104,6 +106,6 @@ export class CooksNoteRepository extends BaseRepository<CooksNoteEntity> {
       DELETE FROM cooks_notes WHERE recipe_id = ${recipeId};
     `;
 
-    return await this.isDeleted(recipeId)
+    return await this.isDeleted(recipeId);
   }
 }

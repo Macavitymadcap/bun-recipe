@@ -29,7 +29,9 @@ export class ShoppingListRepository extends BaseRepository<ShoppingListItemEntit
     `;
   }
 
-  async create(entity: Omit<ShoppingListItemEntity, "id" | "created_at" | "updated_at">): Promise<ShoppingListItemEntity | null> {
+  async create(
+    entity: Omit<ShoppingListItemEntity, "id" | "created_at" | "updated_at">,
+  ): Promise<ShoppingListItemEntity | null> {
     const result = await this.dbContext.queryOne<ShoppingListItemEntity>`
       INSERT INTO shopping_list (
         item, 
@@ -57,7 +59,9 @@ export class ShoppingListRepository extends BaseRepository<ShoppingListItemEntit
     `;
   }
 
-  async update(entity: ShoppingListItemEntity): Promise<ShoppingListItemEntity | null> {
+  async update(
+    entity: ShoppingListItemEntity,
+  ): Promise<ShoppingListItemEntity | null> {
     const existing = await this.read(entity.id);
     if (!existing) {
       return null;
@@ -117,15 +121,19 @@ export class ShoppingListRepository extends BaseRepository<ShoppingListItemEntit
     return remainingChecked.length === 0;
   }
 
-  async getItemByText(itemText: string): Promise<ShoppingListItemEntity | null> {
+  async getItemByText(
+    itemText: string,
+  ): Promise<ShoppingListItemEntity | null> {
     return this.dbContext.queryOne<ShoppingListItemEntity>`
       SELECT * FROM shopping_list WHERE item = ${itemText} LIMIT 1;
     `;
   }
 
-  async addOrUpdateItem(itemText: string): Promise<ShoppingListItemEntity | null> {
+  async addOrUpdateItem(
+    itemText: string,
+  ): Promise<ShoppingListItemEntity | null> {
     const existing = await this.getItemByText(itemText);
-    
+
     if (existing) {
       if (existing.is_checked) {
         return await this.update({ ...existing, is_checked: false });

@@ -12,9 +12,10 @@ interface UploadRecipesResponseProps {
 
 export const UploadRecipesResponse = ({
   alert,
-  details
+  details,
 }: UploadRecipesResponseProps) => {
-  const detailsHtml = details ? `
+  const detailsHtml = details
+    ? `
     <article class="card mt-3">
       <div class="card-header">
         <h3>Upload Summary</h3>
@@ -32,19 +33,24 @@ export const UploadRecipesResponse = ({
           </div>
         </div>
         
-        ${details.messages.length > 0 ? `
+        ${
+          details.messages.length > 0
+            ? `
           <details class="mt-3">
             <summary><strong>Detailed Messages (${details.messages.length})</strong></summary>
             <div class="content">
               <ul>
-                ${details.messages.map(msg => `<li>${msg}</li>`).join('')}
+                ${details.messages.map((msg) => `<li>${msg}</li>`).join("")}
               </ul>
             </div>
           </details>
-        ` : ''}
+        `
+            : ""
+        }
       </div>
     </article>
-  ` : '';
+  `
+    : "";
 
   return `
     <div hx-swap-oob="beforeend:#alerts">

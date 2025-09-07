@@ -5,7 +5,10 @@ export interface DeleteShoppingListItemFormProps {
   item: string;
 }
 
-export const DeleteShoppingListItemForm = ({ id, item }: DeleteShoppingListItemFormProps) => {
+export const DeleteShoppingListItemForm = ({
+  id,
+  item,
+}: DeleteShoppingListItemFormProps) => {
   const hxOnDeleteRecipe = {
     "hx-on:htmx:after-request":
       'if(event.detail.successful) { this.reset(); htmx.find("dialog").close(); htmx.removeClass("dialog", "card-outline-danger"); }',
@@ -20,7 +23,7 @@ export const DeleteShoppingListItemForm = ({ id, item }: DeleteShoppingListItemF
       hx-indicator="#delete-item-indicator"
       {...hxOnDeleteRecipe}
     >
-      <section class="card-header grid">
+      <div class="card-header grid">
         <span class="col-1"></span>
         <h2 class="text-center col-10">Delete item</h2>
 
@@ -34,15 +37,15 @@ export const DeleteShoppingListItemForm = ({ id, item }: DeleteShoppingListItemF
             <CloseIcon />
           </button>
         </span>
-      </section>
+      </div>
 
-      <section class="card-body">
+      <div class="card-body">
         <p class="text-center">
           Are you sure you want to delete <strong>{item}</strong>?
         </p>
-      </section>
+      </div>
 
-      <section class="card-footer grid">
+      <div class="card-footer grid">
         <button
           type="submit"
           title="Delete item"
@@ -50,8 +53,11 @@ export const DeleteShoppingListItemForm = ({ id, item }: DeleteShoppingListItemF
         >
           Delete
         </button>
-        <progress id="delete-item-indicator" class="htmx-indicator col-12"></progress>
-      </section>
+        <progress
+          id="delete-item-indicator"
+          class="htmx-indicator col-12"
+        ></progress>
+      </div>
     </form>
   );
 };

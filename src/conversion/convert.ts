@@ -8,7 +8,7 @@ import {
   UnitShort,
   isMassUnit,
   isTemperatureUnit,
-  isVolumeUnit
+  isVolumeUnit,
 } from "./model";
 import Decimal from "decimal.js";
 
@@ -84,7 +84,7 @@ export const convert = (
   fromUnit: UnitShort,
   toUnit: UnitShort,
 ): number => {
-  let result
+  let result;
 
   if (isMassUnit(fromUnit) && isMassUnit(toUnit)) {
     result = convertMass(value, fromUnit, toUnit);
@@ -97,6 +97,6 @@ export const convert = (
   }
 
   const rounded = new Decimal(result).toDecimalPlaces(2);
-  
+
   return rounded.isInteger() ? rounded.toNumber() : Number(rounded);
 };

@@ -23,7 +23,9 @@ export class RecipeRoute extends BaseRoute {
   constructor(container: Container = Container.getInstance()) {
     super({ prefix: "/recipe" });
     this.recipeService = container.get<RecipeService>("recipeService");
-    this.shoppingListService = container.get<ShoppingListService>("shoppingListService");
+    this.shoppingListService = container.get<ShoppingListService>(
+      "shoppingListService",
+    );
   }
 
   protected initializeRoutes(): void {
@@ -37,7 +39,7 @@ export class RecipeRoute extends BaseRoute {
 
   private async createRecipe(context: Context): Promise<Response> {
     console.log("Creating recipe...");
-    const shoppingList = await this.getShoppingList()
+    const shoppingList = await this.getShoppingList();
     let alert: AlertProps;
 
     try {
@@ -137,7 +139,7 @@ export class RecipeRoute extends BaseRoute {
 
   private async searchRecipes(context: Context): Promise<Response> {
     console.log("Searching recipes...");
-    const shoppingList = await this.getShoppingList()
+    const shoppingList = await this.getShoppingList();
     let alert: AlertProps | undefined;
 
     try {
@@ -150,7 +152,9 @@ export class RecipeRoute extends BaseRoute {
       let recipes: CompleteRecipe[] = [];
 
       if (searchType === "name" && recipeName?.trim()) {
-        recipes = await this.recipeService.searchRecipesByName(recipeName.trim());
+        recipes = await this.recipeService.searchRecipesByName(
+          recipeName.trim(),
+        );
 
         if (recipes.length === 0) {
           alert = {
@@ -207,7 +211,9 @@ export class RecipeRoute extends BaseRoute {
         };
       }
 
-      return context.html(SearchRecipesResponse({ alert, recipes, shoppingList }));
+      return context.html(
+        SearchRecipesResponse({ alert, recipes, shoppingList }),
+      );
     } catch (error) {
       console.error("Error searching recipes:", error);
       alert = {
@@ -216,13 +222,15 @@ export class RecipeRoute extends BaseRoute {
         message: `Failed to search recipes: ${(error as Error).message}`,
       };
 
-      return context.html(SearchRecipesResponse({ alert, recipes: [], shoppingList }));
+      return context.html(
+        SearchRecipesResponse({ alert, recipes: [], shoppingList }),
+      );
     }
   }
 
   private async updateRecipe(context: Context): Promise<Response> {
     console.log("Updating recipe ...");
-    const shoppingList = await this.getShoppingList()
+    const shoppingList = await this.getShoppingList();
     let alert: AlertProps | undefined;
 
     const id = this.parseRecipeIdFromContext(context);
@@ -242,7 +250,10 @@ export class RecipeRoute extends BaseRoute {
         return context.html(StandardResponse({ alert, shoppingList }));
       }
 
-      const recipe = await this.recipeService.updateCompleteRecipe(id, formData);
+      const recipe = await this.recipeService.updateCompleteRecipe(
+        id,
+        formData,
+      );
 
       if (recipe) {
         alert = {
@@ -251,7 +262,7 @@ export class RecipeRoute extends BaseRoute {
           message: `Recipe "${recipe.name}" updated successfully!`,
         };
 
-        return context.html(UpdateRecipeResponse({alert, recipe}))
+        return context.html(UpdateRecipeResponse({ alert, recipe }));
       } else {
         alert = {
           alertType: "danger",
@@ -403,9 +414,9 @@ export class RecipeRoute extends BaseRoute {
   }
 
   private async getShoppingList() {
-    const items = await this.shoppingListService.getAllItems()
-    const stats = await this.shoppingListService.getStats()
-    const shoppingList: ShoppingListProps = {items, stats};
+    const items = await this.shoppingListService.getAllItems();
+    const stats = await this.shoppingListService.getStats();
+    const shoppingList: ShoppingListProps = { items, stats };
 
     return shoppingList;
   }

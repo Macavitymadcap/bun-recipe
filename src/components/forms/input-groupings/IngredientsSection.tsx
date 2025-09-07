@@ -172,7 +172,7 @@ export const IngredientsSection = ({
           No ingredients added yet. Click add button above to get started.
         </em>
       </div>
-      
+
       <div className="wrapped-row">
         <button
           type="button"

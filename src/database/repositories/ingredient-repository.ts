@@ -39,7 +39,9 @@ export class IngredientRepository extends BaseRepository<IngredientEntity> {
     `;
   }
 
-  async create(entity: Omit<IngredientEntity, "id">): Promise<IngredientEntity | null> {
+  async create(
+    entity: Omit<IngredientEntity, "id">,
+  ): Promise<IngredientEntity | null> {
     const result = await this.dbContext.queryOne<IngredientEntity>`
       INSERT INTO ingredients (
         recipe_id, 
@@ -58,7 +60,7 @@ export class IngredientRepository extends BaseRepository<IngredientEntity> {
       RETURNING *;
     `;
 
-    return result || null
+    return result || null;
   }
 
   async read(id: number): Promise<IngredientEntity | null> {
@@ -108,9 +110,9 @@ export class IngredientRepository extends BaseRepository<IngredientEntity> {
 
       await sql`
         DELETE FROM ingredients WHERE id = ${id};
-      `; 
+      `;
 
-      return await this.read(id) === null;
+      return (await this.read(id)) === null;
     });
   }
 

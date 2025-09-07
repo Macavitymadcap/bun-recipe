@@ -1,10 +1,12 @@
 import { CloseIcon } from "../icons/CloseIcon";
 
 export interface ClearShoppingListItemsFormProps {
-  action: "all" | "checked"
+  action: "all" | "checked";
 }
 
-export const ClearShoppingListItemsForm = ({ action }: ClearShoppingListItemsFormProps) => {
+export const ClearShoppingListItemsForm = ({
+  action,
+}: ClearShoppingListItemsFormProps) => {
   const hxOnClearItems = {
     "hx-on:htmx:after-request":
       'if(event.detail.successful) { this.reset(); htmx.find("dialog").close(); htmx.removeClass("dialog", "card-outline-danger"); }',
@@ -14,7 +16,7 @@ export const ClearShoppingListItemsForm = ({ action }: ClearShoppingListItemsFor
       id="delete-task-form"
       method="dialog"
       hx-delete={`${action === "checked" ? "/shopping-list/checked" : "/shopping-list"}`}
-       hx-target="#shopping-list-content"
+      hx-target="#shopping-list-content"
       hx-swap="outerHTML"
       hx-indicator="#clear-items-indicator"
       {...hxOnClearItems}
@@ -50,7 +52,10 @@ export const ClearShoppingListItemsForm = ({ action }: ClearShoppingListItemsFor
         >
           Clear Items
         </button>
-        <progress id="clear-items-indicator" class="htmx-indicator col-12"></progress>
+        <progress
+          id="clear-items-indicator"
+          class="htmx-indicator col-12"
+        ></progress>
       </section>
     </form>
   );

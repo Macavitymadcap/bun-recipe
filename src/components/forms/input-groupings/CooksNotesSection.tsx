@@ -9,7 +9,6 @@ export const CooksNotesSection = ({ isUpdateForm }: CooksNotesSectionProps) => {
   return (
     <section>
       <h3>Cook's Notes</h3>
-        
 
       <ul id="notes-list" className="unstyled" x-show="cooksNotes.length > 0">
         <template x-for="(note, index) in cooksNotes" x-bind:key="index">
@@ -63,7 +62,7 @@ export const CooksNotesSection = ({ isUpdateForm }: CooksNotesSectionProps) => {
       >
         <em>No notes added yet. Click the add button above to get started.</em>
       </div>
-      
+
       <div className="wrapped-row">
         <button
           type="button"

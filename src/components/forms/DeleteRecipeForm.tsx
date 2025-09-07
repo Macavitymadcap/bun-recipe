@@ -20,7 +20,7 @@ const DeleteRecipeForm = ({ recipeId, recipeName }: DeleteRecipeFormProps) => {
       hx-indicator="#delete-recipe-indicator"
       {...hxOnDeleteRecipe}
     >
-      <section class="card-header grid">
+      <div class="card-header grid">
         <span class="col-1"></span>
         <h2 class="text-center col-10">Delete recipe</h2>
 
@@ -34,15 +34,15 @@ const DeleteRecipeForm = ({ recipeId, recipeName }: DeleteRecipeFormProps) => {
             <CloseIcon />
           </button>
         </span>
-      </section>
+      </div>
 
-      <section class="card-body">
+      <div class="card-body">
         <p class="text-center">
           Are you sure you want to delete <strong>{recipeName}</strong>?
         </p>
-      </section>
+      </div>
 
-      <section class="card-footer grid">
+      <div class="card-footer grid">
         <button
           type="submit"
           title="Delete Recipe"
@@ -50,8 +50,11 @@ const DeleteRecipeForm = ({ recipeId, recipeName }: DeleteRecipeFormProps) => {
         >
           Delete
         </button>
-        <progress id="delete-recipe-indicator" class="htmx-indicator col-12"></progress>
-      </section>
+        <progress
+          id="delete-recipe-indicator"
+          class="htmx-indicator col-12"
+        ></progress>
+      </div>
     </form>
   );
 };

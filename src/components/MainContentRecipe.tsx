@@ -35,14 +35,14 @@ export const MainContentRecipe = ({
           <UpdateIcon />
         </button>
 
-          <button
-            title="Add ingredients to shopping list"
-            className="btn btn-icon btn-outline-warning"
-            hx-post={`/shopping-list/recipe/${id}`}
-            hx-indicator="#working"
-          >
-            <ShoppingListIcon />
-          </button>
+        <button
+          title="Add ingredients to shopping list"
+          className="btn btn-icon btn-outline-warning"
+          hx-post={`/shopping-list/recipe/${id}`}
+          hx-indicator="#working"
+        >
+          <ShoppingListIcon />
+        </button>
 
         <button
           title="Delete Recipe"

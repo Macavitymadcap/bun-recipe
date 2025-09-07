@@ -3,7 +3,7 @@ import { ShoppingList, ShoppingListProps } from "../ShoppingList";
 
 interface StandardResponseProps {
   alert?: AlertProps;
-  shoppingList: ShoppingListProps
+  shoppingList: ShoppingListProps;
 }
 
 export const StandardResponse = ({
