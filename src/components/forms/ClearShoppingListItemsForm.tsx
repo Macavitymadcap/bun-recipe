@@ -1,12 +1,11 @@
 import { CloseIcon } from "../icons/CloseIcon";
 
-interface DeleteRecipeFormProps {
-  recipeId: number;
-  recipeName: string;
+export interface ClearShoppingListItemsFormProps {
+  action: "all" | "checked"
 }
 
-const DeleteRecipeForm = ({ recipeId, recipeName }: DeleteRecipeFormProps) => {
-  const hxOnDeleteRecipe = {
+export const ClearShoppingListItemsForm = ({ action }: ClearShoppingListItemsFormProps) => {
+  const hxOnClearItems = {
     "hx-on:htmx:after-request":
       'if(event.detail.successful) { this.reset(); htmx.find("dialog").close(); htmx.removeClass("dialog", "card-outline-danger"); }',
   };
@@ -14,21 +13,21 @@ const DeleteRecipeForm = ({ recipeId, recipeName }: DeleteRecipeFormProps) => {
     <form
       id="delete-task-form"
       method="dialog"
-      hx-delete={`/recipe/${recipeId}`}
-      hx-target="#main-content"
-      hx-swap="innerHTML"
-      hx-indicator="#delete-recipe-indicator"
-      {...hxOnDeleteRecipe}
+      hx-delete={`${action === "checked" ? "/shopping-list/checked" : "/shopping-list"}`}
+       hx-target="#shopping-list-content"
+      hx-swap="outerHTML"
+      hx-indicator="#clear-items-indicator"
+      {...hxOnClearItems}
     >
       <section class="card-header grid">
         <span class="col-1"></span>
-        <h2 class="text-center col-10">Delete recipe</h2>
+        <h2 class="text-center col-10">Clear {action} items</h2>
 
         <span class="col-1">
           <button
             class="btn btn-icon btn-outline-danger col-1 col-push-right"
             type="button"
-            title="Cancel Recipe Deletion"
+            title="Cancel Items Clearance"
             x-on:click="htmx.removeClass('dialog', 'card-outline-danger'); htmx.find('dialog').close();"
           >
             <CloseIcon />
@@ -38,22 +37,21 @@ const DeleteRecipeForm = ({ recipeId, recipeName }: DeleteRecipeFormProps) => {
 
       <section class="card-body">
         <p class="text-center">
-          Are you sure you want to delete <strong>{recipeName}</strong>?
+          Are you sure you want to clear {action} items?
         </p>
       </section>
 
       <section class="card-footer grid">
         <button
           type="submit"
-          title="Delete Recipe"
+          title={`Clear ${action} items`}
           class="btn btn-outline-danger col-12"
+          hx-indicator="#clear-items-indicator"
         >
-          Delete
+          Clear Items
         </button>
-        <progress id="delete-recipe-indicator" class="htmx-indicator col-12"></progress>
+        <progress id="clear-items-indicator" class="htmx-indicator col-12"></progress>
       </section>
     </form>
   );
 };
-
-export { DeleteRecipeForm, type DeleteRecipeFormProps };

@@ -1,5 +1,6 @@
 import { DeleteIcon } from "./icons/DeleteIcon";
 import { MaximiseIcon } from "./icons/MaximiseIcon";
+import { ShoppingListIcon } from "./icons/ShoppingListIcon";
 import { UpdateIcon } from "./icons/UpdateIcon";
 
 interface RecipeCardProps {
@@ -57,7 +58,7 @@ const RecipeCard = ({
           <button
             title="Full content view"
             hx-get={`/recipe/${id}`}
-            className="btn btn-icon btn-outline-primary col-4"
+            className="btn btn-icon btn-outline-primary"
             hx-target="#main-content"
           >
             <MaximiseIcon />
@@ -65,7 +66,7 @@ const RecipeCard = ({
 
           <button
             title="Update Recipe"
-            className="btn btn-icon btn-outline-secondary col-4"
+            className="btn btn-icon btn-outline-secondary"
             hx-get={`/form/update/${id}`}
             hx-target="#main-content"
           >
@@ -73,8 +74,17 @@ const RecipeCard = ({
           </button>
 
           <button
+            title="Add ingredients to shopping list"
+            className="btn btn-icon btn-outline-warning"
+            hx-post={`/shopping-list/recipe/${id}`}
+            hx-indicator="#working"
+          >
+            <ShoppingListIcon />
+          </button>
+
+          <button
             title="Delete Recipe"
-            className="btn btn-icon btn-outline-danger col-4"
+            className="btn btn-icon btn-outline-danger"
             hx-get={`/form/delete/${id}`}
             hx-target="dialog"
             {...hxOnAfterRequestSuccessful}

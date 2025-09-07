@@ -7,6 +7,8 @@ import { RecipeRepository } from "../database/repositories/recipe-repository";
 import { RecipeTagRepository } from "../database/repositories/recipe-tag-repository";
 import { TagRepository } from "../database/repositories/tag-repository";
 import { RecipeService } from "../database/services/recipe-service";
+import { ShoppingListRepository } from "../database/repositories/shopping-list-repository";
+import { ShoppingListService } from "../database/services/shopping-list-service";
 
 const DEPENDENCY_KEYS = {
   DB_CONTEXT: "dbContext",
@@ -17,6 +19,8 @@ const DEPENDENCY_KEYS = {
   RECIPE_TAG_REPOSITORY: "recipeTagRepository",
   TAG_REPOSITORY: "tagRepository",
   RECIPE_SERVICE: "recipeService",
+  SHOPPING_LIST_REPOSITORY: "shoppingListRepository",
+  SHOPPING_LIST_SERVICE: "shoppingListService"
 } as const;
 
 type ObjectValues<T> = T[keyof T];
@@ -32,6 +36,8 @@ export interface Dependencies {
   recipeTagRepository: RecipeTagRepository;
   tagRepository: TagRepository;
   recipeService: RecipeService;
+  shoppingListRepository: ShoppingListRepository;
+  shoppingListService: ShoppingListService;
 }
 
 export class Container {
@@ -93,6 +99,18 @@ export class Container {
         this.get<DbContext>("dbContext"),
       ),
     );
+    this.dependencies.set(
+      DEPENDENCY_KEYS.SHOPPING_LIST_REPOSITORY,
+      new ShoppingListRepository(DB_CONFIG)
+    ),
+    this.dependencies.set(
+      DEPENDENCY_KEYS.SHOPPING_LIST_SERVICE,
+      new ShoppingListService(
+        this.get<ShoppingListRepository>("shoppingListRepository"),
+        this.get<IngredientRepository>("ingredientRepository"),
+        this.get<DbContext>("dbContext")
+      )
+    )
   }
 
   /**
@@ -104,13 +122,6 @@ export class Container {
     }
     return this.dependencies.get(key) as T;
   }
-
-  // /**
-  //  * Set a dependency (useful for testing)
-  //  */
-  // public set(key: string, value: any): void {
-  //   this.dependencies.set(key, value);
-  // }
 
   /**
    * Get all dependencies as an object
@@ -129,6 +140,8 @@ export class Container {
       recipeTagRepository: this.get<RecipeTagRepository>("recipeTagRepository"),
       tagRepository: this.get<TagRepository>("tagRepository"),
       recipeService: this.get<RecipeService>("recipeService"),
+      shoppingListRepository: this.get<ShoppingListRepository>("shoppingListRepository"),
+      shoppingListService: this.get<ShoppingListService>("shoppingListService")
     };
   }
 
@@ -139,20 +152,4 @@ export class Container {
     this.dependencies.clear();
     this.registerDependencies();
   }
-
-  // /**
-  //  * Create a test container with mock dependencies
-  //  */
-  // public static createTestContainer(
-  //   mockDependencies: Partial<Dependencies>,
-  // ): Container {
-  //   const container = new Container();
-
-  //   // Override with mock dependencies
-  //   Object.entries(mockDependencies).forEach(([key, value]) => {
-  //     container.set(key, value);
-  //   });
-
-  //   return container;
-  // }
 }

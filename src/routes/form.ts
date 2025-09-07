@@ -1,4 +1,4 @@
-import { Context, HonoRequest } from "hono";
+import { Context } from "hono";
 import { RecipeService } from "../database/services/recipe-service";
 import { Container } from "./container";
 import { BaseRoute } from "./base-route";
@@ -7,13 +7,19 @@ import { AlertProps } from "../components/Alert";
 import { GetUpdateRecipeFormResponse } from "../components/responses/GetUpdateRecipeFormResponse";
 import { GetDeleteRecipeFormResponse } from "../components/responses/GetDeleteRecipeFormResponse";
 import { SearchRecipesForm } from "../components/forms/SearchRecipesForm";
+import { ClearShoppingListItemsForm } from "../components/forms/ClearShoppingListItemsForm";
+import { ShoppingListService } from "../database/services/shopping-list-service";
+import { DeleteShoppingListItemForm } from "../components/forms/DeleteShoppingListItemForm";
+import { GetDeleteShoppingListItemFormResponse } from "../components/responses/GetDeleteShoppingListItemFormResponse";
 
 export class FormRoute extends BaseRoute {
   private recipeService: RecipeService;
+  private shoppingListService: ShoppingListService;
 
   constructor(container: Container = Container.getInstance()) {
     super({ prefix: "/form" });
     this.recipeService = container.get<RecipeService>("recipeService");
+    this.shoppingListService = container.get<ShoppingListService>("shoppingListService");
   }
 
   protected initializeRoutes(): void {
@@ -21,6 +27,9 @@ export class FormRoute extends BaseRoute {
     this.app.get("/create", this.getCreateRecipeForm.bind(this));
     this.app.get("/update/:id", this.getUpdateRecipeForm.bind(this));
     this.app.get("/delete/:id", this.getDeleteRecipeForm.bind(this));
+    this.app.get("/clear-all", this.getClearAllShoppingListItemsForm.bind(this));
+    this.app.get("/clear-checked", this.getClearCheckedShoppingListItemsForm.bind(this));
+    this.app.get("/delete-item/:id", this.getDeleteShoppingListItemForm.bind(this));
   }
 
   private async getSearchRecipesForm(context: Context) {
@@ -61,6 +70,33 @@ export class FormRoute extends BaseRoute {
       }),
     );
   }
+
+  private async getClearAllShoppingListItemsForm(context: Context) {
+
+    return context.html(ClearShoppingListItemsForm({ action: "all" }))
+  }
+
+  private async getClearCheckedShoppingListItemsForm(context: Context) {
+    return context.html(ClearShoppingListItemsForm({ action: "checked" }))
+  }
+
+  private async getDeleteShoppingListItemForm(context: Context) {
+    const id = this.parseIdFromRequest(context);
+    const item = await this.shoppingListService.read(id);
+    const alert: AlertProps = {
+      alertType: "danger",
+      title: "Error",
+      message: `Failed to retireve item with ID ${id}`
+    }
+
+    return context.html(
+      GetDeleteShoppingListItemFormResponse({
+        alert: item? undefined : alert,
+        form: item ? {id: item.id, item: item.item} : undefined
+      })
+    )
+  }
+
 
   private parseIdFromRequest(context: Context) {
     return parseInt(context.req.param("id"), 10);
