@@ -19,7 +19,7 @@ export const SearchRecipesForm = ({
       hx-post="/recipe/search"
       hx-target="#main-content"
       hx-swap="innerHTML"
-      // hx-indicator="#loading"
+      // hx-indicator="#working"
       method="dialog"
       x-data="{ searchType: 'name' }"
       {...hxOnSearchSubmitted}
@@ -96,9 +96,15 @@ export const SearchRecipesForm = ({
       </search>
 
       <div className="card-footer wrapped-row">
-        <button type="submit" className="btn btn-outline-primary">
+        <button type="submit" className="btn btn-outline-primary" hx-indicator="#search-indicator">
           Search
         </button>
+
+        <progress
+          id="search-indicator" 
+          class="htmx-indicator"
+        >
+        </progress>
 
         <button
           className="btn btn-outline-warning"

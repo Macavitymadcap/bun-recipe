@@ -17,3 +17,7 @@ body {
   background-color: var(--colour-background);
   padding: var(--space-md);
 }
+
+img {
+  display: inline-block;
+}

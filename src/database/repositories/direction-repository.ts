@@ -1,3 +1,4 @@
+import { DbConfig } from "../config";
 import { BaseEntity, BaseRepository } from "./base-repository";
 
 export interface DirectionEntity extends BaseEntity {
@@ -7,118 +8,105 @@ export interface DirectionEntity extends BaseEntity {
 }
 
 export class DirectionRepository extends BaseRepository<DirectionEntity> {
-  constructor(dbPath?: string) {
-    super("directions", dbPath);
+  constructor(dbConfig: DbConfig) {
+    super("directions", dbConfig);
   }
 
-  protected initDb(): void {
-    this.createTable();
-    this.createIndexes();
+  protected async initDb(): Promise<void> {
+    await this.createTable();
+    await this.createIndexes();
   }
 
-  protected createTable(): void {
-    this.dbContext.execute(`
+  protected async createTable(): Promise<void> {
+    await this.dbContext.queryOne`
       CREATE TABLE IF NOT EXISTS directions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         recipe_id INTEGER NOT NULL,
         order_index INTEGER NOT NULL,
         instruction TEXT NOT NULL,
         FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE
       );
-    `);
+    `;
   }
 
-  private createIndexes(): void {
-    this.dbContext.execute(`
+  private async createIndexes(): Promise<void> {
+    await this.dbContext.queryOne`
       CREATE INDEX IF NOT EXISTS idx_directions_recipe_id ON directions(recipe_id);
-    `);
+    `;
   }
 
-  create(entity: Omit<DirectionEntity, "id">): DirectionEntity | null {
-    this.dbContext.queryOne(
-      `INSERT INTO directions (recipe_id, order_index, instruction) 
-         VALUES ($recipe_id, $order_index, $instruction);`,
-      {
-        $recipe_id: entity.recipe_id,
-        $order_index: entity.order_index,
-        $instruction: entity.instruction,
-      },
-    );
+  async create(entity: Omit<DirectionEntity, "id">): Promise<DirectionEntity | null> {
+    const result = await this.dbContext.queryOne<DirectionEntity>`
+      INSERT INTO directions (recipe_id, order_index, instruction) 
+      VALUES (${entity.recipe_id}, ${entity.order_index}, ${entity.instruction})
+      RETURNING *;
+    `;
 
-    const lastId = this.dbContext.getLastInsertedId();
-    if (lastId === null) {
-      return null;
-    }
-
-    return this.read(lastId);
+    return result || null;
   }
 
-  read(id: number): DirectionEntity | null {
-    return this.dbContext.queryOne<DirectionEntity>(
-      `SELECT * FROM directions WHERE id = $id;`,
-      { $id: id },
-    );
+  async read(id: number): Promise<DirectionEntity | null> {
+    return await this.dbContext.queryOne<DirectionEntity>`
+      SELECT * FROM directions WHERE id = ${id};
+    `;
   }
 
-  readAll(): DirectionEntity[] {
-    return this.dbContext.query<DirectionEntity>(
-      `SELECT * FROM directions;`,
-    );
+  async readAll(): Promise<DirectionEntity[]> {
+    return await this.dbContext.query<DirectionEntity>`
+      SELECT * FROM directions;
+    `;
   }
 
-  readByRecipeId(recipeId: number): DirectionEntity[] {
-    return this.dbContext.query<DirectionEntity>(
-      `SELECT * FROM directions WHERE recipe_id = $recipe_id ORDER BY order_index;`,
-      { $recipe_id: recipeId },
-    );
+  async readByRecipeId(recipeId: number): Promise<DirectionEntity[]> {
+    return await this.dbContext.query<DirectionEntity>`
+      SELECT * FROM directions WHERE recipe_id = ${recipeId} ORDER BY order_index;
+    `;
   }
 
-  update(entity: DirectionEntity): DirectionEntity | null {
-    const existing = this.read(entity.id);
+  async update(entity: DirectionEntity): Promise<DirectionEntity | null> {
+    const existing = await this.read(entity.id);
     if (!existing) {
       return null;
     }
 
-    this.dbContext.queryOne(
-      `UPDATE directions SET
-          recipe_id = $recipe_id,
-          order_index = $order_index,
-          instruction = $instruction
-        WHERE id = $id;`,
-      {
-        $id: entity.id,
-        $recipe_id: entity.recipe_id,
-        $order_index: entity.order_index,
-        $instruction: entity.instruction,
-      },
-    );
+    const result = await this.dbContext.queryOne<DirectionEntity>`
+      UPDATE directions SET
+        recipe_id = ${entity.recipe_id},
+        order_index = ${entity.order_index},
+        instruction = ${entity.instruction}
+      WHERE id = ${entity.id}
+      RETURNING *;
+    `;
 
-    return this.read(entity.id);
+    return result || null;
   }
 
-  delete(id: number): boolean {
-    return this.dbContext.transaction(() => {
-      const existing = this.read(id);
+  async delete(id: number): Promise<boolean> {
+    return await this.dbContext.transaction(async (sql) => {
+      const existing = await this.read(id);
       if (!existing) {
         return false;
       }
 
-      this.dbContext.queryOne(`DELETE FROM directions WHERE id = $id;`, {
-        $id: id,
-      });
+      await sql`DELETE FROM directions WHERE id = ${id};`; 
 
-      return this.read(id) === null;
+      return await this.read(id) === null;
     });
   }
 
-  deleteByRecipeId(recipeId: number): boolean {
-    if (this.readByRecipeId(recipeId).length === 0) return false;
+  private async isDeleted(recipeId: number) {
+    return (await this.readByRecipeId(recipeId)).length === 0;
+  }
 
-    this.dbContext.queryOne(
-      `DELETE FROM directions WHERE recipe_id = $recipe_id;`,
-      { $recipe_id: recipeId },
-    );
+  async deleteByRecipeId(recipeId: number): Promise<boolean> {
+    const isDeleted = await this.isDeleted(recipeId);
 
-    return this.readByRecipeId(recipeId).length === 0;
+    if (isDeleted) return false;
+
+    await this.dbContext.queryOne`
+      DELETE FROM directions WHERE recipe_id = ${recipeId};
+    `;
+
+    return await this.isDeleted(recipeId);
   }
 }

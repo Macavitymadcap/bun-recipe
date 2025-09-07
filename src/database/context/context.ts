@@ -1,5 +1,5 @@
-import { Database, SQLQueryBindings } from "bun:sqlite";
-import { DB_CONFIG } from "../config";
+import { SQL } from "bun";
+import { DB_CONFIG, type DbConfig } from "../config";
 
 /**
  * Database context class that manages connections and provides
@@ -7,18 +7,32 @@ import { DB_CONFIG } from "../config";
  */
 export class DbContext {
   private static instance: DbContext;
-  private db: Database;
+  private db: SQL
 
-  private constructor(path: string = DB_CONFIG.path) {
-    this.db = new Database(path, DB_CONFIG.options);
+  private constructor(config: DbConfig = DB_CONFIG) {
+
+    if (config.connectionString) {
+      this.db = new SQL(config.connectionString);
+    } else {
+      this.db = new SQL({
+        host: config.host,
+        port: config.port,
+        database: config.database,
+        username: config.user, 
+        password: config.password,
+        max: config.pool.max || 10,
+        idleTimeout: config.pool.idleTimeoutMillis || 3000,
+        ssl: config.ssl ? true : false,
+      })
+    }
   }
 
   /**
    * Get the singleton database context instance
    */
-  public static getInstance(path?: string): DbContext {
+  public static getInstance(config: DbConfig): DbContext {
     if (!DbContext.instance) {
-      DbContext.instance = new DbContext(path);
+      DbContext.instance = new DbContext(config);
     }
     return DbContext.instance;
   }
@@ -26,83 +40,29 @@ export class DbContext {
   /**
    * Execute SQL query with parameters and return all matching rows
    */
-  public query<T>(sql: string, params?: SQLQueryBindings): T[] {
-    const statement = this.db.prepare(sql);
-    if (params) {
-      return statement.all(params) as T[];
-    }
-    return statement.all() as T[];
+  public async query<T>(sql: TemplateStringsArray, ...params: unknown[]): Promise<T[]> {
+    return await this.db(sql, ...params) as T[];
   }
 
   /**
    * Execute SQL query with parameters and return the first matching row
    */
-  public queryOne<T>(sql: string, params?: SQLQueryBindings): T | null {
-    const statement = this.db.prepare(sql);
-    if (params) {
-      return statement.get(params) as T | null;
-    }
-    return statement.get() as T | null;
-  }
-
-  /**
-   * Get the last inserted row ID
-   */
-  public getLastInsertedId(): number | null {
-    const result = this.queryOne<{ last_insert_rowid: number }>(
-      "SELECT last_insert_rowid() as last_insert_rowid;",
-    );
-
-    return result ? result.last_insert_rowid : null;
-  }
-
-  /**
-   * Execute SQL statement without returning results
-   */
-  public execute(sql: string): void {
-    this.db.exec(sql);
+  public async queryOne<T>(sql: TemplateStringsArray, ...params: unknown[]): Promise<T | null> {
+    const results = await this.query<T>(sql, ...params)
+    return results.length > 0 ? results[0] : null
   }
 
   /**
    * Execute function within a transaction
    */
-  public transaction<T>(callback: () => T): T {
-    try {
-      this.beginTransaction();
-      const result = callback();
-      this.commitTransaction();
-      return result;
-    } catch (error) {
-      this.rollbackTransaction();
-      throw error;
-    }
-  }
-
-  /**
-   * Begin a database transaction
-   */
-  public beginTransaction(): void {
-    this.db.exec("BEGIN TRANSACTION");
-  }
-
-  /**
-   * Commit a database transaction
-   */
-  public commitTransaction(): void {
-    this.db.exec("COMMIT");
-  }
-
-  /**
-   * Rollback a database transaction
-   */
-  public rollbackTransaction(): void {
-    this.db.exec("ROLLBACK");
+  public async transaction<T>(callback: (sql: SQL) => Promise<T>): Promise<T> {
+    return await this.db.begin(callback)
   }
 
   /**
    * Close the database connection
    */
-  public close(): void {
-    this.db.close();
+  public async close(): Promise<void> {
+    await this.db.close();
   }
 }

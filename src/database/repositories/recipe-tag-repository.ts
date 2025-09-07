@@ -1,3 +1,4 @@
+import { DbConfig } from "../config";
 import { BaseEntity, BaseRepository } from "./base-repository";
 
 export interface RecipeTagEntity extends BaseEntity {
@@ -5,164 +6,161 @@ export interface RecipeTagEntity extends BaseEntity {
   tag_id: number;
 }
 
+interface TagCount {
+  tag_id: number;
+  count: number;
+}
+
 export class RecipeTagRepository extends BaseRepository<RecipeTagEntity> {
-  constructor(dbPath?: string) {
-    super("recipe_tags", dbPath);
+  constructor(config: DbConfig) {
+    super("recipe_tags", config);
   }
 
-  protected initDb(): void {
-    this.createTable();
-    this.createIndexes();
+  protected async initDb(): Promise<void> {
+    await this.createTable();
+    await this.createIndexes();
   }
 
-  protected createTable(): void {
-    this.dbContext.execute(`
+  protected async createTable(): Promise<void> {
+    await this.dbContext.queryOne`
       CREATE TABLE IF NOT EXISTS recipe_tags (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        id SERIAL PRIMARY KEY,
         recipe_id INTEGER NOT NULL,
         tag_id INTEGER NOT NULL,
         FOREIGN KEY (recipe_id) REFERENCES recipes(id) ON DELETE CASCADE,
         FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE,
         UNIQUE(recipe_id, tag_id)
       );
-    `);
+    `;
   }
 
-  private createIndexes(): void {
-    this.dbContext.execute(`
+  private async createIndexes(): Promise<void> {
+    await this.dbContext.queryOne`
       CREATE INDEX IF NOT EXISTS idx_recipe_tags_recipe_id ON recipe_tags(recipe_id);
+    `;
+    await this.dbContext.queryOne`
       CREATE INDEX IF NOT EXISTS idx_recipe_tags_tag_id ON recipe_tags(tag_id);
-    `);
+    `;
   }
 
-  create(entity: Omit<RecipeTagEntity, "id">): RecipeTagEntity | null {
-    this.dbContext.queryOne(
-      `INSERT INTO recipe_tags (recipe_id, tag_id) VALUES ($recipe_id, $tag_id);`,
-      {
-        $recipe_id: entity.recipe_id,
-        $tag_id: entity.tag_id,
-      },
-    );
+  async create(entity: Omit<RecipeTagEntity, "id">): Promise<RecipeTagEntity | null> {
+    const result = await this.dbContext.queryOne<RecipeTagEntity>`
+      INSERT INTO recipe_tags (
+        recipe_id, 
+        tag_id
+      ) 
+      VALUES (
+        ${entity.recipe_id}, 
+        ${entity.tag_id}
+      )
+      RETURNING *;
+    `;
 
-    const lastId = this.dbContext.getLastInsertedId();
-    if (lastId === null) {
-      return null;
-    }
-
-    return this.read(lastId);
+    return result || null;
   }
 
-  read(id: number): RecipeTagEntity | null {
-    return this.dbContext.queryOne<RecipeTagEntity>(
-      `SELECT * FROM recipe_tags WHERE id = $id;`,
-      { $id: id },
-    );
+  async read(id: number): Promise<RecipeTagEntity | null> {
+    return await this.dbContext.queryOne<RecipeTagEntity>`
+      SELECT * FROM recipe_tags WHERE id = ${id};
+    `;
   }
 
-  readAll(): RecipeTagEntity[] {
-    return this.dbContext.query<RecipeTagEntity>(`SELECT * FROM recipe_tags;`);
+  async readAll(): Promise<RecipeTagEntity[]> {
+    return await this.dbContext.query<RecipeTagEntity>`
+      SELECT * FROM recipe_tags;
+    `;
   }
 
-  readByTagId(tagId: number): RecipeTagEntity[] {
-    return this.dbContext.query<RecipeTagEntity>(
-      `SELECT * FROM recipe_tags WHERE tag_id = $tag_id;`,
-      { $tag_id: tagId },
-    );
+  async readByTagId(tagId: number): Promise<RecipeTagEntity[]> {
+    return await this.dbContext.query<RecipeTagEntity>`
+      SELECT * FROM recipe_tags WHERE tag_id = ${tagId};
+    `;
   }
 
-  readByRecipeId(recipeId: number): RecipeTagEntity[] {
-    return this.dbContext.query<RecipeTagEntity>(
-      `SELECT * FROM recipe_tags WHERE recipe_id = $recipe_id;`,
-      { $recipe_id: recipeId },
-    );
+  async readByRecipeId(recipeId: number): Promise<RecipeTagEntity[]> {
+    return await this.dbContext.query<RecipeTagEntity>`
+      SELECT * FROM recipe_tags WHERE recipe_id = ${recipeId};
+    `;
   }
 
-  readByRecipeAndTag(recipeId: number, tagId: number): RecipeTagEntity | null {
-    return this.dbContext.queryOne<RecipeTagEntity>(
-      `SELECT * FROM recipe_tags WHERE recipe_id = $recipe_id AND tag_id = $tag_id;`,
-      { $recipe_id: recipeId, $tag_id: tagId },
-    );
+  async readByRecipeAndTag(recipeId: number, tagId: number): Promise<RecipeTagEntity | null> {
+    return await this.dbContext.queryOne<RecipeTagEntity>`
+      SELECT * FROM recipe_tags WHERE recipe_id = ${recipeId} AND tag_id = ${tagId};
+    `;
   }
 
-  update(entity: RecipeTagEntity): RecipeTagEntity | null {
-    const existing = this.read(entity.id);
+  async update(entity: RecipeTagEntity): Promise<RecipeTagEntity | null> {
+    const existing = await this.read(entity.id);
     if (!existing) {
       return null;
     }
 
-    this.dbContext.queryOne(
-      `UPDATE recipe_tags SET
-          recipe_id = $recipe_id,
-          tag_id = $tag_id
-        WHERE id = $id;`,
-      {
-        $id: entity.id,
-        $recipe_id: entity.recipe_id,
-        $tag_id: entity.tag_id,
-      },
-    );
+    const result = await this.dbContext.queryOne<RecipeTagEntity>`
+      UPDATE recipe_tags SET
+        recipe_id = ${entity.recipe_id},
+        tag_id = ${entity.tag_id}
+      WHERE id = ${entity.id}
+      RETURNING *;
+    `;
 
-    return this.read(entity.id);
+    return result || null;
   }
 
-  delete(id: number): boolean {
-    return this.dbContext.transaction(() => {
-      const existing = this.read(id);
+  async delete(id: number): Promise<boolean> {
+    return await this.dbContext.transaction(async (sql) => {
+      const existing = await this.read(id);
       if (!existing) {
         return false;
       }
 
-      this.dbContext.queryOne(`DELETE FROM recipe_tags WHERE id = $id;`, {
-        $id: id,
-      });
+      await sql`
+        DELETE FROM recipe_tags WHERE id = ${id};
+      `;
 
-      return this.read(id) === null;
+      return await this.read(id) === null;
     });
   }
 
-  deleteByRecipeId(recipeId: number): boolean {
-    if (this.readByRecipeId(recipeId).length === 0) return false;
-
-    this.dbContext.queryOne(
-      `DELETE FROM recipe_tags WHERE recipe_id = $recipe_id;`,
-      { $recipe_id: recipeId },
-    );
-
-    return this.readByRecipeId(recipeId).length === 0;
+  private async isDeleted(recipeId: number) {
+    return (await this.readByRecipeId(recipeId)).length === 0;
   }
 
-  getRecipeCountForTag(tagId: number): number {
-    const result = this.dbContext.queryOne<{ count: number }>(
-      `SELECT COUNT(*) as count FROM recipe_tags WHERE tag_id = $tag_id;`,
-      { $tag_id: tagId }
-    );
+  async deleteByRecipeId(recipeId: number): Promise<boolean> {
+    const isDeleted = await this.isDeleted(recipeId);
+
+    if (isDeleted) return false;
+
+    await this.dbContext.queryOne`
+      DELETE FROM recipe_tags WHERE recipe_id = ${recipeId};
+    `;
+
+    return await this.isDeleted(recipeId);
+  }
+
+  async getRecipeCountForTag(tagId: number): Promise<number> {
+    const [result] = await this.dbContext.query<{ count: string }>`
+      SELECT COUNT(*) as count FROM recipe_tags WHERE tag_id = ${tagId};
+    `;
     
-    return result?.count || 0;
+    return parseInt(result?.count || "0");
   }
 
-  /**
-   * Get tag usage statistics - returns tags with their usage counts
-   */
-  getTagUsageStatistics(): Array<{ tag_id: number; count: number }> {
-    return this.dbContext.query<{ tag_id: number; count: number }>(
-      `SELECT tag_id, COUNT(*) as count 
+  async getTagUsageStatistics(): Promise<TagCount[]> {
+    return this.dbContext.query<TagCount>`
+      SELECT tag_id, COUNT(*) as count 
       FROM recipe_tags 
       GROUP BY tag_id 
-      ORDER BY count DESC;`
-    );
+      ORDER BY count DESC;
+    `;
   }
 
-  /**
-   * Get the most used tags with their counts
-   */
-  getMostUsedTags(limit: number = 10): Array<{ tag_id: number; count: number }> {
-    return this.dbContext.query<{ tag_id: number; count: number }>(
-      `SELECT tag_id, COUNT(*) as count 
+  async getMostUsedTags(limit: number = 10): Promise<TagCount[]> {
+    return this.dbContext.query<TagCount>`
+      SELECT tag_id, COUNT(*) as count 
       FROM recipe_tags 
       GROUP BY tag_id 
       ORDER BY count DESC 
-      LIMIT $limit;`,
-      { $limit: limit }
-    );
+      LIMIT ${limit};
+    `;
   }
 }

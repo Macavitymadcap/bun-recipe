@@ -10,7 +10,7 @@ import {
   DirectionEntity,
   DirectionRepository,
 } from "./direction-repository";
-import { DB_CONFIG } from "../config";
+import { DB_CONFIG, DbConfig } from "../config";
 import { DbContext } from "../context/context";
 
 const sampledirection = (
@@ -26,24 +26,29 @@ describe("directionRepository", () => {
   let directionRepository: DirectionRepository;
 
   beforeAll(() => {
+    const testConfig: DbConfig = {
+      ...DB_CONFIG, 
+      database: "recipe_test"
+    };
+
     (DbContext as any).instance = undefined; // Reset singleton instance before tests
-    directionRepository = new DirectionRepository(DB_CONFIG.inMemoryPath);
+    directionRepository = new DirectionRepository(testConfig);
   });
 
-  afterAll(() => {
+  afterAll( async () => {
     try {
-      directionRepository.close();
+      await directionRepository.close();
     } catch (error) {
       // Ignore errors during cleanup
     }
     (DbContext as any).instance = undefined; // Reset singleton instance after tests
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     // Clean up any existing directions before each test
-    const alldirections = directionRepository.readAll();
-    alldirections.forEach((direction) =>
-      directionRepository.delete(direction.id),
+    const alldirections = await directionRepository.readAll();
+    alldirections.forEach(async (direction) =>
+      await directionRepository.delete(direction.id),
     );
   });
 
@@ -53,12 +58,12 @@ describe("directionRepository", () => {
   });
 
   describe("create", () => {
-    test("should create a new direction and return the created entity with an id", () => {
+    test("should create a new direction and return the created entity with an id", async () => {
       // Arrange
       const directionData = sampledirection();
 
       // Act
-      const result = directionRepository.create(
+      const result = await directionRepository.create(
         directionData,
       ) as DirectionEntity;
 
@@ -71,7 +76,7 @@ describe("directionRepository", () => {
       expect(result.instruction).toBe(directionData.instruction);
     });
 
-    test("should create multiple directions with unique ids", () => {
+    test("should create multiple directions with unique ids", async () => {
       // Arrange
       const direction1Data = sampledirection({
         instruction: "Instruction 1",
@@ -81,10 +86,10 @@ describe("directionRepository", () => {
       }) as DirectionEntity;
 
       // Act
-      const direction1 = directionRepository.create(
+      const direction1 = await directionRepository.create(
         direction1Data,
       ) as DirectionEntity;
-      const direction2 = directionRepository.create(
+      const direction2 = await directionRepository.create(
         direction2Data,
       ) as DirectionEntity;
 
@@ -101,15 +106,15 @@ describe("directionRepository", () => {
   });
 
   describe("read", () => {
-    test("should read an existing direction by id", () => {
+    test("should read an existing direction by id", async () => {
       // Arrange
       const directionData = sampledirection();
-      const createddirection = directionRepository.create(
+      const createddirection = await directionRepository.create(
         directionData,
       ) as DirectionEntity;
 
       // Act
-      const result = directionRepository.read(
+      const result = await directionRepository.read(
         createddirection.id,
       ) as DirectionEntity;
 
@@ -121,9 +126,9 @@ describe("directionRepository", () => {
       expect(result.instruction).toBe(directionData.instruction);
     });
 
-    test("should return null for non-existent direction", () => {
+    test("should return null for non-existent direction", async () => {
       // Act
-      const result = directionRepository.read(999);
+      const result = await directionRepository.read(999);
 
       // Assert
       expect(result).toBeNull();
@@ -131,23 +136,24 @@ describe("directionRepository", () => {
   });
 
   describe("readAll", () => {
-    test("should return all directions ordered by name", () => {
+    test("should return all directions ordered by name", async () => {
       // Arrange
-      const direction1 = directionRepository.create(
+      const direction1 = await  directionRepository.create(
         sampledirection({ instruction: "Instruction 1" }),
       );
-      const direction2 = directionRepository.create(
+      const direction2 = await directionRepository.create(
         sampledirection({ instruction: "Instruction 2", order_index: 2 }),
       );
-      const direction3 = directionRepository.create(
+      const direction3 = await directionRepository.create(
         sampledirection({ instruction: "Instruction 3", order_index: 3 }),
       );
 
       // Act
-      const result = directionRepository.readAll();
+      const result = await directionRepository.readAll();
 
       // Assert
       expect(result).toBeArrayOfSize(3);
+      expect(result).toContainValues([direction1, direction2, direction3])
     });
 
     test("should return an empty array when no directions exist", () => {
@@ -160,9 +166,9 @@ describe("directionRepository", () => {
   });
 
   describe("update", () => {
-    test("should update an existing direction and return the updated entity", () => {
+    test("should update an existing direction and return the updated entity", async () => {
       // Arrange
-      const originaldirection = directionRepository.create(
+      const originaldirection = await directionRepository.create(
         sampledirection(),
       ) as DirectionEntity;
       const updatedData: DirectionEntity = {
@@ -171,7 +177,7 @@ describe("directionRepository", () => {
       };
 
       // Act
-      const result = directionRepository.update(
+      const result = await directionRepository.update(
         updatedData,
       ) as DirectionEntity;
 
@@ -183,7 +189,7 @@ describe("directionRepository", () => {
       expect(result.instruction).toBe(updatedData.instruction);
     });
 
-    test("should return null when trying to update a non-existant direction", () => {
+    test("should return null when trying to update a non-existant direction", async () => {
       // Arrange
       const nonExistentdirection: DirectionEntity = {
         id: 999,
@@ -193,7 +199,7 @@ describe("directionRepository", () => {
       };
 
       // Act
-      const result = directionRepository.update(nonExistentdirection);
+      const result = await directionRepository.update(nonExistentdirection);
 
       // Assert
       expect(result).toBeNull();
@@ -201,14 +207,14 @@ describe("directionRepository", () => {
   });
 
   describe("delete", () => {
-    test("should delete an existing direction and return true", () => {
+    test("should delete an existing direction and return true", async () => {
       // Arrange
-      const direction = directionRepository.create(
+      const direction = await directionRepository.create(
         sampledirection(),
       ) as DirectionEntity;
 
       // Act
-      const result = directionRepository.delete(direction.id);
+      const result = await directionRepository.delete(direction.id);
 
       // Assert
       expect(result).toBe(true);
@@ -218,40 +224,40 @@ describe("directionRepository", () => {
       expect(deleteddirection).toBeNull();
     });
 
-    test("should return false when when trying to delete a non-existant direction", () => {
+    test("should return false when when trying to delete a non-existant direction", async () => {
       // Arrange
       const nonExistantId = 999;
 
       // Act
-      const result = directionRepository.delete(nonExistantId);
+      const result = await directionRepository.delete(nonExistantId);
 
       // Assert
       expect(result).toBe(false);
     });
 
-    test("should handle deleting all directions", () => {
+    test("should handle deleting all directions", async () => {
       // Arrange
-      directionRepository.create(
+      await directionRepository.create(
         sampledirection({ instruction: "Instruction 1 of Recipe 1" }),
       );
-      directionRepository.create(
+      await directionRepository.create(
         sampledirection({
           recipe_id: 2,
           instruction: "Instruction 1 of Recipe 2",
         }),
       );
-      directionRepository.create(
+      await directionRepository.create(
         sampledirection({
           recipe_id: 3,
           instruction: "Instruction 1 of Recipe 3",
         }),
       );
 
-      const alldirections = directionRepository.readAll();
+      const alldirections = await directionRepository.readAll();
 
       // Act
-      alldirections.forEach((direction) => {
-        const deleted = directionRepository.delete(direction.id);
+      alldirections.forEach(async (direction) => {
+        const deleted = await directionRepository.delete(direction.id);
         expect(deleted).toBe(true);
       });
 
@@ -262,20 +268,20 @@ describe("directionRepository", () => {
   });
 
   describe("readByRecipeId", () => {
-    test("should return all directions that have the given recipe_id", () => {
+    test("should return all directions that have the given recipe_id", async () => {
       // Arrange
       const recipeId = 30;
-      const direction1 = directionRepository.create(
+      const direction1 =  await directionRepository.create(
         sampledirection({ recipe_id: recipeId, instruction: "Instruction 1" }),
       );
-      const direction2 = directionRepository.create(
+      const direction2 = await directionRepository.create(
         sampledirection({
           recipe_id: recipeId,
           instruction: "Instruction 2",
           order_index: 2,
         }),
       );
-      const direction3 = directionRepository.create(
+      const direction3 = await directionRepository.create(
         sampledirection({
           recipe_id: recipeId,
           instruction: "Instruction 3",
@@ -284,19 +290,19 @@ describe("directionRepository", () => {
       );
 
       // Act
-      const result = directionRepository.readByRecipeId(recipeId);
+      const result = await directionRepository.readByRecipeId(recipeId);
 
       // Assert
       expect(result).toBeArrayOfSize(3);
       expect(result).toContainValues([direction1, direction2, direction3]);
     });
 
-    test("should return an empty array when given a recipe_id with no associated directions", () => {
+    test("should return an empty array when given a recipe_id with no associated directions", async () => {
       // Arrange
       const nonExistantRecipeId = 50;
 
       // Act
-      const result = directionRepository.readByRecipeId(nonExistantRecipeId);
+      const result = await directionRepository.readByRecipeId(nonExistantRecipeId);
 
       // Assert
       expect(result).toBeArrayOfSize(0);
@@ -304,18 +310,18 @@ describe("directionRepository", () => {
   });
 
   describe("deleteByRecipeId", () => {
-    test("should return false when given a recipe_id with no associated directions", () => {
+    test("should return false when given a recipe_id with no associated directions", async () => {
       // Arrange
       const nonExistantRecipeId = 55;
 
       // Act
-      const result = directionRepository.deleteByRecipeId(nonExistantRecipeId);
+      const result = await directionRepository.deleteByRecipeId(nonExistantRecipeId);
 
       // Assert
       expect(result).toBe(false);
     });
 
-    test("should return true and remove entities from the database when given a recipe_id with associated directions", () => {
+    test("should return true and remove entities from the database when given a recipe_id with associated directions", async () => {
       // Arrange
       const recipeId = 76;
       const directions = [
@@ -334,19 +340,19 @@ describe("directionRepository", () => {
           order_index: 3,
         }),
       ];
-      directions.forEach((direction) =>
-        directionRepository.create(direction),
+      directions.forEach(async (direction) =>
+        await directionRepository.create(direction),
       );
 
       // Act
-      const result = directionRepository.deleteByRecipeId(recipeId);
+      const result = await directionRepository.deleteByRecipeId(recipeId);
 
       // Assert
       expect(result).toBe(true);
 
       // Verify deletion of directions
       const remainingdirections =
-        directionRepository.readByRecipeId(recipeId);
+        await directionRepository.readByRecipeId(recipeId);
       expect(remainingdirections).toBeArrayOfSize(0);
     });
   });
