@@ -5,6 +5,7 @@ import { ShoppingListService } from "../database/services/shopping-list-service"
 import { ShoppingList } from "../components/ShoppingList";
 import { Alert, AlertProps } from "../components/Alert";
 import { AlertResponse } from "../components/responses/AlertResponse";
+import { ShoppingListResponse } from "../components/responses/ShoppingListResponse";
 
 export class ShoppingListRoute extends BaseRoute {
   private shoppingListService: ShoppingListService;
@@ -20,17 +21,17 @@ export class ShoppingListRoute extends BaseRoute {
     this.app.post("/recipe/:recipeId", this.addRecipeIngredients.bind(this));
     this.app.put("/:id", this.updateItem.bind(this));
     this.app.put("/:id/toggle", this.toggleItem.bind(this));
-    this.app.delete("/:id", this.deleteItem.bind(this));
+    this.app.delete("/", this.clearAllItems.bind(this));
     this.app.delete("/checked", this.clearCheckedItems.bind(this));
-    this.app.delete("/all", this.clearAllItems.bind(this));
+    this.app.delete("/:id", this.deleteItem.bind(this));
   }
 
   private async getShoppingList(context: Context): Promise<Response> {
     console.log("Getting shopping list...");
     
     try {
-      const items = this.shoppingListService.getAllItems();
-      const stats = this.shoppingListService.getStats();
+      const items = await this.shoppingListService.getAllItems();
+      const stats = await this.shoppingListService.getStats();
 
       return context.html(
         `<div id="shopping-list-content">${ShoppingList({ items, stats })}</div>`
@@ -54,14 +55,14 @@ export class ShoppingListRoute extends BaseRoute {
       const itemText = formData.get("item") as string;
 
       if (!itemText?.trim()) {
-        return this.getShoppingListWithAlert(context, {
+        return await this.getShoppingListWithAlert(context, {
           alertType: "warning",
           title: "Validation Error",
           message: "Please enter an item to add.",
         });
       }
 
-      const addedItem = this.shoppingListService.addItem(itemText.trim());
+      const addedItem = await this.shoppingListService.addItem(itemText.trim());
 
       if (addedItem) {
         return this.getShoppingListWithAlert(context, {
@@ -102,7 +103,7 @@ export class ShoppingListRoute extends BaseRoute {
         return context.html(AlertResponse({alert}));
       }
 
-      const addedCount = this.shoppingListService.addRecipeIngredientsToList(recipeId);
+      const addedCount = await this.shoppingListService.addRecipeIngredientsToList(recipeId);
 
       if (addedCount > 0) {
         alert = {
@@ -138,7 +139,7 @@ export class ShoppingListRoute extends BaseRoute {
       console.log("item id: ", id);
       const formData = await context.req.formData();
       console.log("form data: ", formData);
-      const itemText = formData.get("item") as string;
+      const itemText = formData.get("itemText") as string;
 
 
       if (isNaN(id)) {
@@ -157,7 +158,7 @@ export class ShoppingListRoute extends BaseRoute {
         });
       }
 
-      const updatedItem = this.shoppingListService.updateItem(id, itemText.trim());
+      const updatedItem = await this.shoppingListService.updateItem(id, itemText.trim());
 
       if (updatedItem) {
         return this.getShoppingListWithAlert(context, {
@@ -196,7 +197,7 @@ export class ShoppingListRoute extends BaseRoute {
         });
       }
 
-      const toggledItem = this.shoppingListService.toggleItem(id);
+      const toggledItem = await this.shoppingListService.toggleItem(id);
 
       if (toggledItem) {
         return this.getShoppingList(context); // Just refresh, no alert needed
@@ -231,7 +232,7 @@ export class ShoppingListRoute extends BaseRoute {
         });
       }
 
-      const deleted = this.shoppingListService.deleteItem(id);
+      const deleted = await this.shoppingListService.deleteItem(id);
 
       if (deleted) {
         return this.getShoppingListWithAlert(context, {
@@ -260,7 +261,7 @@ export class ShoppingListRoute extends BaseRoute {
     console.log("Clearing checked items...");
     
     try {
-      const success = this.shoppingListService.clearCheckedItems();
+      const success = await this.shoppingListService.clearCheckedItems();
 
       if (success) {
         return this.getShoppingListWithAlert(context, {
@@ -289,7 +290,7 @@ export class ShoppingListRoute extends BaseRoute {
     console.log("Clearing all items...");
     
     try {
-      const success = this.shoppingListService.clearAllItems();
+      const success = await this.shoppingListService.clearAllItems();
 
       if (success) {
         return this.getShoppingListWithAlert(context, {
@@ -315,16 +316,9 @@ export class ShoppingListRoute extends BaseRoute {
   }
 
   private async getShoppingListWithAlert(context: Context, alert: AlertProps): Promise<Response> {
-    const items = this.shoppingListService.getAllItems();
-    const stats = this.shoppingListService.getStats();
+    const items = await this.shoppingListService.getAllItems();
+    const stats = await this.shoppingListService.getStats();
 
-    return context.html(`
-      <div hx-swap-oob="beforeend:#alerts">
-        ${Alert(alert)}
-      </div>
-      <div id="shopping-list-content">
-        ${ShoppingList({ items, stats })}
-      </div>
-    `);
+    return context.html(ShoppingListResponse({alert, items, stats}));
   }
 }

@@ -3,7 +3,6 @@ import { BaseRoute } from "./base-route";
 import { RecipeRoute } from "./recipe";
 import { FormRoute } from "./form";
 import { Container } from "./container";
-import { DataRoute } from "./data";
 import { ShoppingListRoute } from "./shopping-list";
 
 export class RouteManager {
@@ -22,7 +21,6 @@ export class RouteManager {
     this.routes = [
       new RecipeRoute(this.container),
       new FormRoute(this.container),
-      new DataRoute(this.container),
       new ShoppingListRoute(this.container),
     ];
 

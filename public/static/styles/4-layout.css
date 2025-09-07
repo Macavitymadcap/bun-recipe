@@ -238,7 +238,7 @@ footer {
   display: flex;
 }
 
-.flex-cutartumn {
+.flex-column {
   flex-direction: column;
 }
 

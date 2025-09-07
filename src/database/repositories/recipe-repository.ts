@@ -1,3 +1,4 @@
+import { DbConfig } from "../config";
 import { BaseEntity, BaseRepository } from "./base-repository";
 
 export interface RecipeEntity extends BaseEntity {
@@ -6,134 +7,117 @@ export interface RecipeEntity extends BaseEntity {
   calories_per_serving?: number;
   preparation_time?: string;
   cooking_time?: string;
-  created_at: string;
-  updated_at: string;
+  created_at: number;
+  updated_at: number;
 }
 
 export class RecipeRepository extends BaseRepository<RecipeEntity> {
-  constructor(dbPath?: string) {
-    super("recipes", dbPath);
+  constructor(config: DbConfig) {
+    super("recipes", config);
   }
 
-  protected initDb(): void {
-    this.createTable();
+  protected async initDb(): Promise<void> {
+    await this.createTable();
   }
 
-  protected createTable(): void {
-    this.dbContext.execute(`
+  protected async createTable(): Promise<void> {
+    await this.dbContext.queryOne`
     CREATE TABLE IF NOT EXISTS recipes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      id SERIAL PRIMARY KEY,
       name TEXT NOT NULL,
       servings TEXT NOT NULL,
       calories_per_serving INTEGER,
       preparation_time TEXT,
       cooking_time TEXT,
-      created_at TEXT NOT NULL,
-      updated_at TEXT NOT NULL
+      created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
     );
-  `);
+  `;
   }
 
-  create(
+  async create(
     entity: Omit<RecipeEntity, "id" | "created_at" | "updated_at">,
-  ): RecipeEntity | null {
-    const now = new Date().toISOString();
+  ): Promise<RecipeEntity | null> {
+    const result = await this.dbContext.queryOne<RecipeEntity>`
+      INSERT INTO recipes (
+        name, 
+        servings, 
+        calories_per_serving, 
+        preparation_time, 
+        cooking_time
+      ) 
+      VALUES (
+        ${entity.name}, 
+        ${entity.servings}, 
+        ${entity.calories_per_serving || null}, 
+        ${entity.preparation_time || null}, 
+        ${entity.cooking_time || null}
+      )
+      RETURNING *;
+    `;
 
-    this.dbContext.queryOne(
-      `INSERT INTO recipes (name, servings, calories_per_serving, preparation_time, cooking_time, created_at, updated_at) 
-         VALUES ($name, $servings, $calories_per_serving, $preparation_time, $cooking_time, $created_at, $updated_at);`,
-      {
-        $name: entity.name,
-        $servings: entity.servings,
-        $calories_per_serving: entity.calories_per_serving || null,
-        $preparation_time: entity.preparation_time || null,
-        $cooking_time: entity.cooking_time || null,
-        $created_at: now,
-        $updated_at: now,
-      },
-    );
-
-    const lastId = this.dbContext.getLastInsertedId();
-    if (lastId === null) {
-      return null;
-    }
-
-    return this.read(lastId);
+    return result || null;
   }
 
-  read(id: number): RecipeEntity | null {
-    return this.dbContext.queryOne<RecipeEntity>(
-      `SELECT * FROM recipes WHERE id = $id;`,
-      { $id: id },
-    );
+  async read(id: number): Promise<RecipeEntity | null> {
+    return await this.dbContext.queryOne<RecipeEntity>`
+      SELECT * FROM recipes WHERE id = ${id};
+    `;
   }
 
-  readAll(): RecipeEntity[] {
-    return this.dbContext.query<RecipeEntity>(
-      `SELECT * FROM recipes ORDER BY created_at DESC;`,
-    );
+  async readAll(): Promise<RecipeEntity[]> {
+    return await this.dbContext.query<RecipeEntity>`
+      SELECT * FROM recipes ORDER BY created_at DESC;
+    `;
   }
 
-  update(entity: RecipeEntity): RecipeEntity | null {
-    const existing = this.read(entity.id);
+  async update(entity: RecipeEntity): Promise<RecipeEntity | null> {
+    const existing = await this.read(entity.id);
     if (!existing) {
       return null;
     }
 
-    const now = new Date().toISOString();
+    const result = await this.dbContext.queryOne<RecipeEntity>`
+      UPDATE recipes SET
+        name = ${entity.name},
+        servings = ${entity.servings},
+        calories_per_serving = ${entity.calories_per_serving || null},
+        preparation_time = ${entity.preparation_time || null},
+        cooking_time = ${entity.cooking_time || null},
+        updated_at = NOW()
+      WHERE id = ${entity.id}
+      RETURNING *;
+    `;
 
-    this.dbContext.queryOne(
-      `UPDATE recipes SET
-        name = $name,
-        servings = $servings,
-        calories_per_serving = $calories_per_serving,
-        preparation_time = $preparation_time,
-        cooking_time = $cooking_time,
-        updated_at = $updated_at
-      WHERE id = $id;`,
-      {
-        $id: entity.id,
-        $name: entity.name,
-        $servings: entity.servings,
-        $calories_per_serving: entity.calories_per_serving || null,
-        $preparation_time: entity.preparation_time || null,
-        $cooking_time: entity.cooking_time || null,
-        $updated_at: now,
-      },
-    );
-
-    return this.read(entity.id);
+    return result || null;
   }
 
-  delete(id: number): boolean {
-    return this.dbContext.transaction(() => {
-      const existing = this.read(id);
+  async delete(id: number): Promise<boolean> {
+    return await this.dbContext.transaction(async (sql) => {
+      const existing = await this.read(id);
       if (!existing) {
         return false;
       }
 
-      this.dbContext.queryOne(`DELETE FROM recipes WHERE id = $id;`, {
-        $id: id,
-      });
+      await sql`DELETE FROM recipes WHERE id = ${id};`;
 
-      return this.read(id) === null;
+      return await this.read(id) === null;
     });
   }
 
-  searchByName(searchTerm: string): RecipeEntity[] {
-    return this.dbContext.query<RecipeEntity>(
-      `SELECT * FROM recipes 
-       WHERE name LIKE $searchTerm 
-       ORDER BY created_at DESC;`,
-      { $searchTerm: `%${searchTerm}%` },
-    );
+  async searchByName(searchTerm: string): Promise<RecipeEntity[]> {
+    return await this.dbContext.query<RecipeEntity>`
+      SELECT * FROM recipes
+      WHERE name ILIKE ${`%${searchTerm}%`}
+      ORDER BY created_at DESC;
+    `;
   }
 
-  getTotalRecipeCount(): number {
-    const result = this.dbContext.queryOne<{ count: number }>(
-      `SELECT COUNT(*) as count FROM recipes;`
-    );
-    
-    return result?.count || 0;
+  async getTotalRecipeCount(): Promise<number> {
+    const [result] = await this.dbContext.query<{ count: string }>`
+      SELECT COUNT(*) as count FROM recipes;
+    `
+
+    return parseInt(result?.count || '0');
   }
 }

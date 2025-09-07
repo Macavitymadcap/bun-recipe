@@ -28,7 +28,7 @@ export const MainContentRecipe = ({
       <div className="wrapped-row mt-1">
         <button
           title="Update Recipe"
-          className="btn btn-icon btn-outline-secondary col-1"
+          className="btn btn-icon btn-outline-secondary"
           hx-get={`/form/update/${id}`}
           hx-target="#main-content"
         >
@@ -37,7 +37,7 @@ export const MainContentRecipe = ({
 
           <button
             title="Add ingredients to shopping list"
-            className="btn btn-icon btn-outline-warning col-1"
+            className="btn btn-icon btn-outline-warning"
             hx-post={`/shopping-list/recipe/${id}`}
             hx-indicator="#working"
           >
@@ -46,7 +46,7 @@ export const MainContentRecipe = ({
 
         <button
           title="Delete Recipe"
-          className="btn btn-icon btn-outline-danger col-1 col-push-right"
+          className="btn btn-icon btn-outline-danger"
           hx-get={`/form/delete/${id}`}
           hx-target="dialog"
           {...hxOnAfterRequestSuccessful}

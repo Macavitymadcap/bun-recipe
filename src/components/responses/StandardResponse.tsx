@@ -1,15 +1,14 @@
 import { type AlertProps, Alert } from "../Alert";
-import { DefaultContent } from "../DefaultContent";
-import { RecipeStatistics } from "../../database/services/recipe-service";
+import { ShoppingList, ShoppingListProps } from "../ShoppingList";
 
 interface StandardResponseProps {
   alert?: AlertProps;
-  statistics: RecipeStatistics;
+  shoppingList: ShoppingListProps
 }
 
 export const StandardResponse = ({
   alert,
-  statistics,
+  shoppingList,
 }: StandardResponseProps) => {
   const alertHtml = alert ? Alert(alert) : "";
 
@@ -17,6 +16,6 @@ export const StandardResponse = ({
     <div hx-swap-oob="beforeend:#alerts">
       ${alertHtml}
     </div>
-    ${DefaultContent({ statistics })}
+    ${ShoppingList(shoppingList)}
   `;
 };

@@ -4,12 +4,16 @@ import { AddIcon } from "./icons/AddIcon";
 import { DeleteIcon } from "./icons/DeleteIcon";
 import { UpdateIcon } from "./icons/UpdateIcon";
 
-interface ShoppingListProps {
+export interface ShoppingListProps {
   items: ShoppingListItemEntity[];
   stats: ShoppingListStats;
 }
 
 export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
+  const showConfirmDilaog = {
+    "hx-on:htmx:after-request": "if (event.detail.successful) { htmx.addClass('dialog', 'card-outline-danger'); htmx.find('dialog').showModal(); }"
+
+  }
   const uncheckedItems = items.filter(item => !item.is_checked);
   const checkedItems = items.filter(item => item.is_checked);
   const onKeyDownEnter = { 
@@ -24,8 +28,8 @@ export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
   }
 
   return (
-    <article className="card">
-      <div className="card-header">
+    <section>
+      <header>
         <h2>Shopping List</h2>
         <div className="grid mt-2">
           <div className="col-4 text-center">
@@ -38,7 +42,7 @@ export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
             <strong>Collected: {stats.checkedItems}</strong>
           </div>
         </div>
-      </div>
+      </header>
 
       <div className="card-body">
         {/* Add new item form */}
@@ -49,16 +53,19 @@ export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
           hx-swap="outerHTML"
           hx-indicator="#working"
         >
-          <div className="form-group col-9">
-            <input
-              type="text"
-              name="item"
-              placeholder="Add new item..."
-              required
-            />
-          </div>
-          <button type="submit" className="btn btn-outline-success col-3">
-            Add Item
+          <input
+            className="col-11"
+            type="text"
+            name="item"
+            placeholder="Add new item..."
+            required
+          />
+          <button 
+            type="submit" 
+            className="btn btn-icon btn-outline-success col-1" 
+            title="Add Item"
+          >
+            <AddIcon />
           </button>
         </form>
 
@@ -68,11 +75,10 @@ export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
             {checkedItems.length > 0 && (
               <button
                 className="btn btn-outline-warning"
-                hx-delete="/shopping-list/checked"
-                hx-target="#shopping-list-content"
-                hx-swap="outerHTML"
+                hx-get="/form/clear-checked"
+                hx-target="dialog"
                 hx-indicator="#working"
-                hx-confirm="Remove all checked items?"
+                {...showConfirmDilaog}
               >
                 Clear Checked ({checkedItems.length})
               </button>
@@ -80,11 +86,10 @@ export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
             
             <button
               className="btn btn-outline-danger"
-              hx-delete="/shopping-list/all"
-              hx-target="#shopping-list-content"
-              hx-swap="outerHTML"
-              hx-indicator="#working``"
-              hx-confirm="Clear entire shopping list?"
+              hx-get="/form/clear-all"
+              hx-target="dialog" 
+              hx-indicator="#working"
+              {...showConfirmDilaog}
             >
               Clear All
             </button>
@@ -112,15 +117,10 @@ export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
                         setNewText() {
                           this.newText = this.newText.replace(/'/g, "'");
                         },
-
-                        init() {
-                          Alpine.store('newText', this.newText);
-                        },
                       }`}>
                         <div className="col-1">
                           <input
                             type="checkbox"
-                            className="switch switch-success"
                             hx-put={`/shopping-list/${item.id}/toggle`}
                             hx-target="#shopping-list-content"
                             hx-swap="outerHTML"
@@ -138,6 +138,7 @@ export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
                             {...onKeyDownEscape}
                           />
                         </div>
+                        <input type="hidden" name="itemText" x-bind:value="newText"></input>
                         <div className="col-2">
                           <button
                             x-show="!editing"
@@ -159,7 +160,7 @@ export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
                             hx-target="#shopping-list-content"
                             hx-swap="outerHTML"
                             hx-indicator="#working"
-                            hx-vals="js{ item: Alpine.store('newText') }"
+                            hx-include="[name='itemText']"
                             {...hxOnAfterRequest}
                           >
                             <AddIcon />
@@ -169,11 +170,9 @@ export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
                             type="button"
                             className="btn btn-icon btn-outline-danger"
                             title="Delete item"
-                            hx-delete={`/shopping-list/${item.id}`}
-                            hx-target="#shopping-list-content"
-                            hx-swap="outerHTML"
+                            hx-get={`/form/delete-item/${item.id}`}
+                            hx-target="dialog"
                             hx-indicator="#working"
-                            hx-confirm="Delete this item?"
                           >
                             <DeleteIcon />
                           </button>
@@ -196,7 +195,6 @@ export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
                         <div className="col-1">
                           <input
                             type="checkbox"
-                            className="switch switch-success"
                             checked
                             hx-put={`/shopping-list/${item.id}/toggle`}
                             hx-target="#shopping-list-content"
@@ -214,11 +212,9 @@ export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
                             type="button"
                             className="btn btn-icon btn-outline-danger"
                             title="Delete item"
-                            hx-delete={`/shopping-list/${item.id}`}
-                            hx-target="#shopping-list-content"
-                            hx-swap="outerHTML"
+                            hx-get={`/form/delete-item/${item.id}`}
+                            hx-target="dialog"
                             hx-indicator="#working"
-                            hx-confirm="Delete this item?"
                           >
                             <DeleteIcon />
                           </button>
@@ -232,6 +228,6 @@ export const ShoppingList = ({ items, stats }: ShoppingListProps) => {
           </div>
         )}
       </div>
-    </article>
+    </section>
   );
 };

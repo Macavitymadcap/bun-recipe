@@ -15,65 +15,58 @@ export class ShoppingListService {
     private dbContext: DbContext,
   ) {}
 
-  getAllItems(): ShoppingListItemEntity[] {
-    return this.shoppingListRepository.readAll();
+  async read(id: number): Promise<ShoppingListItemEntity | null> {
+    return await this.shoppingListRepository.read(id);
   }
 
-  addItem(itemText: string): ShoppingListItemEntity | null {
+  async getAllItems(): Promise<ShoppingListItemEntity[]> {
+    return await this.shoppingListRepository.readAll();
+  }
+
+  async addItem(itemText: string): Promise<ShoppingListItemEntity | null> {
     const trimmedItem = itemText.trim();
     if (!trimmedItem) return null;
 
-    return this.shoppingListRepository.addOrUpdateItem(trimmedItem);
+    return await this.shoppingListRepository.addOrUpdateItem(trimmedItem);
   }
 
-  updateItem(id: number, newText: string): ShoppingListItemEntity | null {
-    const item = this.shoppingListRepository.read(id);
+  async updateItem(id: number, newText: string): Promise<ShoppingListItemEntity | null> {
+    const item = await this.shoppingListRepository.read(id);
     if (!item) return null;
 
     const trimmedText = newText.trim();
     if (!trimmedText) return null;
 
-    return this.shoppingListRepository.update({
+    return await this.shoppingListRepository.update({
       ...item,
       item: trimmedText,
     });
   }
 
-  toggleItem(id: number): ShoppingListItemEntity | null {
-    return this.shoppingListRepository.toggleChecked(id);
+  async toggleItem(id: number): Promise<ShoppingListItemEntity | null> {
+    return await this.shoppingListRepository.toggleChecked(id);
   }
 
-  deleteItem(id: number): boolean {
-    return this.shoppingListRepository.delete(id);
+  async deleteItem(id: number): Promise<boolean> {
+    return await this.shoppingListRepository.delete(id);
   }
 
-  clearCheckedItems(): boolean {
-    return this.shoppingListRepository.clearCheckedItems();
+  async clearCheckedItems(): Promise<boolean> {
+    return await this.shoppingListRepository.clearCheckedItems();
   }
 
-  clearAllItems(): boolean {
-    return this.dbContext.transaction(() => {
-      const allItems = this.shoppingListRepository.readAll();
-      let success = true;
-      
-      for (const item of allItems) {
-        if (!this.shoppingListRepository.delete(item.id)) {
-          success = false;
-        }
-      }
-      
-      return success;
-    });
+  async clearAllItems(): Promise<boolean> {
+    return await this.shoppingListRepository.deleteAll();
   }
 
-  addRecipeIngredientsToList(recipeId: number): number {
-    return this.dbContext.transaction(() => {
-      const ingredients = this.ingredientRepository.readByRecipeId(recipeId);
+  async addRecipeIngredientsToList(recipeId: number): Promise<number> {
+    return await this.dbContext.transaction(async () => {
+      const ingredients = await this.ingredientRepository.readByRecipeId(recipeId);
       let addedCount = 0;
 
       for (const ingredient of ingredients) {
         const itemText = this.formatIngredientAsItem(ingredient);
-        const addedItem = this.shoppingListRepository.addOrUpdateItem(itemText);
+        const addedItem = await this.shoppingListRepository.addOrUpdateItem(itemText);
         
         if (addedItem) {
           addedCount++;
@@ -84,8 +77,8 @@ export class ShoppingListService {
     });
   }
 
-  getStats(): ShoppingListStats {
-    const items = this.shoppingListRepository.readAll();
+  async getStats(): Promise<ShoppingListStats> {
+    const items = await this.shoppingListRepository.readAll();
     const totalItems = items.length;
     const checkedItems = items.filter(item => item.is_checked).length;
     const uncheckedItems = totalItems - checkedItems;

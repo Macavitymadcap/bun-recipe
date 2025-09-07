@@ -10,7 +10,7 @@ import {
   IngredientEntity,
   IngredientRepository,
 } from "./ingredient-repository";
-import { DB_CONFIG } from "../config";
+import { DB_CONFIG, DbConfig } from "../config";
 import { DbContext } from "../context/context";
 
 const sampleIngredient = (
@@ -28,24 +28,28 @@ describe("IngredientRepository", () => {
   let ingredientRepository: IngredientRepository;
 
   beforeAll(() => {
+    const testConfig: DbConfig = {
+      ...DB_CONFIG, 
+      database: "recipe_test"
+    };
     (DbContext as any).instance = undefined; // Reset singleton instance before tests
-    ingredientRepository = new IngredientRepository(DB_CONFIG.inMemoryPath);
+    ingredientRepository = new IngredientRepository(testConfig);
   });
 
-  afterAll(() => {
+  afterAll(async () => {
     try {
-      ingredientRepository.close();
+      await ingredientRepository.close();
     } catch (error) {
       // Ignore errors during cleanup
     }
     (DbContext as any).instance = undefined; // Reset singleton instance after tests
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     // Clean up any existing ingredients before each test
-    const allIngredients = ingredientRepository.readAll();
-    allIngredients.forEach((ingredient) =>
-      ingredientRepository.delete(ingredient.id),
+    const allIngredients = await ingredientRepository.readAll();
+    allIngredients.forEach(async (ingredient) =>
+      await ingredientRepository.delete(ingredient.id),
     );
   });
 
@@ -55,12 +59,12 @@ describe("IngredientRepository", () => {
   });
 
   describe("create", () => {
-    test("should create a new ingredient and return the created entity with an id", () => {
+    test("should create a new ingredient and return the created entity with an id", async () => {
       // Arrange
       const ingredientData = sampleIngredient();
 
       // Act
-      const result = ingredientRepository.create(
+      const result = await ingredientRepository.create(
         ingredientData,
       ) as IngredientEntity;
 
@@ -75,7 +79,7 @@ describe("IngredientRepository", () => {
       expect(result.name).toBe(ingredientData.name);
     });
 
-    test("should create multiple ingredients with unique ids", () => {
+    test("should create multiple ingredients with unique ids", async () => {
       // Arrange
       const ingredient1Data = sampleIngredient();
       const ingredient2Data = sampleIngredient({
@@ -85,10 +89,10 @@ describe("IngredientRepository", () => {
       });
 
       // Act
-      const ingredient1 = ingredientRepository.create(
+      const ingredient1 = await ingredientRepository.create(
         ingredient1Data,
       ) as IngredientEntity;
-      const ingredient2 = ingredientRepository.create(
+      const ingredient2 = await ingredientRepository.create(
         ingredient2Data,
       ) as IngredientEntity;
 
@@ -103,15 +107,15 @@ describe("IngredientRepository", () => {
   });
 
   describe("read", () => {
-    test("should read an existing ingredient by id", () => {
+    test("should read an existing ingredient by id", async () => {
       // Arrange
       const ingredientData = sampleIngredient();
-      const createdIngredient = ingredientRepository.create(
+      const createdIngredient = await ingredientRepository.create(
         ingredientData,
       ) as IngredientEntity;
 
       // Act
-      const result = ingredientRepository.read(
+      const result = await ingredientRepository.read(
         createdIngredient.id,
       ) as IngredientEntity;
 
@@ -125,9 +129,9 @@ describe("IngredientRepository", () => {
       expect(result.unit).toBe(ingredientData.unit!);
     });
 
-    test("should return null for non-existent ingredient", () => {
+    test("should return null for non-existent ingredient", async () => {
       // Act
-      const result = ingredientRepository.read(999);
+      const result = await ingredientRepository.read(999);
 
       // Assert
       expect(result).toBeNull();
@@ -135,33 +139,33 @@ describe("IngredientRepository", () => {
   });
 
   describe("readAll", () => {
-    test("should return all ingredients ordered by name", () => {
+    test("should return all ingredients ordered by name", async () => {
       // Arrange
-      const ingredient1 = ingredientRepository.create(
+      const ingredient1 = await ingredientRepository.create(
         sampleIngredient({ unit: undefined, name: "Onion" }),
       ) as IngredientEntity;
-      const ingredient2 = ingredientRepository.create(
+      const ingredient2 = await ingredientRepository.create(
         sampleIngredient({
           unit: undefined,
           name: "Bell Pepper",
           order_index: 2,
         }),
       ) as IngredientEntity;
-      const ingredient3 = ingredientRepository.create(
+      const ingredient3 = await ingredientRepository.create(
         sampleIngredient({ unit: undefined, name: "Celery", order_index: 3 }),
       ) as IngredientEntity;
 
       // Act
-      const result = ingredientRepository.readAll();
+      const result = await ingredientRepository.readAll();
 
       // Assert
       expect(result).toBeArrayOfSize(3);
       expect(result).toContainValues([ingredient1, ingredient2, ingredient3]);
     });
 
-    test("should return an empty array when no ingredients exist", () => {
+    test("should return an empty array when no ingredients exist", async () => {
       // Act
-      const result = ingredientRepository.readAll();
+      const result = await ingredientRepository.readAll();
 
       // Assert
       expect(result).toBeArrayOfSize(0);
@@ -169,9 +173,9 @@ describe("IngredientRepository", () => {
   });
 
   describe("update", () => {
-    test("should update an existing ingredient and return the updated entity", () => {
+    test("should update an existing ingredient and return the updated entity", async () => {
       // Arrange
-      const originalIngredient = ingredientRepository.create(
+      const originalIngredient = await ingredientRepository.create(
         sampleIngredient(),
       ) as IngredientEntity;
       const updatedData: IngredientEntity = {
@@ -181,7 +185,7 @@ describe("IngredientRepository", () => {
       };
 
       // Act
-      const result = ingredientRepository.update(
+      const result = await ingredientRepository.update(
         updatedData,
       ) as IngredientEntity;
 
@@ -195,9 +199,9 @@ describe("IngredientRepository", () => {
       expect(result.order_index).toBe(originalIngredient.order_index);
     });
 
-    test("should handle updating optional fields to null", () => {
+    test("should handle updating optional fields to null", async () => {
       // Arrange
-      const originalIngredient = ingredientRepository.create(
+      const originalIngredient = await ingredientRepository.create(
         sampleIngredient(),
       ) as IngredientEntity;
 
@@ -207,7 +211,7 @@ describe("IngredientRepository", () => {
       };
 
       // Act
-      const result = ingredientRepository.update(
+      const result = await ingredientRepository.update(
         updatedData,
       ) as IngredientEntity;
 
@@ -216,7 +220,7 @@ describe("IngredientRepository", () => {
       expect(result.unit).toBeNull();
     });
 
-    test("should return null when trying to update a non-existant ingredient", () => {
+    test("should return null when trying to update a non-existant ingredient", async () => {
       // Arrange
       const nonExistentIngredient: IngredientEntity = {
         id: 999,
@@ -227,7 +231,7 @@ describe("IngredientRepository", () => {
       };
 
       // Act
-      const result = ingredientRepository.update(nonExistentIngredient);
+      const result = await ingredientRepository.update(nonExistentIngredient);
 
       // Assert
       expect(result).toBeNull();
@@ -235,45 +239,45 @@ describe("IngredientRepository", () => {
   });
 
   describe("delete", () => {
-    test("should delete an existing ingredient and return true", () => {
+    test("should delete an existing ingredient and return true", async () => {
       // Arrange
-      const ingredient = ingredientRepository.create(
+      const ingredient = await ingredientRepository.create(
         sampleIngredient(),
       ) as IngredientEntity;
 
       // Act
-      const result = ingredientRepository.delete(ingredient.id);
+      const result = await ingredientRepository.delete(ingredient.id);
 
       // Assert
       expect(result).toBe(true);
 
       // Verify ingredient is actually deleted
-      const deletedIngredient = ingredientRepository.read(ingredient.id);
+      const deletedIngredient = await ingredientRepository.read(ingredient.id);
       expect(deletedIngredient).toBeNull();
     });
 
-    test("should return false when when trying to delete a non-existant ingredient", () => {
+    test("should return false when when trying to delete a non-existant ingredient", async () => {
       // Arrange
       const nonExistantId = 999;
 
       // Act
-      const result = ingredientRepository.delete(nonExistantId);
+      const result = await ingredientRepository.delete(nonExistantId);
 
       // Assert
       expect(result).toBe(false);
     });
 
-    test("should handle deleting all ingredients", () => {
+    test("should handle deleting all ingredients", async () => {
       // Arrange
-      ingredientRepository.create(sampleIngredient());
-      ingredientRepository.create(
+      await ingredientRepository.create(sampleIngredient());
+      await ingredientRepository.create(
         sampleIngredient({
           unit: "dash",
           name: "Henderson's Relish",
           order_index: 2,
         }),
       );
-      ingredientRepository.create(
+      await ingredientRepository.create(
         sampleIngredient({
           quantity: "150",
           unit: "g",
@@ -282,11 +286,11 @@ describe("IngredientRepository", () => {
         }),
       );
 
-      const allIngredients = ingredientRepository.readAll();
+      const allIngredients = await ingredientRepository.readAll();
 
       // Act
-      allIngredients.forEach((ingredient) => {
-        const deleted = ingredientRepository.delete(ingredient.id);
+      allIngredients.forEach(async (ingredient) => {
+        const deleted = await ingredientRepository.delete(ingredient.id);
         expect(deleted).toBe(true);
       });
 
@@ -297,17 +301,17 @@ describe("IngredientRepository", () => {
   });
 
   describe("readByRecipeId", () => {
-    test("should return all Ingredients that have the given recipe_id", () => {
+    test("should return all Ingredients that have the given recipe_id", async () => {
       // Arrange
       const recipeId = 30;
-      const ingredient1 = ingredientRepository.create(
+      const ingredient1 = await ingredientRepository.create(
         sampleIngredient({
           recipe_id: recipeId,
           unit: undefined,
           name: "Apple",
         }),
       );
-      const ingredient2 = ingredientRepository.create(
+      const ingredient2 = await ingredientRepository.create(
         sampleIngredient({
           recipe_id: recipeId,
           unit: undefined,
@@ -315,7 +319,7 @@ describe("IngredientRepository", () => {
           order_index: 2,
         }),
       );
-      const ingredient3 = ingredientRepository.create(
+      const ingredient3 = await ingredientRepository.create(
         sampleIngredient({
           recipe_id: recipeId,
           unit: undefined,
@@ -325,19 +329,19 @@ describe("IngredientRepository", () => {
       );
 
       // Act
-      const result = ingredientRepository.readByRecipeId(recipeId);
+      const result = await ingredientRepository.readByRecipeId(recipeId);
 
       // Assert
       expect(result).toBeArrayOfSize(3);
       expect(result).toContainValues([ingredient1, ingredient2, ingredient3]);
     });
 
-    test("should return an empty array when given a recipe_id with no associated Ingredients", () => {
+    test("should return an empty array when given a recipe_id with no associated Ingredients", async () => {
       // Arrange
       const nonExistantRecipeId = 50;
 
       // Act
-      const result = ingredientRepository.readByRecipeId(nonExistantRecipeId);
+      const result = await ingredientRepository.readByRecipeId(nonExistantRecipeId);
 
       // Assert
       expect(result).toBeArrayOfSize(0);
@@ -345,18 +349,18 @@ describe("IngredientRepository", () => {
   });
 
   describe("deleteByRecipeId", () => {
-    test("should return false when given a recipe_id with no associated Ingredients", () => {
+    test("should return false when given a recipe_id with no associated Ingredients", async () => {
       // Arrange
       const nonExistantRecipeId = 55;
 
       // Act
-      const result = ingredientRepository.deleteByRecipeId(nonExistantRecipeId);
+      const result = await ingredientRepository.deleteByRecipeId(nonExistantRecipeId);
 
       // Assert
       expect(result).toBe(false);
     });
 
-    test("should return true and remove entities from the database when given a recipe_id with associated Ingredients", () => {
+    test("should return true and remove entities from the database when given a recipe_id with associated Ingredients", async () => {
       // Arrange
       const recipeId = 76;
       const ingredient = [
@@ -369,19 +373,19 @@ describe("IngredientRepository", () => {
           name: "Chicken Stock",
         }),
       ];
-      ingredient.forEach((ingredient) =>
-        ingredientRepository.create(ingredient),
+      ingredient.forEach(async (ingredient) =>
+        await ingredientRepository.create(ingredient),
       );
 
       // Act
-      const result = ingredientRepository.deleteByRecipeId(recipeId);
+      const result = await ingredientRepository.deleteByRecipeId(recipeId);
 
       // Assert
       expect(result).toBe(true);
 
       // Verify deletion of Ingredients
       const remainingIngredients =
-        ingredientRepository.readByRecipeId(recipeId);
+        await ingredientRepository.readByRecipeId(recipeId);
       expect(remainingIngredients).toBeArrayOfSize(0);
     });
   });

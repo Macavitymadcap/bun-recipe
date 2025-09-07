@@ -126,6 +126,7 @@ const UpdateRecipeForm = ({ recipe, availableTags }: UpdateRecipeFormProps) => {
           className="btn btn-outline-secondary"
           type="submit"
           title="Update Recipe"
+          hx-indicator="#working"
         >
           Update
         </button>

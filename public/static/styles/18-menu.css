@@ -9,7 +9,7 @@
 
 #main-menu[popover]:popover-open {
   position: absolute !important;
-  top: -23rem !important; 
+  top: -25rem !important; 
   right: 2rem !important; 
   left: auto !important;
   border: 2px solid var(--colour-surface-lowest);

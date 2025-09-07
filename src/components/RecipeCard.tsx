@@ -58,7 +58,7 @@ const RecipeCard = ({
           <button
             title="Full content view"
             hx-get={`/recipe/${id}`}
-            className="btn btn-icon btn-outline-primary col-3"
+            className="btn btn-icon btn-outline-primary"
             hx-target="#main-content"
           >
             <MaximiseIcon />
@@ -66,7 +66,7 @@ const RecipeCard = ({
 
           <button
             title="Update Recipe"
-            className="btn btn-icon btn-outline-secondary col-3"
+            className="btn btn-icon btn-outline-secondary"
             hx-get={`/form/update/${id}`}
             hx-target="#main-content"
           >
@@ -75,7 +75,7 @@ const RecipeCard = ({
 
           <button
             title="Add ingredients to shopping list"
-            className="btn btn-icon btn-outline-warning col-3"
+            className="btn btn-icon btn-outline-warning"
             hx-post={`/shopping-list/recipe/${id}`}
             hx-indicator="#working"
           >
@@ -84,7 +84,7 @@ const RecipeCard = ({
 
           <button
             title="Delete Recipe"
-            className="btn btn-icon btn-outline-danger col-3"
+            className="btn btn-icon btn-outline-danger"
             hx-get={`/form/delete/${id}`}
             hx-target="dialog"
             {...hxOnAfterRequestSuccessful}
